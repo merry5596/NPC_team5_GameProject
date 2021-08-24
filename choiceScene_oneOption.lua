@@ -24,43 +24,31 @@ function scene:create( event )
 	
 	-- 혜연 수정: 이전 scene에서 setVariable로 저장한 선택지 배열을 받아옴 --
 	local options = composer.getVariable("options")
-	local optionText = {}
+	
 
 	--선택지 그림--
-	local choiceBox = { }
-	for i = 1, 2 do
-		choiceBox[i] = display.newImage("image/component/story_option.png")
-		choiceBox[i].x, choiceBox[i].y = display.contentCenterX, display.contentCenterY*0.42
-		sceneGroup:insert(choiceBox[i])
+	local choiceBox = display.newImage("image/component/story_option.png")
+	choiceBox.x, choiceBox.y = display.contentCenterX, display.contentCenterY*0.71
+	sceneGroup:insert(choiceBox)
 
-		optionText[i] = display.newText(options[i], display.contentCenterX, display.contentCenterY*0.42, native.systemFont, 24)
-		sceneGroup:insert(optionText[i])
+	local optionText = display.newText(options[1], display.contentCenterX, display.contentCenterY*0.71, native.systemFont, 24)
+	sceneGroup:insert(optionText)
 
-		if i == 2 then
-			choiceBox[i].y = display.contentCenterY
-			optionText[i].y = display.contentCenterY
-		end
-	end
+	-- if i == 2 then
+	-- 	choiceBox[i].y = display.contentCenterY
+	-- 	optionText[i].y = display.contentCenterY
+	-- end
 
 	-- 혜연 수정 --
 	-- 1번 선택지 선택 시 --
 	local function selectOption1(event)
 		print("tap1")
-		composer.setVariable("selectedOption", 1) -- selectedOption에 1 저장
-		composer.hideOverlay() -- 이때 scene:hide( event ) 호출
-	end
-
-	-- 2번 선택지 선택 시 --
-	local function selectOption2(event)
-		print("tap2")
-		composer.setVariable("selectedOption", 2) -- selectedOption에 2 저장
 		composer.hideOverlay() -- 이때 scene:hide( event ) 호출
 	end
 
 	-- 혜연 수정 --
 	-- 선택지 선택 이벤트리스너 --
-	choiceBox[1]:addEventListener("tap", selectOption1)
-	choiceBox[2]:addEventListener("tap", selectOption2)
+	choiceBox:addEventListener("tap", selectOption1)
 
 end
 
