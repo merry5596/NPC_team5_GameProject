@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------------------
 --
--- view1.lua
+-- 스토리 폐허 파트 상.lua
 --
 -----------------------------------------------------------------------------------------
 
@@ -10,10 +10,11 @@ local scene = composer.newScene()
 function scene:create(event)
 	local sceneGroup = self.view
 	
+-------------------변수-------------------------------------------------------------------------------
+
 	--배경 그림--
-	local background = display.newRect(display.contentCenterX, display.contentCenterY, 
-		display.contentWidth, display.contentHeight)
-	background:setFillColor(1)
+	local background = display.newImage("image/background/ruins_nature.jpg", display.contentWidth, display.contentHeight)
+	background.x, background.y = display.contentCenterX, display.contentCenterY
 
 	--플레이어 그림--
 	local player = display.newImage("image/component/evy.png")
@@ -46,9 +47,57 @@ function scene:create(event)
 	local menuButton = display.newImage("image/component/menu_button.png")
   	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
 
+-------------------텍스트---------------------------------------------------------------------------------
+
+  	--내래이션과 대사--
+  	local dialogue = {" ", "얼마나 오래 걸었을까요? 숲을 가득 채우던 나무가 하나씩 시야에서 사라지고 있어요.",
+  				"은근한 흙먼지 향내가 코끝에 감돌고, 지내온 숲과는 다른 풍경이 당신 앞에 펼쳐집니다.",
+  				"어째 점점 황량한 배경이 이어지는 것 같아요.",
+  				"숲과 멀어지면... 건물의 잔해와 이끼가 뒤엉켜 바스라진 광경이 눈에 들어옵니다.",
+  				"\n이게 바로 시멘트라는 걸까요?\n\n건물의 벽을 이루고 있었던 시멘트덩이 사이를 잡초가 비집고 들어간 것 같네요.",
+  				"우뚝 솟은 잡초들이 시들시들해 보여요.",
+  				"숲 밖은 모두 이렇게 생명의 흔적이 사라지고 있는 걸까요.",
+  				"... 아무도 없는 건가? 주위를 둘러봐도 사람이 없네.",
+  				"생각해보면, 선생님께서는 다른 사람들에 대한 이야기를 당신께 일절 하지 않았습니다.	",
+  				"목소리를 높여 사람들을 불러봐도 메아리만 칠 뿐, 아무도 당신 곁에 다가오질 않아요.",
+  				"사람이 없다는 것이 더 정확한 표현이겠죠.",
+  				"이상합니다. 더 살펴보는 게 좋겠어요."}
+
+	--대사 구성--
+	local showDialogue = {}
+	for i = 1, #dialogue do
+		showDialogue[i] = display.newText(dialogue[i], dialogueBox.x, dialogueBox.y, 1000, 0, native.systemFont, 30)
+		-- showDialogue[i].size = 30
+		showDialogue[i]:setFillColor(1)
+		showDialogue[i].alpha = 0
+	end
+
+	--이름창 글자--
+	local name = "이비"
+	local showName = display.newText(name, nameBox.x, nameBox.y*0.993, native.systemFontBold)
+	showName.size = 35
+	showName.alpha = 0
+
+-------------------함수----------------------------------------------------------------------------------
+	
+	--클릭으로 대사 전환--
+	i = 1
+	local function showNextDialogue(event)
+		showDialogue[i].alpha = 0
+		i = i + 1
+		if(i == 9) then
+			showName.alpha = 1
+		else
+			showName.alpha = 0
+		end
+		showDialogue[i].alpha = 1
+	end
+	dialogueBox:addEventListener("tap", showNextDialogue)
+
   	local function changeCursorShape(event)
 
   	end
+
   	--메뉴열기--
   	local function menuOpen(event)
   		if(event.phase == "began") then

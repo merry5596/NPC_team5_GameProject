@@ -3,8 +3,11 @@
 -- scene1.lua
 --
 -----------------------------------------------------------------------------------------
+
 local composer = require( "composer" )
 local scene = composer.newScene()
+
+-------------------변수---------------------------------------------------------------------------------
 
 --배경 이미지 흰 바탕으로 대체
 local background = display.newRect(display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight)
@@ -24,7 +27,15 @@ load_button.x, load_button.y = display.contentWidth/2, display.contentHeight/2+1
 local start_button = display.newImageRect("image/component/menu_import.png", 350, 85)
 start_button.x, start_button.y = display.contentWidth/2, display.contentHeight/2+260
 
+-------------------함수----------------------------------------------------------------------------------
 
+--시작하기 버튼 클릭시 장면 전환
+local function gameStart(event)
+	if(event.phase == "began") then
+		composer.gotoScene("StoryScene_gameIntro")
+	end
+end
+start_button:addEventListener("touch", gameStart)
 
 ---------------------------------------------------------------------------------
 
