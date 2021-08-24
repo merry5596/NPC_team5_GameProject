@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------------------
 --
--- view1.lua
+-- 메뉴창.lua
 --
 -----------------------------------------------------------------------------------------
 
@@ -10,6 +10,8 @@ local scene = composer.newScene()
 function scene:create( event )
 	local sceneGroup = self.view
 	
+-------------------변수--------------------------------------------------------------------------
+
 	--배경 그림--
 	local background = display.newRect(display.contentCenterX, display.contentCenterY, 
 		display.contentWidth, display.contentHeight)
@@ -23,14 +25,6 @@ function scene:create( event )
 	local menuCloseButton = display.newImage("image/component/menu_close.png")
 	menuCloseButton.x, menuCloseButton.y = display.contentCenterX*1.635, display.contentCenterY*0.55
 
-	--메뉴닫기--
-	local function menuClose(event)
-		if(event.phase == "began") then
-			composer.hideOverlay()
-		end
-	end
-	menuCloseButton:addEventListener("touch", menuClose)
-
 	--메뉴창 시작화면으로 그림--
 	local menuTitleScreen = display.newImage("image/component/menu_gotomain.png")
 	menuTitleScreen.x, menuTitleScreen.y = display.contentCenterX, display.contentCenterY*0.65
@@ -42,6 +36,22 @@ function scene:create( event )
 	--메뉴창 불러오기 그림--
 	local menuLoad = display.newImage("image/component/menu_import.png")
 	menuLoad.x, menuLoad.y = display.contentCenterX, display.contentCenterY*1.35
+
+-------------------함수----------------------------------------------------------------------------
+
+	--메뉴닫기--
+	local function menuClose(event)
+		if(event.phase == "began") then
+			sceneGroup:insert(background)
+			sceneGroup:insert(menuBox)
+			sceneGroup:insert(menuCloseButton)
+			sceneGroup:insert(menuTitleScreen)
+			sceneGroup:insert(menuSave)
+			sceneGroup:insert(menuLoad)
+			composer.hideOverlay("menuScene")
+		end
+	end
+	menuCloseButton:addEventListener("touch", menuClose)
 end
 
 function scene:show( event )
