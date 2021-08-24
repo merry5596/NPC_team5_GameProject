@@ -30,7 +30,7 @@ function scene:create( event )
 	nameBox.x, nameBox.y = display.contentCenterX*0.35, display.contentCenterY*1.333
 
 	--대사창 위 이름--
-	local name = display.newText("이비", display.contentCenterX*0.35, display.contentCenterY*1.333, native.systemFont, 36)
+	local name = display.newText("이비", display.contentCenterX*0.35, display.contentCenterY*1.333, "fonts/GowunBatang-Bold.ttf", 36)
 
 	--대사창 위 스킵버튼 그림--
 	local skipButton = display.newImage("image/component/story_skip.png")
@@ -102,7 +102,7 @@ function scene:create( event )
     local curScript = {}
     local curScriptNum = 0
  	for i = 1, #scripts, 1 do
-		curScript[i] = display.newText(scripts[i], display.contentCenterX, display.contentCenterY*1.6, 1000, 0, native.systemFont, 30)
+ 		curScript[i] = display.newText(scripts[i], display.contentCenterX, display.contentCenterY*1.6, 1000, 0, "fonts/GowunBatang-Bold.ttf", 30)
 		curScript[i].alpha = 0
 	end
 
