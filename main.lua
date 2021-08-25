@@ -14,7 +14,7 @@ local composer = require "composer"
 
 -- event listeners for tab buttons:
 local function onFirstView( event )
-	composer.gotoScene( "story_forest1_2" )
+	composer.gotoScene( "scene1" )
 end
 
 local function onSecondView( event )

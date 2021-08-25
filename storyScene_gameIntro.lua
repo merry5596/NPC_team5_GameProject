@@ -19,6 +19,7 @@ function scene:create(event)
 	--플레이어 그림--
 	local player = display.newImage("image/component/evy.png")
 	player.x, player.y = display.contentCenterX, display.contentCenterY*1.3
+	player.isVisible = false
 
 	--대사창 그림--
 	local dialogueBox = display.newImage("image/component/story_box.png")
@@ -71,17 +72,20 @@ function scene:create(event)
 	--대사 구성--
 	local showDialogue = {}
 	for i = 1, #dialogue do
-		showDialogue[i] = display.newText(dialogue[i], dialogueBox.x, dialogueBox.y, 1000, 0, native.systemFont, 27)
-		-- showDialogue[i].size = 30
+		showDialogue[i] = display.newText(dialogue[i], dialogueBox.x, dialogueBox.y, 1000, 0, "fonts/GowunBatang-Bold.ttf", 26)
 		showDialogue[i]:setFillColor(1)
 		showDialogue[i].alpha = 0
 	end
 
 	--이름창 글자--
 	local name = "이비"
-	local showName = display.newText(name, nameBox.x, nameBox.y*0.993, native.systemFontBold)
-	showName.size = 35
-	showName.alpha = 0
+	local showName = display.newText(name, nameBox.x, nameBox.y*0.993, native.systemFontBold, 35)
+
+	--이름창+이름글자 그룹--
+	local nameGroup = display.newGroup()
+	nameGroup:insert(nameBox)
+	nameGroup:insert(showName)
+	nameGroup.isVisible = false
 
 -------------------함수-------------------------------------------------------------------------------
 	
@@ -89,19 +93,19 @@ function scene:create(event)
 	i = 1
 	local function showNextDialogue(event)
 		showDialogue[i].alpha = 0
-		i = i + 1
-		if(i == 5 or i == 9 or i == 10) then
-			showName.alpha = 1
-		else
-			showName.alpha = 0
+		if(i < #dialogue) then
+			i = i + 1
 		end
 		showDialogue[i].alpha = 1
+		if(i == 5 or i == 9 or i == 10) then
+			nameGroup.isVisible = true
+			player.isVisible = true
+		elseif(i == 6 or i == 11) then
+			nameGroup.isVisible = false
+			player.isVisible = false
+		end
 	end
 	dialogueBox:addEventListener("tap", showNextDialogue)
-
-  	local function changeCursorShape(event)
-
-  	end
 
   	--메뉴열기--
   	local function menuOpen(event)
