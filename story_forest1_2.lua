@@ -57,9 +57,6 @@ function scene:create( event )
 	local menuButton = display.newImage("image/component/menu_button.png")
   	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
 
-  	local function changeCursorShape(event)
-
-  	end
   	--메뉴열기--
   	local function menuOpen(event)
   		if(event.phase == "began") then

@@ -19,6 +19,7 @@ function scene:create(event)
 	--플레이어 그림--
 	local player = display.newImage("image/component/evy.png")
 	player.x, player.y = display.contentCenterX, display.contentCenterY*1.3
+	player.isVisible = false
 
 	--대사창 그림--
 	local dialogueBox = display.newImage("image/component/story_box.png")
@@ -54,7 +55,7 @@ function scene:create(event)
   				"은근한 흙먼지 향내가 코끝에 감돌고, 지내온 숲과는 다른 풍경이 당신 앞에 펼쳐집니다.",
   				"어째 점점 황량한 배경이 이어지는 것 같아요.",
   				"숲과 멀어지면... 건물의 잔해와 이끼가 뒤엉켜 바스라진 광경이 눈에 들어옵니다.",
-  				"\n이게 바로 시멘트라는 걸까요?\n\n건물의 벽을 이루고 있었던 시멘트덩이 사이를 잡초가 비집고 들어간 것 같네요.",
+  				"이게 바로 시멘트라는 걸까요?\n건물의 벽을 이루고 있었던 시멘트덩이 사이를 잡초가 비집고 들어간 것 같네요.",
   				"우뚝 솟은 잡초들이 시들시들해 보여요.",
   				"숲 밖은 모두 이렇게 생명의 흔적이 사라지고 있는 걸까요.",
   				"... 아무도 없는 건가? 주위를 둘러봐도 사람이 없네.",
@@ -66,17 +67,20 @@ function scene:create(event)
 	--대사 구성--
 	local showDialogue = {}
 	for i = 1, #dialogue do
-		showDialogue[i] = display.newText(dialogue[i], dialogueBox.x, dialogueBox.y, 1000, 0, native.systemFont, 30)
-		-- showDialogue[i].size = 30
+		showDialogue[i] = display.newText(dialogue[i], dialogueBox.x, dialogueBox.y, 1000, 0, "fonts/GowunBatang-Bold.ttf", 26)
 		showDialogue[i]:setFillColor(1)
 		showDialogue[i].alpha = 0
 	end
 
 	--이름창 글자--
 	local name = "이비"
-	local showName = display.newText(name, nameBox.x, nameBox.y*0.993, native.systemFontBold)
-	showName.size = 35
-	showName.alpha = 0
+	local showName = display.newText(name, nameBox.x, nameBox.y*0.993, native.systemFontBold, 35)
+
+	--이름창+이름글자 그룹--
+	local nameGroup = display.newGroup()
+	nameGroup:insert(nameBox)
+	nameGroup:insert(showName)
+	nameGroup.isVisible = false
 
 -------------------함수----------------------------------------------------------------------------------
 	
@@ -84,19 +88,19 @@ function scene:create(event)
 	i = 1
 	local function showNextDialogue(event)
 		showDialogue[i].alpha = 0
-		i = i + 1
-		if(i == 9) then
-			showName.alpha = 1
-		else
-			showName.alpha = 0
+		if(i < #dialogue) then
+			i = i + 1
 		end
 		showDialogue[i].alpha = 1
+		if(i == 9) then
+			nameGroup.isVisible = true
+			player.isVisible = true
+		elseif(i == 10) then
+			nameGroup.isVisible = false
+			player.isVisible = false
+		end
 	end
 	dialogueBox:addEventListener("tap", showNextDialogue)
-
-  	local function changeCursorShape(event)
-
-  	end
 
   	--메뉴열기--
   	local function menuOpen(event)
