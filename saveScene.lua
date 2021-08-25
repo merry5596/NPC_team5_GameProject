@@ -12,20 +12,20 @@ function scene:create( event )
 	
 	-- 배경 --
 	local background = display.newRect(display.contentWidth/2, display.contentHeight/2, display.contentWidth, display.contentHeight)
-	background:setFillColor(0.5)
-	sceneGroup:insert(background)
+	background:setFillColor(1, 0.5) --반투명 배경으로 수정
+	-- sceneGroup:insert(background)
 
 	local saveButton = display.newImageRect("image/component/save_savebutton.png", 300, 100)
 	saveButton.x, saveButton.y = display.contentWidth*0.5, display.contentHeight*0.4
-	sceneGroup:insert(saveButton)
+	-- sceneGroup:insert(saveButton)
 
 	local backButton = display.newImageRect("image/component/save_backbutton.png", 300, 100)
 	backButton.x, backButton.y = display.contentWidth*0.5, display.contentHeight*0.6
-	sceneGroup:insert(backButton)
+	-- sceneGroup:insert(backButton)
 
 	local menuButton = display.newImage("image/component/menu_button.png")
    	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
-	sceneGroup:insert(menuButton)
+	-- sceneGroup:insert(menuButton)
 
 	--composer.gotoScene("view2")
 

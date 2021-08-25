@@ -22,7 +22,7 @@ function scene:create( event )
 	sceneGroup:insert(player)
 
 	--대사창 그림--
-	local dialogueBox = display.newImage("image/component/story_box.png")
+	dialogueBox = display.newImage("image/component/story_box.png") --local 빼기 수정
 	dialogueBox.x, dialogueBox.y = display.contentCenterX, display.contentCenterY*1.6
 
 	--대사창 위 이름칸 그림--
@@ -60,6 +60,7 @@ function scene:create( event )
   	--메뉴열기--
   	local function menuOpen(event)
   		if(event.phase == "began") then
+			dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
   			composer.showOverlay("menuScene")
   		end
   	end
@@ -97,9 +98,10 @@ function scene:create( event )
  	}
 
     local curScript = {}
+    local curScriptGroup = display.newGroup() --대사배열그룹 작성 추가
     local curScriptNum = 0
  	for i = 1, #scripts, 1 do
- 		curScript[i] = display.newText(scripts[i], display.contentCenterX, display.contentCenterY*1.6, 1000, 0, "fonts/GowunBatang-Bold.ttf", 30)
+ 		curScript[i] = display.newText(curScriptGroup, scripts[i], display.contentCenterX, display.contentCenterY*1.6, 1000, 0, "fonts/GowunBatang-Bold.ttf", 30)
 		curScript[i].alpha = 0
 	end
 
@@ -109,7 +111,7 @@ function scene:create( event )
 	    isModal = true
 	}
 
-	local function nextScript(event)
+	function nextScript(event) --local 빼기 수정
 		print(#scripts)
 		print("curScriptNum: ", curScriptNum)
 		if curScriptNum == 13 then
@@ -141,7 +143,7 @@ function scene:create( event )
 		end
 	end
 
-	dialogueBoxGroup:addEventListener("tap", nextScript)
+	dialogueBox:addEventListener("tap", nextScript) --dialogueBoxGroup -> dialogueBox 수정
 
 	function scene:resumeGame()
 		if curScriptNum == 13 then
@@ -160,6 +162,18 @@ function scene:create( event )
 
 		print("curScriptNum: ", curScriptNum)
 		curScript[curScriptNum].alpha = 1
+	end
+
+	--메뉴의 시작화면으로 버튼 클릭시 현재 장면 닫고 타이틀화면으로 이동 (추가)--
+	function scene:closeScene()
+		sceneGroup:insert(background)
+		sceneGroup:insert(player)
+		sceneGroup:insert(dialogueBoxGroup)
+		sceneGroup:insert(menuButton)
+		sceneGroup:insert(curScriptGroup)
+		sceneGroup:insert(nameGroup)
+		composer.removeScene("story_forest1_2")
+		composer.gotoScene("scene1")
 	end
 
 	-- composer.loadScene("choiceScene")

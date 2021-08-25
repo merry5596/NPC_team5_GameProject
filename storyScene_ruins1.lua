@@ -22,7 +22,7 @@ function scene:create(event)
 	player.isVisible = false
 
 	--대사창 그림--
-	local dialogueBox = display.newImage("image/component/story_box.png")
+	dialogueBox = display.newImage("image/component/story_box.png")
 	dialogueBox.x, dialogueBox.y = display.contentCenterX, display.contentCenterY*1.6
 
 	--대사창 위 이름칸 그림--
@@ -66,8 +66,9 @@ function scene:create(event)
 
 	--대사 구성--
 	local showDialogue = {}
+	local showDialogueGroup = display.newGroup()
 	for i = 1, #dialogue do
-		showDialogue[i] = display.newText(dialogue[i], dialogueBox.x, dialogueBox.y, 1000, 0, "fonts/GowunBatang-Bold.ttf", 26)
+		showDialogue[i] = display.newText(showDialogueGroup, dialogue[i], dialogueBox.x, dialogueBox.y, 1000, 0, "fonts/GowunBatang-Bold.ttf", 26)
 		showDialogue[i]:setFillColor(1)
 		showDialogue[i].alpha = 0
 	end
@@ -86,7 +87,7 @@ function scene:create(event)
 	
 	--클릭으로 대사 전환--
 	i = 1
-	local function showNextDialogue(event)
+	function nextScript(event)
 		showDialogue[i].alpha = 0
 		if(i < #dialogue) then
 			i = i + 1
@@ -100,15 +101,28 @@ function scene:create(event)
 			player.isVisible = false
 		end
 	end
-	dialogueBox:addEventListener("tap", showNextDialogue)
+	dialogueBox:addEventListener("tap", nextScript)
 
   	--메뉴열기--
   	local function menuOpen(event)
   		if(event.phase == "began") then
+  			dialogueBox:removeEventListener("tap", nextScript)
   			composer.showOverlay("menuScene")
   		end
   	end
   	menuButton:addEventListener("touch", menuOpen)
+
+  	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
+	function scene:closeScene()
+		sceneGroup:insert(background)
+		sceneGroup:insert(player)
+		sceneGroup:insert(dialogueBoxGroup)
+		sceneGroup:insert(menuButton)
+		sceneGroup:insert(showDialogueGroup)
+		sceneGroup:insert(nameGroup)
+		composer.removeScene("storyScene_ruins1")
+		composer.gotoScene("scene1")
+	end
 
 	-- composer.loadScene("choiceScene")
 end
