@@ -17,9 +17,9 @@ c.x, c.y = display.contentWidth/2, display.contentHeight/2+50
 local d = display.newImage("image/component/area.png")
 d.x, d.y = display.contentWidth/2, display.contentHeight/2+180
 
--- 메뉴 버튼
-local menuButton = display.newImage("image/component/menu_button.png")
-menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
+-- 메뉴 버튼을 뒤로가기 버튼으로 대체 예정
+-- local menuButton = display.newImage("image/component/menu_button.png")
+-- menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
 
 
 ---------------------------------------------------------------------------------

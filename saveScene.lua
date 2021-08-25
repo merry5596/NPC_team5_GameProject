@@ -23,10 +23,6 @@ function scene:create( event )
 	backButton.x, backButton.y = display.contentWidth*0.5, display.contentHeight*0.6
 	-- sceneGroup:insert(backButton)
 
-	local menuButton = display.newImage("image/component/menu_button.png")
-   	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
-	-- sceneGroup:insert(menuButton)
-
 	--composer.gotoScene("view2")
 
 
