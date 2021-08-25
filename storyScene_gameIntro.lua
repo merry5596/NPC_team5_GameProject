@@ -73,14 +73,14 @@ function scene:create(event)
 	local showDialogue = {}
 	local showDialogueGroup = display.newGroup()
 	for i = 1, #dialogue do
-		showDialogue[i] = display.newText(showDialogueGroup, dialogue[i], dialogueBox.x, dialogueBox.y, 1000, 0, "fonts/GowunBatang-Bold.ttf", 26)
+		showDialogue[i] = display.newText(showDialogueGroup, dialogue[i], dialogueBox.x, dialogueBox.y, 1000, 0, "fonts/GowunBatang-Bold.ttf", 27)
 		showDialogue[i]:setFillColor(1)
 		showDialogue[i].alpha = 0
 	end
 
 	--이름창 글자--
 	local name = "이비"
-	local showName = display.newText(name, nameBox.x, nameBox.y*0.993, native.systemFontBold, 35)
+	local showName = display.newText(name, nameBox.x, nameBox.y, "fonts/GowunBatang-Bold.ttf", 30)
 
 	--이름창+이름글자 그룹--
 	local nameGroup = display.newGroup()
