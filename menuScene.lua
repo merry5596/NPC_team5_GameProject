@@ -38,25 +38,60 @@ function scene:create( event )
 	menuLoad.x, menuLoad.y = display.contentCenterX, display.contentCenterY*1.35
 
 -------------------함수----------------------------------------------------------------------------
+	
+	--변수들 sceneGroup에 포함--
+	local function inSceneGroup()
+		sceneGroup:insert(background)
+		sceneGroup:insert(menuBox)
+		sceneGroup:insert(menuCloseButton)
+		sceneGroup:insert(menuTitleScreen)
+		sceneGroup:insert(menuSave)
+		sceneGroup:insert(menuLoad)
+	end
 
 	--메뉴닫기--
 	local function menuClose(event)
 		if(event.phase == "began") then
-			sceneGroup:insert(background)
-			sceneGroup:insert(menuBox)
-			sceneGroup:insert(menuCloseButton)
-			sceneGroup:insert(menuTitleScreen)
-			sceneGroup:insert(menuSave)
-			sceneGroup:insert(menuLoad)
+			inSceneGroup()
+			dialogueBox:addEventListener("tap", nextScript)
 			composer.hideOverlay("menuScene")
 		end
 	end
 	menuCloseButton:addEventListener("touch", menuClose)
+
+	--시작화면으로 버튼 클릭시 타이틀화면으로 이동--
+	local function goTitleScreen(event)
+		if(event.phase == "began") then
+			inSceneGroup()
+			composer.hideOverlay("menuScene")
+			parent:closeScene() --이전 장면의 함수 실행
+		end
+	end
+	menuTitleScreen:addEventListener("touch", goTitleScreen)
+
+	--저장하기 버튼 클릭시 세이브화면으로 이동--
+	local function saveSceneOpen(event)
+		if(event.phase == "began") then
+			inSceneGroup()
+			composer.showOverlay("saveScene")
+		end
+	end
+	menuSave:addEventListener("touch", saveSceneOpen)
+
+	--불러오기 버튼 클릭시 세이브파일목록화면으로 이동--
+	local function saveFileListOpen(event)
+		if(event.phase == "began") then
+			inSceneGroup()
+			composer.showOverlay("scene11")
+		end
+	end
+	menuLoad:addEventListener("touch", saveFileListOpen)
 end
 
 function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
+	parent = event.parent --이전 장면
 	
 	if phase == "will" then
 		-- Called when the scene is still off screen and is about to move on screen
@@ -64,7 +99,7 @@ function scene:show( event )
 		-- Called when the scene is now on screen
 		-- 
 		-- INSERT code here to make the scene come alive
-		-- e.g. start timers, begin animation, play audio, etc.
+		-- e.g. start timers, begin animation, play audio, etc
 	end	
 end
 
@@ -79,7 +114,6 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
-		-- parent:create()
 	end
 end
 

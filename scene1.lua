@@ -7,35 +7,45 @@
 local composer = require( "composer" )
 local scene = composer.newScene()
 
+function scene:create(event)
+
+	local sceneGroup = self.view
+
 -------------------변수---------------------------------------------------------------------------------
 
---배경 이미지 흰 바탕으로 대체
-local background = display.newRect(display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight)
-background:setFillColor(1)
+	--배경 이미지 흰 바탕으로 대체
+	local background = display.newRect(display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight)
+	background:setFillColor(1)
 
---타이틀 이미지 텍스트로 대체
-local Title = "이비의 모험 : 선생님을 찾아서"
-local showTitle = display.newText(Title, display.contentWidth/2, display.contentHeight/2-50) 
-showTitle:setFillColor(0) 
-showTitle.size = 80
+	--타이틀 이미지 텍스트로 대체
+	local Title = "이비의 모험 : 선생님을 찾아서"
+	local showTitle = display.newText(Title, display.contentWidth/2, display.contentHeight/2-50) 
+	showTitle:setFillColor(0) 
+	showTitle.size = 80
 
--- 불러오기 버튼
-local load_button = display.newImageRect("image/component/menu_import.png", 350, 85)
-load_button.x, load_button.y = display.contentWidth/2, display.contentHeight/2+150
+	-- 불러오기 버튼
+	local load_button = display.newImageRect("image/component/menu_import.png", 350, 85)
+	load_button.x, load_button.y = display.contentWidth/2, display.contentHeight/2+150
 
--- 시작하기 버튼 불러오기 버튼으로 대체
-local start_button = display.newImageRect("image/component/menu_import.png", 350, 85)
-start_button.x, start_button.y = display.contentWidth/2, display.contentHeight/2+260
+	-- 시작하기 버튼 불러오기 버튼으로 대체
+	local start_button = display.newImageRect("image/component/menu_import.png", 350, 85)
+	start_button.x, start_button.y = display.contentWidth/2, display.contentHeight/2+260
 
 -------------------함수----------------------------------------------------------------------------------
 
---시작하기 버튼 클릭시 장면 전환
-local function gameStart(event)
-	if(event.phase == "began") then
-		composer.gotoScene("StoryScene_gameIntro")
+	--시작하기 버튼 클릭시 장면 전환
+	local function gameStart(event)
+		if(event.phase == "began") then
+			sceneGroup:insert(background)
+			sceneGroup:insert(showTitle)
+			sceneGroup:insert(load_button)
+			sceneGroup:insert(start_button)
+			composer.gotoScene("storyScene_gameIntro")
+		end
 	end
+	start_button:addEventListener("touch", gameStart)
+
 end
-start_button:addEventListener("touch", gameStart)
 
 ---------------------------------------------------------------------------------
 

@@ -9,6 +9,8 @@ local scene = composer.newScene()
 
 function scene:create(event)
 	local sceneGroup = self.view
+
+-------------------변수-------------------------------------------------------------------------------
 	
 	--배경 그림--
 	local background = display.newRect(display.contentCenterX, display.contentCenterY, 
@@ -20,7 +22,7 @@ function scene:create(event)
 	player.x, player.y = display.contentCenterX, display.contentCenterY*1.3
 
 	--대사창 그림--
-	local dialogueBox = display.newImage("image/component/story_box.png")
+	dialogueBox = display.newImage("image/component/story_box.png")
 	dialogueBox.x, dialogueBox.y = display.contentCenterX, display.contentCenterY*1.6
 
 	--대사창 위 이름칸 그림--
@@ -46,16 +48,28 @@ function scene:create(event)
 	local menuButton = display.newImage("image/component/menu_button.png")
   	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
 
-  	local function changeCursorShape(event)
+-------------------함수----------------------------------------------------------------------------------
 
-  	end
   	--메뉴열기--
   	local function menuOpen(event)
   		if(event.phase == "began") then
+  			dialogueBox:removeEventListener("tap", nextScript)
   			composer.showOverlay("menuScene")
   		end
   	end
   	menuButton:addEventListener("touch", menuOpen)
+
+  	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
+	function scene:closeScene()
+		sceneGroup:insert(background)
+		sceneGroup:insert(player)
+		sceneGroup:insert(dialogueBoxGroup)
+		sceneGroup:insert(menuButton)
+		sceneGroup:insert(showDialogueGroup)
+		sceneGroup:insert(nameGroup)
+		composer.removeScene("") --현재 장면 이름 넣기 ex)storyScene
+		composer.gotoScene("scene1")
+	end
 
 	-- composer.loadScene("choiceScene")
 end
