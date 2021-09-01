@@ -18,29 +18,42 @@ function scene:create( event )
 	-- create a white background to fill screen
 
 	--반투명 배경 그림--
-	-- local background = display.newRect(display.contentCenterX, display.contentCenterY, 
-	-- 	display.contentWidth, display.contentHeight)
-	-- background:setFillColor(1, 0.5)
+	local background = display.newRect(display.contentCenterX, display.contentCenterY, 
+	display.contentWidth, display.contentHeight)
+	background:setFillColor(0, 0.5)
+	sceneGroup:insert(background)
 	
 	-- 혜연 수정: 이전 scene에서 setVariable로 저장한 선택지 배열을 받아옴 --
 	local options = composer.getVariable("options")
 	local optionText = {}
 
+	-- 혜연 수정: 선택지 그룹 --
+	local selectGroup = display.newGroup()
+
 	--선택지 그림--
 	local choiceBox = { }
-	for i = 1, 2 do
-		choiceBox[i] = display.newImage("image/component/story_option.png")
-		choiceBox[i].x, choiceBox[i].y = display.contentCenterX, display.contentCenterY*0.42
-		sceneGroup:insert(choiceBox[i])
-
-		optionText[i] = display.newText(options[i], display.contentCenterX, display.contentCenterY*0.42, native.systemFont, 24)
-		sceneGroup:insert(optionText[i])
-
+	for i = 1, #options do
+		choiceBox[i] = display.newImage(selectGroup,"image/component/story_option.png")
+		choiceBox[i].x, choiceBox[i].y = display.contentCenterX, display.contentCenterY * 0.71
 		if i == 2 then
+			choiceBox[1].y = display.contentCenterY * 0.6
 			choiceBox[i].y = display.contentCenterY
-			optionText[i].y = display.contentCenterY
+		end
+		if i == 3 then
+			choiceBox[1].y = display.contentCenterY * 0.3
+			choiceBox[2].y = display.contentCenterY * 0.7
+			choiceBox[3].y = display.contentCenterY * 1.1
 		end
 	end
+
+	--선택지에 option 내용 삽입--
+	for i = 1, #options do
+		optionText[i] = display.newText(options[i], choiceBox[i].x, choiceBox[i].y, "fonts/GowunBatang-Bold.ttf", 21)
+		selectGroup:insert(optionText[i])
+	end
+
+	sceneGroup:insert(selectGroup)
+
 
 	-- 혜연 수정 --
 	-- 1번 선택지 선택 시 --
@@ -57,10 +70,22 @@ function scene:create( event )
 		composer.hideOverlay() -- 이때 scene:hide( event ) 호출
 	end
 
+	-- 3번 선택지 선택 시 --
+	local function selectOption3(event)
+		print("tap3")
+		composer.setVariable("selectedOption", 3) -- selectedOption에 2 저장
+		composer.hideOverlay() -- 이때 scene:hide( event ) 호출
+	end
+
 	-- 혜연 수정 --
 	-- 선택지 선택 이벤트리스너 --
 	choiceBox[1]:addEventListener("tap", selectOption1)
-	choiceBox[2]:addEventListener("tap", selectOption2)
+	if #choiceBox >= 2 then
+		choiceBox[2]:addEventListener("tap", selectOption2)
+	end
+	if #choiceBox == 3 then
+		choiceBox[3]:addEventListener("tap", selectOption3)
+	end
 
 end
 
@@ -84,7 +109,7 @@ function scene:hide( event )
 
 	-- 혜연 수정 --
 	local parent = event.parent -- 이전 scene을 뜻함
-	
+
 	if event.phase == "will" then
 		-- Called when the scene is on screen and is about to move off screen
 		--
