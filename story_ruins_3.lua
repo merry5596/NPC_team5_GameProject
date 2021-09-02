@@ -11,13 +11,14 @@ function scene:create( event )
 	local sceneGroup = self.view
 	
 	-- 임시 배경 --
-	local background = display.newImageRect("image/background/오두막내부임시배경.jpg", display.contentWidth, display.contentHeight)
+	local background = display.newImageRect("image/background/ruins_nature.jpg", display.contentWidth, display.contentHeight)
 	background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
 	sceneGroup:insert(background)
 
 	--플레이어 그림--
 	local player = display.newImage("image/component/evy.png")
-	player.x, player.y = display.contentCenterX, display.contentCenterY*1.3
+	player.x, player.y = display.contentCenterX, display.contentCenterY*1.5
+	player:scale(1.2, 1.2)
 	player.isVisible = false
 	sceneGroup:insert(player)
 
@@ -30,7 +31,7 @@ function scene:create( event )
 	nameBox.x, nameBox.y = display.contentCenterX*0.35, display.contentCenterY*1.333
 
 	--대사창 위 이름--
-	local name = display.newText("이비", display.contentCenterX*0.35, display.contentCenterY*1.333, "fonts/GowunBatang-Bold.ttf", 36)
+	local name = display.newText("이비", display.contentCenterX*0.35, display.contentCenterY*1.333, "fonts/GowunBatang-Bold.ttf", 30)
 
 	--대사창 위 스킵버튼 그림--
 	local skipButton = display.newImage("image/component/story_skip.png")
@@ -48,18 +49,20 @@ function scene:create( event )
 	dialogueBoxGroup:insert(fastforwardButton)
 	sceneGroup:insert(dialogueBoxGroup)
 
+
 	--이름 그룹--
 	local nameGroup = display.newGroup()
 	nameGroup:insert(nameBox)
 	nameGroup:insert(name)
-	nameGroup.isVisible = false	
+	nameGroup.isVisible = false
 	sceneGroup:insert(nameGroup)
 
 
 	--메뉴버튼 그림--
 	local menuButton = display.newImage("image/component/menu_button.png")
   	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
-	sceneGroup:insert(menuButton)
+  	sceneGroup:insert(menuButton)
+
 
   	--메뉴열기--
   	local function menuOpen(event)
@@ -71,45 +74,52 @@ function scene:create( event )
   	menuButton:addEventListener("touch", menuOpen)
 
   	local scripts = {
-  		"해가 떨어진 지 오래네요. 그럼에도 선생님을 마주칠 수 없었어요.", 
-  		"살랑살랑 흔들리는 머리카락, 언제나 온화한 미소를 지어주시는 나의 선생님, 대체 어디에 계신 걸까요?", 
- 		"아무래도 걱정이 되기 시작합니다.", 
- 		"이렇게까지 오래 안 오신 경우는 없었는데...",  -- 4 (evy)
- 		"숲 밖까지 돌아다니진 말라는 얘기를 들었지만, 어쩔 수 없을 것 같네요.", 
- 		"날이 밝고도 돌아오지 않으신다면 숲을 벗어나보는 것도... 어쩌면 괜찮은 선택일 수도 있겠네요.", 
- 		"그런 생각을 하며 당신은 밤을 보냅니다......", 
- 		"......", -- 8 (evy)
- 		"아직도 돌아오지 않으셨네.", 
- 		"아침이 밝았습니다만 오두막에선 아직도 당신의 목소리만이 울리고 있습니다.", 
- 		"무슨 일이 있는 게 틀림이 없어요.", 
- 		"무릎이 아플 때마다 바르라고 했던 기름 연고를 가방에 주섬주섬 넣고는 밖으로 나갈 채비를 합시다.", 
- 		"정말로 숲 밖으로 나서볼까요?", -- 13 (options1)
- 		"미지의 공간이라니, 난생 처음 겪는 모험입니다.", -- 14
-  		"어떤가요? 두근두근하지 않나요?", 
- 		"숲 밖의 세계는 어떨까요. 아주 멋있을 거예요.", -- 16 (go to 19)
- 		"기다리고 또 기다렸지만, 날만 저물었습니다. 다시 해가 떠오르기 시작해요.", -- 17
-		"정말로 떠나지 않을 건가요?", -- 18 (options2)
-		"그렇게 짧은 모험을 떠나기로 합니다." --19
+		"[정보 공인 대-안드로이드 연구소]가 있던 자리로 겨우겨우 발걸음을 하면, 그 위치엔 거대한 잔해가 가득합니다.", -- 1: 연구소 파트 시작
+		"규모가 큰 시설이었으나 대부분 무너진 듯해요. 그래도 아주 작은 건물 하나는 남아있는 듯합니다.", -- 2 (options1)
+		"잔해를 피해 조심조심 작은 건물로 다가가보면, 너덜너덜한 문짝이 겨우 붙어있다는 것을 알아차릴 수 있습니다.", -- 3
+		"문을 기울여 열어젖히니... 아, 긴 복도 끝에 탕비실이라 적힌 푯말이 보입니다. 누가 봐도 좁아터진 방이에요.", -- 4
+		"연구소로 들어가지 않고, 그 주위를 배회하기로 마음을 먹습니다.", -- 5
+		"비좁습니다. 먼지 가득한 탕비실이에요. 나무 탁자는 다리 넷이 모두 부러졌고, 커피와 차를 보관하고 있던 곳에선 옅은 악취가 풍겨옵니다.", -- 6: 탕비실 시작(options2)
+		"흙먼지가 나풀댑니다. 시멘트 조각과 케케묵은 냄새가 가득합니다. 그 위를 벌레가 슬슬 지나갑니다.", -- 7
+		"벌레가 지나간 곳 아래에는 종이 하나가 놓여있습니다.", 
+		"종이는 낡았지만, 모두 오래되어 상한 장소에서 서류만큼은 최근의 것이라 생각하기 족할 정도로 멀쩡합니다.", 
+		"최근에 누군가가 이곳에 와서 두고 간 것일지도 모르겠어요.", 
+		"종이를 흘겨보니 그 위엔 안드로이드에 관한 내용으로 가득하다는 사실을 알 수 있습니다. 출력물인 듯해요.", -- 11 (options3)
+		"안드로이드 신체 구조에 관한 내용이 적혀있다. 가정용 모델을 주로 적은 듯한데, 체내에 정수 기능과 공기 청정 기능이 있다는 내용인 듯하다.", -- 12
+		"그 아래에는 연구소의 과거에 대한 이야기가 있는데, 적자가 나서 망했다는 문장만 가득하다.", -- 13 (options4)
+ 		"이 거대한 잔해들 사이에서 터벅터벅 발소리를 내며 걸어보니, 많은 종이들이 찢겨 나풀댄다는 사실을 마주할 수 있었습니다.", -- 14
+ 		"무너진 콘트리트 위에는 연구, 안드로이드, 개발, 멸망의 전조... 어딘가 석연찮은 단어가 가득한 자료만이 가득합니다.", 
+ 		"걷고, 또 걷습니다.", 
+ 		"선생님의 흔적을 찾고자 연구소에 오게 된 건데, 어째 이런 세상이 다가온 이유만을 알아버린 듯합니다.", 
+ 		"미약한 허탈함을 품고 계속해서 걸어갑니다.", 
+ 		"...... 오두막으로 다시 돌아가는 게 좋겠죠. 더 나아가다가는 돌아갈 길을 잃어버릴지도 모르겠어요."
  	}
-
+ 	
  	local options1 = {
- 		"숲 밖으로 간다.", 
- 		"선생님을 더 기다려본다."
+ 		"들어간다.", 
+ 		"들어가지 않는다."
  	}
 
  	local options2 = {
- 		"숲 밖으로 간다."
+ 		"[나무 탁자] 주위로 다가가본다."
+ 	}
+
+ 	local options3 = {
+ 		"[종이]를 확인한다."
+ 	}
+
+ 	local options4 = {
+ 		"[연구소 탕비실]을 나간다."
  	}
 
     local curScript = {}
     local curScriptGroup = display.newGroup() --대사배열그룹 작성 추가
     local curScriptNum = 0
  	for i = 1, #scripts, 1 do
- 		curScript[i] = display.newText(curScriptGroup, scripts[i], display.contentCenterX, display.contentCenterY*1.6, 1000, 0, "fonts/GowunBatang-Bold.ttf", 30)
+ 		curScript[i] = display.newText(curScriptGroup, scripts[i], display.contentCenterX, display.contentCenterY*1.6, 1000, 0, "fonts/GowunBatang-Bold.ttf", 27)
 		curScript[i].alpha = 0
 	end
 	sceneGroup:insert(curScriptGroup)
-
 
 	local overlayOption =
 	{
@@ -119,50 +129,61 @@ function scene:create( event )
 	function nextScript(event) --local 빼기 수정
 		print(#scripts)
 		print("curScriptNum: ", curScriptNum)
-		if curScriptNum == 13 then
+		-- 선택지로 이동
+		if curScriptNum == 2 then
 			composer.setVariable("options", options1)
 			composer.showOverlay("choiceScene", overlayOption)
-		elseif curScriptNum == 18 then
+		elseif curScriptNum == 6 then
 			composer.setVariable("options", options2)
+			composer.showOverlay("choiceScene", overlayOption)
+		elseif curScriptNum == 11 then
+			composer.setVariable("options", options3)
+			composer.showOverlay("choiceScene", overlayOption)
+		elseif curScriptNum == 13 then
+			composer.setVariable("options", options4)
 			composer.showOverlay("choiceScene", overlayOption)
 		elseif curScriptNum < #scripts then
 			if curScriptNum ~= 0 then
 				curScript[curScriptNum].alpha = 0
 			end
-
-			if curScriptNum == 16 then
-				curScriptNum = 19
+			-- 선택지 끝나서 공통으로 모임
+			if curScriptNum == 4 then
+				curScriptNum = 6
+			elseif curScriptNum == 5 then
+				curScriptNum = 14
+			-- 디폴트
 			else
 				curScriptNum = curScriptNum + 1
 			end
 
 			curScript[curScriptNum].alpha = 1
 
-			if curScriptNum == 4 or curScriptNum == 8 then
-				nameGroup.isVisible = true
-				player.isVisible = true
-			end
-			if curScriptNum == 5 or curScriptNum == 10 then
-				nameGroup.isVisible = false
-			end
+			-- 캐릭터 변화
+			-- if curScriptNum == 34 or curScriptNum == 8 then
+			-- 	nameGroup.isVisible = true
+			-- 	-- player.isVisible = true
+			-- end
+			-- if curScriptNum == 36 or curScriptNum == 10 then
+			-- 	nameGroup.isVisible = false
+			-- end
 		end
 	end
 
 	dialogueBox:addEventListener("tap", nextScript) --dialogueBoxGroup -> dialogueBox 수정
 
 	function scene:resumeGame()
-		if curScriptNum == 13 then
+		if curScriptNum == 2 then
 			local selectedOption = composer.getVariable("selectedOption")
 			print(selectedOption)
 			curScript[curScriptNum].alpha = 0
 			if selectedOption == 1 then
-				curScriptNum = 14
+				curScriptNum = 3
 			elseif selectedOption == 2 then
-				curScriptNum = 17
+				curScriptNum = 5
 			end
-		elseif curScriptNum == 18 then
+		elseif curScriptNum == 6 or curScriptNum == 11 or curScriptNum == 13 then
 			curScript[curScriptNum].alpha = 0
-				curScriptNum = 19
+			curScriptNum = curScriptNum + 1
 		end
 
 		print("curScriptNum: ", curScriptNum)
@@ -171,6 +192,12 @@ function scene:create( event )
 
 	--메뉴의 시작화면으로 버튼 클릭시 현재 장면 닫고 타이틀화면으로 이동 (추가)--
 	function scene:closeScene()
+		sceneGroup:insert(background)
+		sceneGroup:insert(player)
+		sceneGroup:insert(dialogueBoxGroup)
+		sceneGroup:insert(menuButton)
+		sceneGroup:insert(curScriptGroup)
+		sceneGroup:insert(nameGroup)
 		composer.removeScene("story_forest1_2")
 		composer.gotoScene("scene1")
 	end

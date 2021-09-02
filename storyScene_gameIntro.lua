@@ -13,12 +13,16 @@ function scene:create(event)
 -------------------변수---------------------------------------------------------------------------------
 
 	--배경 그림--
-	local background = display.newImage("image/background/inside_cabin.jpg", display.contentWidth, display.contentHeight)
-	background.x, background.y = display.contentCenterX, display.contentCenterY
+	local background1 = display.newImage("image/background/inside_cabin_임시.jpg", display.contentWidth, display.contentHeight)
+	background1.x, background1.y = display.contentCenterX, display.contentCenterY
+	local background2 = display.newImage("image/background/outside_cabin_임시.jpg", display.contentWidth, display.contentHeight)
+	background2.x, background2.y = display.contentCenterX, display.contentCenterY
+	background2.alpha = 0
 
 	--플레이어 그림--
 	local player = display.newImage("image/component/evy.png")
-	player.x, player.y = display.contentCenterX, display.contentCenterY*1.3
+	player.x, player.y = display.contentCenterX, display.contentCenterY*1.5
+	player:scale(1.2, 1.2)
 	player.isVisible = false
 
 	--대사창 그림--
@@ -98,7 +102,11 @@ function scene:create(event)
 			i = i + 1
 		end
 		showDialogue[i].alpha = 1
-		if(i == 5 or i == 9 or i == 10) then
+		if(i == 5) then
+			nameGroup.isVisible = true
+			player.isVisible = true
+			background2.alpha = 1 --배경전환
+		elseif(i == 9 or i == 10) then
 			nameGroup.isVisible = true
 			player.isVisible = true
 		elseif(i == 6 or i == 11) then
@@ -119,7 +127,8 @@ function scene:create(event)
 
 	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
-		sceneGroup:insert(background)
+		sceneGroup:insert(background1)
+		sceneGroup:insert(background2)
 		sceneGroup:insert(player)
 		sceneGroup:insert(dialogueBoxGroup)
 		sceneGroup:insert(menuButton)
