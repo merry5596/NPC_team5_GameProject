@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------------------
 --
--- view1.lua
+-- 숲2 파트 상.lua
 --
 -----------------------------------------------------------------------------------------
 
@@ -13,15 +13,15 @@ function scene:create(event)
 -------------------변수-------------------------------------------------------------------------------
 	
 	--배경 그림--
-	local background = display.newRect(display.contentCenterX, display.contentCenterY, 
-		display.contentWidth, display.contentHeight)
-	background:setFillColor(1)
+	local background = display.newImage("image/background/forest(겨울).png", display.contentWidth, display.contentHeight)
+	background.x, background.y = display.contentCenterX, display.contentCenterY
 	sceneGroup:insert(background)
 
 	--플레이어 그림--
 	local player = display.newImage("image/component/evy.png")
 	player.x, player.y = display.contentCenterX, display.contentCenterY*1.5
 	player:scale(1.2, 1.2)
+	player.isVisible = false
 	sceneGroup:insert(player)
 
 	--대사창 그림--
@@ -53,7 +53,51 @@ function scene:create(event)
   	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
 	sceneGroup:insert(menuButton)
 
+-------------------텍스트---------------------------------------------------------------------------------
+
+	--내래이션과 대사--
+  	local dialogue = {" ", "숲으로 돌아오니 아니나 다를까, 소복소복 눈이 쌓여있습니다.",
+  					"완연한 겨울이 당신을 맞이합니다.",
+  					"당연한 일이죠. 이상기후의 발생은 늘 있던 일이니까요.",
+  					"찬 겨울 바람을 그대로 맞으며 오두막으로 걸어갑니다.",
+  					"큰 마음을 먹고 숲 밖으로 나가봤건만, 선생님의 흔적은 무슨! 그 발자취의 실마리조차 찾지 못했습니다.",
+  					"그래도 이쯤이면 선생님께서 돌아온 후일 것 같지 않나요?",
+  					"오래 찾아다니게 만들었으니, 만나면 여러 핀잔을 내뱉어봅시다. 선생님은 웃으며 늘 당신을 받아줬으니까요.",
+  					"눈밭에 발자국을 남기며 걸어갈까요."}
+
+  	--대사 구성--
+	local showDialogue = {}
+	local showDialogueGroup = display.newGroup()
+	for i = 1, #dialogue do
+		showDialogue[i] = display.newText(showDialogueGroup, dialogue[i], dialogueBox.x, dialogueBox.y, 1000, 0, "fonts/GowunBatang-Bold.ttf", 27)
+		showDialogue[i]:setFillColor(1)
+		showDialogue[i].alpha = 0
+	end
+	sceneGroup:insert(showDialogueGroup)
+
+	--이름창 글자--
+	local name = "이비"
+	local showName = display.newText(name, nameBox.x, nameBox.y*0.993, "fonts/GowunBatang-Bold.ttf", 30)
+
+	--이름창+이름글자 그룹--
+	local nameGroup = display.newGroup()
+	nameGroup:insert(nameBox)
+	nameGroup:insert(showName)
+	nameGroup.isVisible = false
+	sceneGroup:insert(nameGroup)
+
 -------------------함수----------------------------------------------------------------------------------
+
+	--클릭으로 대사 전환--
+	i = 1
+	function nextScript(event)
+		showDialogue[i].alpha = 0
+		if(i < #dialogue) then
+			i = i + 1
+		end
+		showDialogue[i].alpha = 1
+	end
+	dialogueBox:addEventListener("tap", nextScript)
 
   	--메뉴열기--
   	local function menuOpen(event)
@@ -66,7 +110,7 @@ function scene:create(event)
 
   	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
-		composer.removeScene("") --현재 장면 이름 넣기 ex)storyScene
+		composer.removeScene("story_forest2_1") --현재 장면 이름 넣기 ex)storyScene
 		composer.gotoScene("scene1")
 	end
 

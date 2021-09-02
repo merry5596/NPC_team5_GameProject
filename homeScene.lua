@@ -92,6 +92,21 @@ function scene:create( event )
 
 	closeButton:addEventListener("tap", closeBag)
 
+	--메뉴열기--
+  	local function menuOpen(event)
+  		if(event.phase == "began") then
+  			composer.setVariable("sceneName", home)
+  			composer.showOverlay("menuScene")
+  		end
+  	end
+  	menuButton:addEventListener("touch", menuOpen)
+
+  	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
+	function scene:closeScene()
+		composer.removeScene("homeScene") --현재 장면 이름 넣기 ex)storyScene
+		composer.gotoScene("scene1")
+	end
+
 	--composer.gotoScene("view2")
 
 
