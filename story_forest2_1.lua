@@ -89,19 +89,78 @@ function scene:create(event)
 -------------------함수----------------------------------------------------------------------------------
 
 	--클릭으로 대사 전환--
+	local fastforward_state = 0 --빨리감기상태 0꺼짐 1켜짐
+
+	local playerTime = 400 --플레이어와 이름창 페이드인 시간
+	local dialogueFadeInTime = 400 --대사 페이드인과 배경 전환 시간
+	local dialogueFadeOutTime = 200 --대사와 이름창 페이드아웃 시간
 	i = 1
 	function nextScript(event)
-		showDialogue[i].alpha = 0
-		if(i < #dialogue) then
-			i = i + 1
+		if(fastforward_state == 0) then
+			showDialogue[i].alpha = 0
+			if(i < #dialogue) then
+				i = i + 1
+			end
+			showDialogue[i].alpha = 1
+
+			playerTime = 200
+		else
+			transition.fadeOut(showDialogue[i], { time = dialogueFadeOutTime })
+			if(i < #dialogue) then
+				i = i + 1
+			end
+			transition.fadeIn(showDialogue[i], { time = dialogueFadeInTime })
 		end
-		showDialogue[i].alpha = 1
 	end
 	dialogueBox:addEventListener("tap", nextScript)
+
+	--빨리감기기능--
+	local function scriptFastForward()
+		print("i: ", i)
+		nextScript()
+	end
+
+	function fastforward(event)
+		if(fastforward_state == 0) then
+			fastforward_state = 1
+			dialogueBox:removeEventListener("tap", nextScript)
+			skipButton:removeEventListener("tap", skip)
+			timer1 = timer.performWithDelay(1000, scriptFastForward, 0, "sFF")
+		else
+			fastforward_state = 0
+			dialogueBox:addEventListener("tap", nextScript)
+			skipButton:addEventListener("tap", skip)
+			timer.pause("sFF")
+	
+			return true
+		end
+	end
+	fastforwardButton:addEventListener("tap", fastforward)
+
+	--빨리감기종료함수--
+	function stopFastForward()
+		fastforward_state = 0
+		dialogueBox:addEventListener("tap", nextScript)
+		skipButton:addEventListener("tap", skip)
+		timer.pause(timer1)
+	end
+
+	--스킵기능--
+	function skip(event)
+		showDialogue[i].alpha = 0
+		i = #dialogue
+		showDialogue[i].alpha = 1
+		
+		print("i: ", i)
+	end
+	skipButton:addEventListener("tap", skip)
 
   	--메뉴열기--
   	local function menuOpen(event)
   		if(event.phase == "began") then
+  			if fastforward_state == 1 then --메뉴오픈시 빨리감기종료
+				stopFastForward()
+			end
   			dialogueBox:removeEventListener("tap", nextScript)
   			composer.showOverlay("menuScene")
   		end
