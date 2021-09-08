@@ -19,7 +19,7 @@ function scene:create( event )
 	local player = display.newImage("image/component/evy.png")
 	player.x, player.y = display.contentCenterX, display.contentCenterY*1.5
 	player:scale(1.2, 1.2)
-	player.isVisible = false
+	player.alpha = 0
 	sceneGroup:insert(player)
 
 	--대사창 그림--
@@ -54,7 +54,7 @@ function scene:create( event )
 	local nameGroup = display.newGroup()
 	nameGroup:insert(nameBox)
 	nameGroup:insert(name)
-	nameGroup.isVisible = false
+	nameGroup.alpha = 0
 	sceneGroup:insert(nameGroup)
 
 
@@ -62,16 +62,6 @@ function scene:create( event )
 	local menuButton = display.newImage("image/component/menu_button.png")
   	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
   	sceneGroup:insert(menuButton)
-
-
-  	--메뉴열기--
-  	local function menuOpen(event)
-  		if(event.phase == "began") then
-			dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
-  			composer.showOverlay("menuScene")
-  		end
-  	end
-  	menuButton:addEventListener("touch", menuOpen)
 
   	local scripts = {
   		"계속해서 걸어다닌 지 몇 시간. 슬슬 무릎이 삐걱거리기 시작해 가방에서 기름 연고를 꺼내 바르다보면, ", 
@@ -159,11 +149,12 @@ function scene:create( event )
 
     local curScript = {}
     local curScriptGroup = display.newGroup() --대사배열그룹 작성 추가
-    local curScriptNum = 0
+    local curScriptNum = 1
  	for i = 1, #scripts, 1 do
  		curScript[i] = display.newText(curScriptGroup, scripts[i], display.contentCenterX, display.contentCenterY*1.6, 1000, 0, "fonts/GowunBatang-Bold.ttf", 27)
 		curScript[i].alpha = 0
 	end
+	curScript[1].alpha = 1
 	sceneGroup:insert(curScriptGroup)
 
 
@@ -173,20 +164,42 @@ function scene:create( event )
 	    isModal = true
 	}
 
+	--클릭으로 대사 전환--
+	local fastforward_state = 0 --빨리감기상태 0꺼짐 1켜짐 추가
+
+	local playerTime = 400 --플레이어와 이름창 페이드인 시간 추가
+	local dialogueFadeInTime = 400 --대사 페이드인과 배경 전환 시간 추가
+	local dialogueFadeOutTime = 200 --대사와 이름창 페이드아웃 시간 추가
 	function nextScript(event) --local 빼기 수정
 		print(#scripts)
 		print("curScriptNum: ", curScriptNum)
 		-- 선택지로 이동
 		if curScriptNum == 2 then
+			if fastforward_state == 1 then --선택지에서 빨리감기종료 추가
+				stopFastForward()
+			end
+
 			composer.setVariable("options", options1)
 			composer.showOverlay("choiceScene", overlayOption)
 		elseif curScriptNum == 4 then
+			if fastforward_state == 1 then --선택지에서 빨리감기종료 추가
+				stopFastForward()
+			end
+
 			composer.setVariable("options", options2)
 			composer.showOverlay("choiceScene", overlayOption)
 		elseif curScriptNum == 9 then
+			if fastforward_state == 1 then --선택지에서 빨리감기종료 추가
+				stopFastForward()
+			end
+
 			composer.setVariable("options", options3)
 			composer.showOverlay("choiceScene", overlayOption)
 		elseif curScriptNum == 22 then
+			if fastforward_state == 1 then --선택지에서 빨리감기종료 추가
+				stopFastForward()
+			end
+
 			composer.setVariable("options", options4)
 			composer.showOverlay("choiceScene", overlayOption)
 		elseif curScriptNum < #scripts then
@@ -194,24 +207,39 @@ function scene:create( event )
 				curScript[curScriptNum].alpha = 0
 			end
 
-			-- 선택지 끝나서 공통으로 모임
-			if curScriptNum == 6 or curScriptNum == 16 or curScriptNum == 31 then
-				curScriptNum = 32
-			-- 디폴트
+			--빨리감기상태따른 text 전환 수정--
+			if(fastforward_state == 0) then
+				curScript[curScriptNum].alpha = 0
+				-- 선택지 끝나서 공통으로 모임
+				if curScriptNum == 6 or curScriptNum == 16 or curScriptNum == 31 then
+					curScriptNum = 32
+				-- 디폴트
+				else
+					curScriptNum = curScriptNum + 1
+				end
+				curScript[curScriptNum].alpha = 1
+
+				playerTime = 200
 			else
-				curScriptNum = curScriptNum + 1
+				transition.fadeOut(curScript[curScriptNum], { time = dialogueFadeOutTime })
+				-- 선택지 끝나서 공통으로 모임
+				if curScriptNum == 6 or curScriptNum == 16 or curScriptNum == 31 then
+					curScriptNum = 32
+				-- 디폴트
+				else
+					curScriptNum = curScriptNum + 1
+				end
+				transition.fadeIn(curScript[curScriptNum], { time = dialogueFadeInTime })
 			end
 
-			curScript[curScriptNum].alpha = 1
-
-			-- 캐릭터 변화
+			--플레이어와 이름창 변화 효과 수정--
 			if curScriptNum == 34 then
-				nameGroup.isVisible = true
-				player.isVisible = true
+				transition.fadeIn(nameGroup, { time = playerTime })
+				transition.fadeIn(player, { time = playerTime })
 			end
 			if curScriptNum == 36 then
-				nameGroup.isVisible = false
-				player.isVisible = false
+				transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
+				transition.fadeOut(player, { time = dialogueFadeOutTime })
 			end
 		end
 	end
@@ -261,14 +289,71 @@ function scene:create( event )
 		curScript[curScriptNum].alpha = 1
 	end
 
+	--빨리감기기능(추가)--
+	local function scriptFastForward()
+		nextScript()
+	end
+
+	function fastforward(event)
+		if(fastforward_state == 0) then
+			fastforward_state = 1
+			dialogueBox:removeEventListener("tap", nextScript)
+			skipButton:removeEventListener("tap", skip)
+			timer1 = timer.performWithDelay(1000, scriptFastForward, 0, "sFF")
+		else
+			fastforward_state = 0
+			dialogueBox:addEventListener("tap", nextScript)
+			skipButton:addEventListener("tap", skip)
+			timer.pause("sFF")
+	
+			return true
+		end
+	end
+	fastforwardButton:addEventListener("tap", fastforward)
+
+	--빨리감기종료함수 추가--
+	function stopFastForward()
+		fastforward_state = 0
+		dialogueBox:addEventListener("tap", nextScript)
+		skipButton:addEventListener("tap", skip)
+		timer.pause(timer1)
+	end
+
+	--스킵기능(추가)--
+	function skip(event)
+		curScript[curScriptNum].alpha = 0
+		if(curScriptNum <= 2) then
+			curScriptNum = 2
+		elseif(curScriptNum >= 3 and curScriptNum <= 4) then
+			curScriptNum = 4
+		elseif(curScriptNum >= 7 and curScriptNum <= 9) then
+			curScriptNum = 9
+		elseif(curScriptNum >= 17 and curScriptNum <= 22) then
+			curScriptNum = 22
+		elseif((curScriptNum >= 5 and curScriptNum <= 6) or (curScriptNum >= 10 and curScriptNum <= 16)
+		 or curScriptNum >= 23) then
+			curScriptNum = #scripts
+		end
+		curScript[curScriptNum].alpha = 1
+		
+		print("curScriptNum: ", curScriptNum)
+	end
+	skipButton:addEventListener("tap", skip)
+
+	  --메뉴열기--
+  	local function menuOpen(event)
+  		if(event.phase == "began") then
+  			if fastforward_state == 1 then --메뉴오픈시 빨리감기종료 추가
+				stopFastForward()
+			end
+			dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
+  			composer.showOverlay("menuScene")
+  		end
+  	end
+  	menuButton:addEventListener("touch", menuOpen)
+
 	--메뉴의 시작화면으로 버튼 클릭시 현재 장면 닫고 타이틀화면으로 이동 (추가)--
 	function scene:closeScene()
-		sceneGroup:insert(background)
-		sceneGroup:insert(player)
-		sceneGroup:insert(dialogueBoxGroup)
-		sceneGroup:insert(menuButton)
-		sceneGroup:insert(curScriptGroup)
-		sceneGroup:insert(nameGroup)
 		composer.removeScene("story_forest1_2")
 		composer.gotoScene("scene1")
 	end
