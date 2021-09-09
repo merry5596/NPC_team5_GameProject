@@ -221,10 +221,6 @@ function scene:create( event )
 
 	--스킵기능 (추가)--
 	function skip(event)
-		if(nameGroup.alpha == 0) then
-			transition.fadeIn(nameGroup, { time = playerTime })
-		end
-
 		curScript[curScriptNum].alpha = 0
 		if(curScriptNum <= 13) then
 			curScriptNum = 13

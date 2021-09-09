@@ -106,7 +106,7 @@ function scene:create( event )
 	    isModal = true
 	}
 
-	--클릭으로 대사 전환--
+	--클릭으로 대사 전환 수정--
 	local fastforward_state = 0 --빨리감기상태 0꺼짐 1켜짐 추가
 
 	local playerTime = 400 --플레이어와 이름창 페이드인 시간 추가
@@ -220,7 +220,7 @@ function scene:create( event )
 		timer.pause(timer1)
 	end
 
-	--스킵기능 (추가)--
+	--스킵기능(추가)--
 	function skip(event)
 		if(nameGroup.isVisible == true) then
 			transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
