@@ -396,8 +396,8 @@ function scene:create(event)
   			if fastforward_state == 1 then --메뉴오픈시 빨리감기종료 추가
 				stopFastForward()
 			end
-  			dialogueBox:removeEventListener("tap", nextScript)
-  			composer.showOverlay("menuScene")
+  			-- dialogueBox:removeEventListener("tap", nextScript)
+  			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
   	menuButton:addEventListener("touch", menuOpen)
@@ -436,6 +436,7 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
+		composer.removeScene("story_forest1_2")
 	end
 end
 
