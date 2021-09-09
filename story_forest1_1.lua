@@ -46,22 +46,32 @@ function scene:create( event )
 	dialogueBoxGroup:insert(nameBox)
 	dialogueBoxGroup:insert(skipButton)
 	dialogueBoxGroup:insert(fastforwardButton)
+	sceneGroup:insert(dialogueBoxGroup)
 
 	--이름 그룹--
 	local nameGroup = display.newGroup()
 	nameGroup:insert(nameBox)
 	nameGroup:insert(name)
 	nameGroup.isVisible = false
+	sceneGroup:insert(nameGroup)
 
 	--메뉴버튼 그림--
 	local menuButton = display.newImage("image/component/menu_button.png")
   	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
+  	sceneGroup:insert(menuButton)
+
+
+  	--overlayOption: overlay 화면의 액션 이 씬에 전달 X
+	local overlayOption =
+	{
+	    isModal = true
+	}
 
   	--메뉴열기--
   	local function menuOpen(event)
   		if(event.phase == "began") then
-			dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
-  			composer.showOverlay("menuScene")
+			-- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
+  			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
   	menuButton:addEventListener("touch", menuOpen)
@@ -102,12 +112,8 @@ function scene:create( event )
  		curScript[i] = display.newText(curScriptGroup, scripts[i], display.contentCenterX, display.contentCenterY*1.6, 1000, 0, "fonts/GowunBatang-Bold.ttf", 30)
 		curScript[i].alpha = 0
 	end
+	sceneGroup:insert(curScriptGroup)
 
-
-	local overlayOption =
-	{
-	    isModal = true
-	}
 
 	function nextScript(event) --local 빼기 수정
 		print(#scripts)
@@ -165,14 +171,14 @@ function scene:create( event )
 
 	--메뉴의 시작화면으로 버튼 클릭시 현재 장면 닫고 타이틀화면으로 이동 (추가)--
 	function scene:closeScene()
-		sceneGroup:insert(background)
-		sceneGroup:insert(player)
-		sceneGroup:insert(dialogueBoxGroup)
-		sceneGroup:insert(menuButton)
-		sceneGroup:insert(curScriptGroup)
-		sceneGroup:insert(nameGroup)
+		-- sceneGroup:insert(background)
+		-- sceneGroup:insert(player)
+		-- sceneGroup:insert(dialogueBoxGroup)
+		-- sceneGroup:insert(menuButton)
+		-- sceneGroup:insert(curScriptGroup)
+		-- sceneGroup:insert(nameGroup)
 		composer.removeScene("story_forest1_1")
-		composer.gotoScene("scene1")
+		composer.gotoScene()
 	end
 
 	-- composer.loadScene("choiceScene")
@@ -205,6 +211,8 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
+		composer.removeScene("story_forest1_1")
+
 	end
 end
 

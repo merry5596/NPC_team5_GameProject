@@ -86,6 +86,12 @@ function scene:create(event)
 	nameGroup.isVisible = false
 	sceneGroup:insert(nameGroup)
 
+  	--overlayOption: overlay 화면의 액션 이 씬에 전달 X
+	local overlayOption =
+	{
+	    isModal = true
+	}
+
 -------------------함수----------------------------------------------------------------------------------
 
 	--클릭으로 대사 전환--
@@ -102,8 +108,8 @@ function scene:create(event)
   	--메뉴열기--
   	local function menuOpen(event)
   		if(event.phase == "began") then
-  			dialogueBox:removeEventListener("tap", nextScript)
-  			composer.showOverlay("menuScene")
+  			-- dialogueBox:removeEventListener("tap", nextScript)
+  			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
   	menuButton:addEventListener("touch", menuOpen)
@@ -142,6 +148,7 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
+		composer.removeScene("story_forest2_1")
 	end
 end
 

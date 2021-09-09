@@ -9,12 +9,11 @@ local scene = composer.newScene()
 
 function scene:create( event )
 	local sceneGroup = self.view
-	
 -------------------변수--------------------------------------------------------------------------
 
 	--배경 그림--
 	local background = display.newRect(display.contentCenterX, display.contentCenterY, 
-		display.contentWidth, display.contentHeight)
+	display.contentWidth, display.contentHeight)
 	background:setFillColor(1, 0.5)
 
 	--메뉴창 그림--
@@ -37,6 +36,11 @@ function scene:create( event )
 	local menuLoad = display.newImage("image/component/menu_import.png")
 	menuLoad.x, menuLoad.y = display.contentCenterX, display.contentCenterY*1.35
 
+	--overlayOption: overlay 화면의 액션 이 씬에 전달 X
+	local overlayOption =
+	{
+	    isModal = true
+	}
 -------------------함수----------------------------------------------------------------------------
 	
 	--변수들 sceneGroup에 포함--
@@ -56,7 +60,7 @@ function scene:create( event )
 			if(composer.getVariable("sceneName") == home) then
 
 			else
-				dialogueBox:addEventListener("tap", nextScript)
+				-- dialogueBox:addEventListener("tap", nextScript)
 			end
 			composer.hideOverlay("menuScene")
 		end
@@ -77,7 +81,7 @@ function scene:create( event )
 	local function saveSceneOpen(event)
 		if(event.phase == "began") then
 			inSceneGroup()
-			composer.showOverlay("saveScene")
+			composer.showOverlay("saveScene", overlayOption)
 		end
 	end
 	menuSave:addEventListener("touch", saveSceneOpen)
@@ -86,7 +90,7 @@ function scene:create( event )
 	local function saveFileListOpen(event)
 		if(event.phase == "began") then
 			inSceneGroup()
-			composer.showOverlay("scene11")
+			composer.showOverlay("loadScene", overlayOption)
 		end
 	end
 	menuLoad:addEventListener("touch", saveFileListOpen)
@@ -96,7 +100,7 @@ function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
 	parent = event.parent --이전 장면
-	
+
 	if phase == "will" then
 		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then
@@ -118,6 +122,7 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
+		print("menu closed")
 	end
 end
 

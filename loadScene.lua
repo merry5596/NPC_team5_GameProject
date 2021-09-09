@@ -8,8 +8,6 @@ local composer = require( "composer" )
 local scene = composer.newScene()
 
 function scene:create( event )
-	
-
 	local sceneGroup = self.view
 
 	-- save slot position --
@@ -22,21 +20,14 @@ function scene:create( event )
 	sceneGroup:insert(background)
 
 	-- 세이브 창 --
-	local saveBox = display.newImage("image/component/세이브창.png")
-	saveBox.x, saveBox.y = display.contentWidth*0.5, display.contentHeight*0.5
-	sceneGroup:insert(saveBox)
+	local loadBox = display.newImage("image/component/로드창.png")
+	loadBox.x, loadBox.y = display.contentWidth*0.5, display.contentHeight*0.5
+	sceneGroup:insert(loadBox)
 
 	--메뉴창 닫기버튼 그림--
 	local menuCloseButton = display.newImage("image/component/menu_close.png")
 	menuCloseButton.x, menuCloseButton.y = display.contentCenterX*1.56, display.contentCenterY*0.33
 	sceneGroup:insert(menuCloseButton)
-
-	--overlayOption: overlay 화면의 액션 이 씬에 전달 X
-	local overlayOption =
-	{
-	    isModal = true
-	}
-
 
 	--메뉴닫기--
 	local function menuClose(event)
@@ -54,7 +45,7 @@ function scene:create( event )
 	local loadsave = require( "loadsave" )
 	local saveDatas = loadsave.loadTable("saveDatas.json")
 
-	-- json 테이블에 저장될 세이브 리스트
+	-- 세이브 리스트
 	local saveList = {}
 	if saveDatas == nil then
 		saveList = {"", "", "", "", "", "", "", "", ""}
@@ -85,27 +76,12 @@ function scene:create( event )
 		end
 	end
 
-	-- save 이벤트 함수
-	local function save(event)
-    	print("save function!")
+	-- load 이벤트 함수
+	local function load(event)
+    	print("load function!")
 		-- 현재 씬 이름
 		print(composer.getSceneName( "current" ))
-		-- local gameSettings = {
-		--     -- musicOn = true,
-		--     -- soundOn = true,
-		--     -- difficulty = "easy",
-		--     -- highScore = 10000,
-		--     -- highestLevel = 7
-		-- }
-
-
-		local saveContent = {
-			-- 현재 씬 저장
-			scene = composer.getSceneName( "current" ),
-			-- 현재 시간 저장
-			date = "2021-09-08 12:24"
-		}
-
+ 
 		local index = 0
 		for i = 1, #slotList do
 			if slotList[i] == event.target then
@@ -114,32 +90,32 @@ function scene:create( event )
 			end
 		end
 
-		saveList[index] = saveContent
-
-		local saveDatas = {
-			saveList = saveList
-		}
-
-		-- loadsave.saveTable( gameSettings, "settings.json" )
-		loadsave.saveTable(saveDatas, "saveDatas.json")
-
-		composer.showOverlay("saveCompleteScene", overlayOption)
+		-- 저장 위치(씬 이름) 출력
+		print("저장 위치: ", saveList[index].scene)
+		local targetScene = saveList[index].scene
+		local currentScene = composer.getSceneName( "current" )
+		composer.hideOverlay("loadScene")
+		if targetScene == currentScene then
+			print("target == current!")
+		else
+			composer:gotoScene(saveList[index].scene)
+		end
 	end
 
 	-- 슬롯마다 이벤트 리스너
-	-- 반복문으로 못하는 이유는...?
 	for i = 1, #slotList do
-		slotList[i]:addEventListener("tap", save)
+		if saveList[i] ~= "" then
+			slotList[i]:addEventListener("tap", load)
+		end
+		-- slotList[2]:addEventListener("tap", load)
+		-- slotList[3]:addEventListener("tap", load)
+		-- slotList[4]:addEventListener("tap", load)
+		-- slotList[5]:addEventListener("tap", load)
+		-- slotList[6]:addEventListener("tap", load)
+		-- slotList[7]:addEventListener("tap", load)
+		-- slotList[8]:addEventListener("tap", load)
+		-- slotList[9]:addEventListener("tap", load)
 	end
-	-- slotList[1]:addEventListener("tap", save(1))
-	-- slotList[2]:addEventListener("tap", save(2))
-	-- slotList[3]:addEventListener("tap", save(3))
-	-- slotList[4]:addEventListener("tap", save(4))
-	-- slotList[5]:addEventListener("tap", save(5))
-	-- slotList[6]:addEventListener("tap", save(6))
-	-- slotList[7]:addEventListener("tap", save(7))
-	-- slotList[8]:addEventListener("tap", save(8))
-	-- slotList[9]:addEventListener("tap", save(9))
 
 	--composer.gotoScene("view2")
 
@@ -156,6 +132,7 @@ function scene:show( event )
 		-- 
 		-- INSERT code here to make the scene come alive
 		-- e.g. start timers, begin animation, play audio, etc.
+		print("loadScene open")
 	end	
 end
 
@@ -168,8 +145,11 @@ function scene:hide( event )
 		--
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
+		print("loadScene hide")
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
+		-- composer.removeScene("home")
+
 	end
 end
 

@@ -15,11 +15,13 @@ function scene:create(event)
 	--배경 그림--
 	local background = display.newImage("image/background/ruins_nature.jpg", display.contentWidth, display.contentHeight)
 	background.x, background.y = display.contentCenterX, display.contentCenterY
+	sceneGroup:insert(background)
 
 	--플레이어 그림--
 	local player = display.newImage("image/component/evy.png")
 	player.x, player.y = display.contentCenterX, display.contentCenterY*1.3
 	player.isVisible = false
+	sceneGroup:insert(player)
 
 	--대사창 그림--
 	dialogueBox = display.newImage("image/component/story_box.png")
@@ -43,10 +45,18 @@ function scene:create(event)
 	dialogueBoxGroup:insert(nameBox)
 	dialogueBoxGroup:insert(skipButton)
 	dialogueBoxGroup:insert(fastforwardButton)
+	sceneGroup:insert(dialogueBoxGroup)
 
 	--메뉴버튼 그림--
 	local menuButton = display.newImage("image/component/menu_button.png")
   	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
+	sceneGroup:insert(menuButton)
+
+  	--overlayOption: overlay 화면의 액션 이 씬에 전달 X
+	local overlayOption =
+	{
+	    isModal = true
+	}
 
 -------------------텍스트---------------------------------------------------------------------------------
 
@@ -72,7 +82,8 @@ function scene:create(event)
 		showDialogue[i]:setFillColor(1)
 		showDialogue[i].alpha = 0
 	end
-
+	sceneGroup:insert(showDialogueGroup)
+	
 	--이름창 글자--
 	local name = "이비"
 	local showName = display.newText(name, nameBox.x, nameBox.y*0.993, "fonts/GowunBatang-Bold.ttf", 30)
@@ -82,6 +93,7 @@ function scene:create(event)
 	nameGroup:insert(nameBox)
 	nameGroup:insert(showName)
 	nameGroup.isVisible = false
+	sceneGroup:insert(nameGroup)
 
 -------------------함수----------------------------------------------------------------------------------
 	
@@ -106,20 +118,20 @@ function scene:create(event)
   	--메뉴열기--
   	local function menuOpen(event)
   		if(event.phase == "began") then
-  			dialogueBox:removeEventListener("tap", nextScript)
-  			composer.showOverlay("menuScene")
+  			-- dialogueBox:removeEventListener("tap", nextScript)
+  			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
   	menuButton:addEventListener("touch", menuOpen)
 
   	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
-		sceneGroup:insert(background)
-		sceneGroup:insert(player)
-		sceneGroup:insert(dialogueBoxGroup)
-		sceneGroup:insert(menuButton)
-		sceneGroup:insert(showDialogueGroup)
-		sceneGroup:insert(nameGroup)
+		-- sceneGroup:insert(background)
+		-- sceneGroup:insert(player)
+		-- sceneGroup:insert(dialogueBoxGroup)
+		-- sceneGroup:insert(menuButton)
+		-- sceneGroup:insert(showDialogueGroup)
+		-- sceneGroup:insert(nameGroup)
 		composer.removeScene("storyScene_ruins1")
 		composer.gotoScene("scene1")
 	end
@@ -152,6 +164,7 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
+		composer.removeScene("story_ruins_1")
 	end
 end
 

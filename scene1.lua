@@ -32,14 +32,27 @@ function scene:create(event)
 	start_button.x, start_button.y = display.contentWidth/2, display.contentHeight/2+260
 
 -------------------함수----------------------------------------------------------------------------------
+	-- scene group 담기
+	local function inSceneGroup()
+		sceneGroup:insert(background)
+		sceneGroup:insert(showTitle)
+		sceneGroup:insert(load_button)
+		sceneGroup:insert(start_button)		
+	end
+
+	--불러오기 버튼 클릭시 장면 전환
+	local function saveFileListOpen(event)
+		if(event.phase == "began") then
+			inSceneGroup()
+			composer.showOverlay("loadScene")
+		end
+	end
+	load_button:addEventListener("touch", saveFileListOpen)
 
 	--시작하기 버튼 클릭시 장면 전환
 	local function gameStart(event)
 		if(event.phase == "began") then
-			sceneGroup:insert(background)
-			sceneGroup:insert(showTitle)
-			sceneGroup:insert(load_button)
-			sceneGroup:insert(start_button)
+			inSceneGroup()
 			composer.gotoScene("storyScene_gameIntro")
 		end
 	end

@@ -256,8 +256,8 @@ function scene:create(event)
   	--메뉴열기--
   	local function menuOpen(event)
   		if(event.phase == "began") then
-  			dialogueBox:removeEventListener("tap", nextScript)
-  			composer.showOverlay("menuScene")
+  			-- dialogueBox:removeEventListener("tap", nextScript)
+  			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
   	menuButton:addEventListener("touch", menuOpen)
@@ -296,6 +296,7 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
+		composer.removeScene("story_forest1_2")
 	end
 end
 
