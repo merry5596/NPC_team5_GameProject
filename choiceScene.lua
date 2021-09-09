@@ -121,7 +121,6 @@ function scene:hide( event )
 
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
-
 	end
 end
 

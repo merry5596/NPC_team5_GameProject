@@ -52,6 +52,13 @@ function scene:create(event)
 	local menuButton = display.newImage("image/component/menu_button.png")
   	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
 	sceneGroup:insert(menuButton)
+  
+  	--overlayOption: overlay 화면의 액션 이 씬에 전달 X
+	local overlayOption =
+	{
+	    isModal = true
+	}
+
 
 -------------------텍스트---------------------------------------------------------------------------------
 
@@ -180,8 +187,8 @@ function scene:create(event)
   			if fastforward_state == 1 then --메뉴오픈시 빨리감기종료
 				stopFastForward()
 			end
-  			dialogueBox:removeEventListener("tap", nextScript)
-  			composer.showOverlay("menuScene")
+  			-- dialogueBox:removeEventListener("tap", nextScript)
+  			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
   	menuButton:addEventListener("touch", menuOpen)
@@ -220,6 +227,7 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
+		composer.removeScene("story_ruins_1")
 	end
 end
 

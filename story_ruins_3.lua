@@ -63,6 +63,12 @@ function scene:create( event )
   	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
   	sceneGroup:insert(menuButton)
 
+  	--overlayOption: overlay 화면의 액션 이 씬에 전달 X
+	local overlayOption =
+	{
+	    isModal = true
+	}
+
   	local scripts = {
 		"[정보 공인 대-안드로이드 연구소]가 있던 자리로 겨우겨우 발걸음을 하면, 그 위치엔 거대한 잔해가 가득합니다.", -- 1: 연구소 파트 시작
 		"규모가 큰 시설이었으나 대부분 무너진 듯해요. 그래도 아주 작은 건물 하나는 남아있는 듯합니다.", -- 2 (options1)
@@ -112,17 +118,13 @@ function scene:create( event )
 	curScript[1].alpha = 1
 	sceneGroup:insert(curScriptGroup)
 
-	local overlayOption =
-	{
-	    isModal = true
-	}
-
 	--클릭으로 대사 전환--
 	local fastforward_state = 0 --빨리감기상태 0꺼짐 1켜짐 추가
 
 	local playerTime = 400 --플레이어와 이름창 페이드인 시간 추가
 	local dialogueFadeInTime = 400 --대사 페이드인과 배경 전환 시간 추가
 	local dialogueFadeOutTime = 200 --대사와 이름창 페이드아웃 시간 추가
+
 	function nextScript(event) --local 빼기 수정
 		print(#scripts)
 		print("curScriptNum: ", curScriptNum)
@@ -277,8 +279,8 @@ function scene:create( event )
   			if fastforward_state == 1 then --메뉴오픈시 빨리감기종료 추가
 				stopFastForward()
 			end
-			dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
-  			composer.showOverlay("menuScene")
+			  -- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
+  			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
   	menuButton:addEventListener("touch", menuOpen)
@@ -319,6 +321,7 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
+		composer.removeScene("story_ruins_3")
 	end
 end
 
