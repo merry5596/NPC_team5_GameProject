@@ -25,8 +25,15 @@ function scene:create(event)
 	local player = display.newImage("image/component/evy.png")
 	player.x, player.y = display.contentCenterX, display.contentCenterY*1.5
 	player:scale(1.2, 1.2)
-	player.isVisible = false
+	player.alpha = 0
 	sceneGroup:insert(player)
+
+	--선생님 그림--
+	local teacher = display.newImage("image/component/스탠딩_선생님.png")
+	teacher.x, teacher.y = display.contentCenterX, display.contentCenterY*1.6
+	teacher:scale(1.6, 1.6)
+	teacher.alpha = 0
+	sceneGroup:insert(teacher)
 
 	--대사창 그림--
 	dialogueBox = display.newImage("image/component/story_box.png")
@@ -102,31 +109,33 @@ function scene:create(event)
   					"시간이 얼마나 오래 지나든... 다시 볼 수 없는 곳으로 떠나지만 않는다면 이 짧은 생에서 만남을 우연으로라도 가질 가능성이 높단 뜻이지.", --스페스대사 (63)40
   					"...아, 약을 먹을 시간이네. 오늘은 혼자 놀아보도록 할래, 이비?", --스페스대사 (64)41
   					"인연이란 사람의 생이 마무리되기 전까지 이어지는 것.",
-  					"분명 선생님과의 인연의 끈은 튼튼할 테니까, 계속 뵐 수 있을 거라 생각합시다."}
+  					"분명 선생님과의 인연의 끈은 튼튼할 테니까, 계속 뵐 수 있을 거라 생각합시다." --(66)43
+  				}
 
   	local bookStory = {" ", "『세상의 멸망이 다가오고 있다. 사람들은 죽어나가고, 기껏 만들어둔 가정용 안드로이드는 폐기되는 세계.", -- 책 내용 삽입 (23)
   					"수차례 기후이변이 발생하더니 이젠 모든 식물이 말라 죽어가고 있다.",
   					"안드로이드 연구소의 일원들도 흩어지기 시작했는데, 소수의 인원만이 남아서 마지막 연구를 진행하고 있다.",
   					"죽기 전에 걸작이라도 만들어보고자 하는 심산이었다.",
   					"모델명 '이비', 가정용 안드로이드로 순한 인상의 어린아이 외형을 지니고 있다.",
-  					"가사일보단 대화 상대에 적절한 안드로이드이다.』",
-  					".\n.",
-  					"『연구원들과 약속을 했다.",
+  					"가사일보단 대화 상대에 적절한 안드로이드이다.",
+  					".\n.", --(29)
+  					"연구원들과 약속을 했다.",
   					"계속해서 죽어나가더라도 이비를 수리하고, 제작하는 과정은 이어나가기로.",
   					"유작을 만들자.",
   					"모두가 그렇게 합심하여 만들고자 노력한 결과가 이비였으니까, 우리는 이비에게 몰두했다.",
   					"그리고 마침내, 이비를 작동할 수 있게 되었다.",
-  					"세상의 2/3이 이미 파괴된 때였다.』",
-  					".\n.",
-  					"『우리들 중에선 스페스가 마지막으로 살아남을 듯하다.",
+  					"세상의 2/3이 이미 파괴된 때였다.",
+  					".\n.", --(36)
+  					"우리들 중에선 스페스가 마지막으로 살아남을 듯하다.",
   					"식량은 부족하고, 인간이 살아남기엔 부적합한 환경에다가 스페스를 제외한 연구원들은 이미 노쇠한 지 오래였다.",
   					"가장 어린 스페스가 이비 제작의 마지막 길을 걷게 되었고, 스페스는 그날부터 동료들의 무덤가 주변에 있는 버려진 오두막에서 머물기 시작했다.",
-  					"그렇게 하나둘 목숨을 거뒀다.』",
-  					"『나는 스페스. 모든 연구원들이 죽었고, 동료들과 함께했을 적의 이비 메모리는 삭제해버렸다.",
+  					"그렇게 하나둘 목숨을 거뒀다.』", --(40)
+  					"『나는 스페스. 모든 연구원들이 죽었고, 동료들과 함께했을 적의 이비 메모리는 삭제해버렸다.", --20
   					"그 이유는 이비에게 죽음이라는 것을 학습시키기 싫었던 탓에 가까웠다.",
   					"물 정수 기능이나 공기 청정 기능을 마법이라 속이기로 했고, 마법사라 자칭하며 동화적인 환경이나 만들어보기도 했는데 이게 과연 잘한 일인 걸까.",
   					"동료들과의 추억을 지우면서까지 이비에게 거짓을 말하는 게 괜찮은 행동인 건지 종종 막연한 기분이 든다.",
-  					"그래도 세상에 홀로 남겨졌으니 이런 식으로라도 살아봐야지. 이비는 모두의 유산이니까 내가 죽기 전까지는 한껏 아껴줘야지, 싶어서......』"}
+  					"그래도 세상에 홀로 남겨졌으니 이런 식으로라도 살아봐야지. 이비는 모두의 유산이니까 내가 죽기 전까지는 한껏 아껴줘야지, 싶어서......』" --(46)24
+  				}
 
   	--대사 구성--
 	local showDialogue = {}
@@ -158,7 +167,7 @@ function scene:create(event)
 	local nameGroup = display.newGroup()
 	nameGroup:insert(nameBox)
 	nameGroup:insert(showName)
-	nameGroup.isVisible = false
+	nameGroup.alpha = 0
 	sceneGroup:insert(nameGroup)
 
 	--선택지 내용--
@@ -180,6 +189,12 @@ function scene:create(event)
 	}
 
 -------------------함수----------------------------------------------------------------------------------
+	
+	local fastforward_state = 0 --빨리감기상태 0꺼짐 1켜짐
+
+	local playerTime = 400 --플레이어와 이름창 페이드인 시간
+	local dialogueFadeInTime = 400 --대사 페이드인과 배경 전환 시간
+	local dialogueFadeOutTime = 200 --대사와 이름창 페이드아웃 시간
 
 	--선택지 제시 함수--
 	function showOptions(optionsName)
@@ -187,51 +202,112 @@ function scene:create(event)
 		composer.showOverlay("choiceScene", overlayOption)
 	end
 
-	--클릭으로 대사 전환+선택지 전개--
-	i = 1
-	function nextScript(event)
-		--대사 전환
-		if(i < 66) then
-			if(i <= 22 or i >= 46) then
-				if(i == 46) then
-					showBookStory[#bookStory - 1].alpha = 0
-				end
-				showDialogue[dialogueNum].alpha = 0
-				dialogueNum = dialogueNum + 1
-				if(i < 66) then
-					i = i + 1
-					showDialogue[dialogueNum].alpha = 1
-				end
-			else
-				if(i == 23) then
-					showDialogue[22].alpha = 0
-				end
-				showBookStory[bookStoryNum].alpha = 0
-				bookStoryNum = bookStoryNum + 1
-				i = i + 1
-				showBookStory[bookStoryNum].alpha = 1
-			end
-			if(i == 22 or i == 45) then
-				i = i + 1
-			end
-		end
-		--캐릭터과 이름창 등장 + 배경 전환
+	--캐릭터과 이름창 등장 + 배경 전환
+	function playerAppear()
 		if(dialogueNum == 2 or dialogueNum == 35) then
-			nameGroup.isVisible = true
-			player.isVisible = true
+			transition.fadeIn(nameGroup, { time = playerTime })
+			transition.fadeIn(player, { time = playerTime })
 		elseif(dialogueNum == 7) then
-			background2.alpha = 0
-			background1.alpha = 1 --배경 전환
+			transition.dissolve(background2, background1, dialogueFadeInTime) --배경전환
 		elseif(dialogueNum == 3 or dialogueNum == 37) then
+			transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
+			transition.fadeOut(player, { time = dialogueFadeOutTime })
+		elseif(bookStoryNum == 20) then
+			transition.fadeIn(teacher, { time = playerTime })
+		elseif(dialogueNum == 23) then
+			transition.fadeOut(teacher, { time = dialogueFadeOutTime })
+		elseif(dialogueNum == 38) then
+			transition.fadeIn(teacher, { time = playerTime })
+		elseif(dialogueNum == 42) then
+			transition.fadeOut(teacher, { time = dialogueFadeOutTime })
+		end
+	end
+
+	--캐릭터와 이름창 사라짐 + 배경 전환
+	function playerDisappear()
+		if(player.isVisible == true and nameGroup.isVisible == true) then
 			nameGroup.isVisible = false
 			player.isVisible = false
 		end
+	end
+
+	--클릭으로 대사 전환+선택지 전개--
+	i = 1
+	function nextScript(event)
+		print("i: ", i)
+		if(fastforward_state == 0) then
+			--스토리 전환
+			if(i < #dialogue + #bookStory - 1) then
+				if(i <= 22 or i >= 47) then --대사 전환
+					if(i == 47) then
+						showBookStory[#bookStory].alpha = 0
+					end
+					showDialogue[dialogueNum].alpha = 0
+					dialogueNum = dialogueNum + 1
+					if(i < #dialogue + #bookStory - 1) then
+						i = i + 1
+						showDialogue[dialogueNum].alpha = 1
+					end
+				else --책내용 전환
+					if(i == 23) then
+						showDialogue[22].alpha = 0
+					end
+					showBookStory[bookStoryNum].alpha = 0
+					bookStoryNum = bookStoryNum + 1
+					i = i + 1
+					showBookStory[bookStoryNum].alpha = 1
+				end
+				if(i == 22 or i == 45) then
+					i = i + 1
+				end
+			end
+
+			playerTime = 200
+		else
+			--스토리 전환
+			if(i < #dialogue + #bookStory - 1) then
+				if(i <= 22 or i >= 47) then --대사 전환
+					if(i == 47) then
+						transition.fadeOut(showBookStory[#bookStory], { time = dialogueFadeOutTime })
+					end
+					transition.fadeOut(showDialogue[dialogueNum], { time = dialogueFadeOutTime })
+					dialogueNum = dialogueNum + 1
+					if(i < #dialogue + #bookStory - 1) then
+						i = i + 1
+						transition.fadeIn(showDialogue[dialogueNum], { time = dialogueFadeInTime })
+					end
+				else --책내용 전환
+					if(i == 23) then
+						transition.fadeOut(showDialogue[22], { time = dialogueFadeOutTime })
+					end
+					transition.fadeOut(showBookStory[bookStoryNum], { time = dialogueFadeOutTime })
+					bookStoryNum = bookStoryNum + 1
+					i = i + 1
+					transition.fadeIn(showBookStory[bookStoryNum], { time = dialogueFadeInTime })
+				end
+				if(i == 22 or i == 45) then
+					i = i + 1
+				end
+			end
+		end
+
+		playerAppear()
+
 		--선택지 제시
 		if(dialogueNum == 15) then
+			if fastforward_state == 1 then --선택지에서 빨리감기종료 추가
+				stopFastForward()
+			end
 			showOptions(options1)
 		elseif(dialogueNum == 19) then
+			if fastforward_state == 1 then --선택지에서 빨리감기종료 추가
+				stopFastForward()
+			end
 			showOptions(options2)
 		elseif(dialogueNum == 25) then
+			if fastforward_state == 1 then --선택지에서 빨리감기종료 추가
+				stopFastForward()
+			end
 			showOptions(options3)
 		end
 	end
@@ -253,9 +329,73 @@ function scene:create(event)
 		showDialogue[dialogueNum].alpha = 1
 	end
 
+	--빨리감기기능--
+	local function scriptFastForward()
+		-- print("i: ", i)
+		nextScript()
+	end
+
+	function fastforward(event)
+		if(fastforward_state == 0) then
+			fastforward_state = 1
+			dialogueBox:removeEventListener("tap", nextScript)
+			skipButton:removeEventListener("tap", skip)
+			timer1 = timer.performWithDelay(1000, scriptFastForward, 0, "sFF")
+		else
+			fastforward_state = 0
+			dialogueBox:addEventListener("tap", nextScript)
+			skipButton:addEventListener("tap", skip)
+			timer.pause("sFF")
+	
+			return true
+		end
+	end
+	fastforwardButton:addEventListener("tap", fastforward)
+
+	--빨리감기종료함수--
+	function stopFastForward()
+		fastforward_state = 0
+		dialogueBox:addEventListener("tap", nextScript)
+		skipButton:addEventListener("tap", skip)
+		timer.pause(timer1)
+	end
+
+	--스킵기능--
+	function skip(event)
+		--이전 글 안 보이게
+		if(i < 24 or i > 47) then --대사 
+			showDialogue[dialogueNum].alpha = 0
+		else --책 내용
+			showBookStory[bookStoryNum].alpha = 0
+		end
+
+		playerAppear()
+		playerDisappear()
+
+		if(i <= 14) then --대사
+			i = 14
+			dialogueNum = 14
+		elseif(i >= 15 and i <= 18) then
+			i = 18
+			dialogueNum = 18
+		elseif(i >= 19 and i <= 47) then
+			i = 47
+			dialogueNum = 24
+			-- bookStoryNum = #bookStory - 1
+		elseif(i >= 48 and i < #dialogue + #bookStory - 1) then
+			i = #dialogue + #bookStory - 2
+			dialogueNum = #dialogue - 1
+		end
+		showDialogue[dialogueNum].alpha = 1
+	end
+	skipButton:addEventListener("tap", skip)
+
   	--메뉴열기--
   	local function menuOpen(event)
   		if(event.phase == "began") then
+  			if fastforward_state == 1 then --메뉴오픈시 빨리감기종료 추가
+				stopFastForward()
+			end
   			-- dialogueBox:removeEventListener("tap", nextScript)
   			composer.showOverlay("menuScene", overlayOption)
   		end

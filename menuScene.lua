@@ -57,11 +57,11 @@ function scene:create( event )
 	local function menuClose(event)
 		if(event.phase == "began") then
 			inSceneGroup()
-			if(composer.getVariable("sceneName") == home) then
-
-			else
-				-- dialogueBox:addEventListener("tap", nextScript)
-			end
+			dialogueBox:addEventListener("tap", nextScript)
+			-- if(composer.getVariable("sceneName") == home) then
+			-- else
+			-- 	dialogueBox:addEventListener("tap", nextScript)
+			-- end
 			composer.hideOverlay("menuScene")
 		end
 	end
