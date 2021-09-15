@@ -11,8 +11,8 @@ function scene:create( event )
 	local sceneGroup = self.view
 	
 	-- 임시 배경 --
-	local background = display.newImageRect("image/background/ruins_nature.jpg", display.contentWidth, display.contentHeight)
-	background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
+	local background = display.newImage("image/background/ruins_nature.jpg", display.contentWidth, display.contentHeight)
+	background.x, background.y = display.contentCenterX, display.contentCenterY
 	sceneGroup:insert(background)
 
 	--플레이어 그림--
@@ -70,10 +70,10 @@ function scene:create( event )
 
   	local scripts = {
   		"계속해서 걸어다닌 지 몇 시간. 슬슬 무릎이 삐걱거리기 시작해 가방에서 기름 연고를 꺼내 바르다보면, ", 
-  		"잔해 가득한 건물 사이에서 쉴만한 공간이 보입니다. 표지판에 [숲 서점]이라 적혀있는 걸 보니, 책을 팔던 곳이었던 것 같아요.", 	-- 2 (options1)
+  		"잔해 가득한 건물 사이에서 쉴만한 공간이 보입니다. 표지판에 『숲 서점』이라 적혀있는 걸 보니, 책을 팔던 곳이었던 것 같아요.", 	-- 2 (options1)
  		"서점에 들어서면, 퀘퀘한 종이 내음과 다 무너진 책장 사이로 잔뜩 낡은 헝겊 소파가 보입니다.", -- 3: 서점 시작
  		"이용하지 않은 지 오래된 걸까요. 손으로 그 위를 쓸어보면 먼지와 흙이 나풀댑니다. 소파 위에는 잡지 하나가 놓여있습니다.",  -- 4 (options2)
- 		"잡지의 낱장을 펄럭여보면, 제일 첫장에 [신-안드로이드 개발 성공, 가정용 안드로이드 보급의 성공.]이라는 제목이 눈에 띕니다.", 
+ 		"잡지의 낱장을 펄럭여보면, 제일 첫장에 『신-안드로이드 개발 성공, 가정용 안드로이드 보급의 성공.』이라는 제목이 눈에 띕니다.", 
  		"더 살펴보면... 우스갯소리로 멸망론에 관해 적어둔 게 보입니다.", -- 6: 서점 끝 (to 32)
  		"콘크리트에 주의하세요. 잘못 헛디뎌 넘어지면 큰일이니까요.", -- 7: 아파트 잔해 시작
  		"그래도 아파트 잔해 사이에 햇빛을 막아주고, 바람을 막아줄 법한 공간이 보입니다.", 
@@ -83,7 +83,7 @@ function scene:create( event )
  		"삐걱삐걱. 쇳소리가 몸의 관절에서 새어나오는 기분이 듭니다.",
  		"숨어있던 바퀴벌레가 툭 튀어나오더니 후다닥 도망갑니다.", -- 13
  		"사람은 없어도 바퀴벌레는 살아있네요. 바퀴벌레가 머물던 곳에는 신문지가 있습니다.", 
-  		"[세계 멸망의 길. 노스트라다무스의 예언]이라는 헤드라인이에요.", 
+  		"『세계 멸망의 길. 노스트라다무스의 예언』이라는 헤드라인이에요.", 
  		"과거의 사람들은 멸망론을 신봉했던 걸까요.", -- 16: 아파트 잔해 끝 (to 32)
  		"옛날에는 사람들이 많이 모이던 장소였나봐요. 이제는 흔적도 없이 무너졌지만 곳곳에 화려하고도 더러운 간판이 떨어져 있습니다.", -- 17: 번화가 시작
 		"화장품 가게부터 시작해서 음식점까지. 이곳은 과거에 도시였나봐요.", 
@@ -94,18 +94,18 @@ function scene:create( event )
 		"유리 잔해를 발로 치우며 어기적 들어가보면, 햇살이 옅게 들어오는 작은 구멍가게 내부인 것을 알아차릴 수 있습니다.", -- 23
 		"진열장에는 진통제와 파상풍약이 가득합니다.", 
 		"... 아, 약이라도 파는 곳이었을까요? 파상풍약 밑에 고객들을 위한 문구가 있습니다.", 
-		"[여린 우리 아이 발에 난 상처! 파상풍, 빠르게 치료하셔야 합니다.]", 
+		"『여린 우리 아이 발에 난 상처! 파상풍, 빠르게 치료하셔야 합니다.』", 
 		"과거의 사람들은 피부가 선생님처럼 무르기라도 했던 걸까요. 선생님의 살갗은 쿡 누르면 물렁하게 들어갔던 기억이 납니다..", 
 		"바닥에 잔뜩 전단지들이 누워있습니다.", -- 28
 		"오래 시간이 지나 그 글자와 형체를 알아보기는 어렵지만 자세히 살펴보면 대충 해석할 수 있을 듯합니다.", 
-		"[... 어디로... 대피... 인류...], [하느님이... 버린...], [안드로이드... 연구소... 폐쇄...]", 
+		"『... 어디로... 대피... 인류...』, 『하느님이... 버린...』, 『안드로이드... 연구소... 폐쇄...』", 
 		"... 뭘까요? 뭔진 몰라도 무슨 일이 있었던 것 같습니다.", -- 31: 아파트 잔해 끝 (to 32)
 		"잠시 쉬었다가 다시 고개를 들어보면, 어째 선생님보다는 필요가 없는 정보만 머리에 담고 온 듯한 기분입니다.", -- 32: 공통
 		"선생님은 숲 밖의 이런 상황들을 다 알고 계셨던 걸까요?", 
 		"역시 잘 모르겠네...... 왜 이런 얘기를 선생님은 내게 안 알려주셨던 걸까?", -- 34: evy
 		"선생님의 의도를 잘 모르겠어.", 
 		"많은 건물 잔해를 지나쳐 도착한 곳에는 표지판이 하나 있습니다.", -- 36: 나레이션
-		"[정부 공인 대-안드로이드 연구소]", 
+		"『정부 공인 대-안드로이드 연구소』", 
 		"저런 곳에 선생님이 계시긴 할까요? 물론 선생님께선 혼자 계실 적에 기름 냄새와 연장을 들고 돌아오셨긴 했지요.", 
 		"어쩌면 선생님이 저 무너진 연구소에서 물품을 갖고 오시는 걸지도 모르겠어요.", 
 		"아무래도 행선지는 정해진 듯합니다.", 
@@ -133,23 +133,23 @@ function scene:create( event )
  	}
 
  	local options1 = {
- 		"[형체를 알아보기 어려운 '숲 서점']으로 들어간다.", 
- 		"[다 무너진 아파트 잔해]로 걸어간다.", 
-		"[돌무덤 가득한 옛 번화가]로 다가간다."
+ 		"『형체를 알아보기 어려운 '숲 서점'』으로 들어간다.", 
+ 		"『다 무너진 아파트 잔해』로 걸어간다.", 
+		"『돌무덤 가득한 옛 번화가』로 다가간다."
  	}
 
  	local options2 = {
- 		"[잡지]를 펼쳐본다."
+ 		"『잡지』를 펼쳐본다."
  	}
 
 	local options3 = {
- 		"[침대] 위에 누워본다.", 
- 		"[침대]를 뒤적여본다."
+ 		"『침대』 위에 누워본다.", 
+ 		"『침대』를 뒤적여본다."
  	}
 
  	local options4 = {
- 		"[그나마 온전한 이름 모를 가게]로 들어가본다.", 
- 		"[번화가]의 중심으로 나아간다."
+ 		"『그나마 온전한 이름 모를 가게』로 들어가본다.", 
+ 		"『번화가』의 중심으로 나아간다."
  	}
 
     local curScript = {}
@@ -169,6 +169,27 @@ function scene:create( event )
 	local playerTime = 400 --플레이어와 이름창 페이드인 시간 추가
 	local dialogueFadeInTime = 400 --대사 페이드인과 배경 전환 시간 추가
 	local dialogueFadeOutTime = 200 --대사와 이름창 페이드아웃 시간 추가
+
+	function changeCharAndBack()
+		--플레이어와 이름창 변화 효과 수정--
+		if curScriptNum == 34 then
+			transition.fadeIn(nameGroup, { time = playerTime })
+		end
+		if curScriptNum == 36 then
+			transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
+		end
+	end
+
+	-- 저장 load시 캐릭터와 배경 상태 setting
+	function setCharAndBack()
+		changeCharAndBack()
+		if curScriptNum > 3 then
+			player.alpha = 1
+		end
+		if curScriptNum == 35 then
+			nameGroup.alpha = 1
+		end
+	end
 
 	function nextScript(event) --local 빼기 수정
 		print(#scripts)
@@ -232,15 +253,7 @@ function scene:create( event )
 				transition.fadeIn(curScript[curScriptNum], { time = dialogueFadeInTime })
 			end
 
-			--플레이어와 이름창 변화 효과 수정--
-			if curScriptNum == 34 then
-				transition.fadeIn(nameGroup, { time = playerTime })
-				transition.fadeIn(player, { time = playerTime })
-			end
-			if curScriptNum == 36 then
-				transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
-				transition.fadeOut(player, { time = dialogueFadeOutTime })
-			end
+			changeCharAndBack()
 		end
 	end
 
@@ -261,7 +274,7 @@ function scene:create( event )
 				curScriptNum = 17
 				-- 번화가로 배경 변화?
 			end
-			-- player.isVisible = true
+			player.alpha = 1
 		elseif curScriptNum == 9 then
 			local selectedOption = composer.getVariable("selectedOption")
 			print(selectedOption)
@@ -347,6 +360,8 @@ function scene:create( event )
 				stopFastForward()
 			end
 			  -- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
+  			-- 현재 대사 위치 파라미터로 저장
+			composer.setVariable("scriptNum", curScriptNum)
   			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
@@ -356,6 +371,16 @@ function scene:create( event )
 	function scene:closeScene()
 		composer.removeScene("story_forest1_2")
 		composer.gotoScene("scene1")
+	end
+
+	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동
+    if event.params then
+    	if event.params.scriptNum then
+			curScriptNum = event.params.scriptNum
+			curScript[1].alpha = 0
+			curScript[curScriptNum].alpha = 1
+			setCharAndBack()
+		end
 	end
 
 	-- composer.loadScene("choiceScene")

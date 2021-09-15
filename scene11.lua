@@ -5,7 +5,6 @@ local scene = composer.newScene()
 local background = display.newRect(display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight)
 background:setFillColor(1, 0.5) --반투명배경으로 수정
 
-
 -- 정확히 어떤 장면인지 잘 모르겠어서 임의로 모양만 따라함
 
 local b = display.newImage("image/component/area.png")

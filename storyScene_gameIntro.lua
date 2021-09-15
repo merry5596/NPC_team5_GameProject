@@ -109,6 +109,30 @@ function scene:create(event)
 	local dialogueFadeInTime = 400 --대사 페이드인과 배경 전환 시간
 	local dialogueFadeOutTime = 200 --대사와 이름창 페이드아웃 시간
 	i = 1
+
+	-- 대사 상태가 변경되었을 때 캐릭터와 배경 상태 setting
+	function changeCharAndBack()
+		if(i == 5) then
+			transition.fadeIn(nameGroup, { time = playerTime })
+			transition.fadeIn(player, { time = playerTime })
+			transition.dissolve(background1, background2, dialogueFadeInTime) --배경전환
+		elseif(i == 9 or i == 10) then
+			transition.fadeIn(nameGroup, { time = playerTime })
+			transition.fadeIn(player, { time = playerTime })
+		elseif(i == 6 or i == 11) then
+			transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
+		end
+	end
+	
+	-- 저장 load시 캐릭터와 배경 상태 setting
+	function setCharAndBack()
+		changeCharAndBack()
+		if i > 5 then	-- i > 5이면 배경이 background2, 이비 alpha=1
+			transition.dissolve(background1, background2, dialogueFadeInTime) --배경전환
+			player.alpha = 1
+		end
+	end
+
 	function nextScript(event)
 		if(fastforward_state == 0) then
 			showDialogue[i].alpha = 0
@@ -126,16 +150,7 @@ function scene:create(event)
 			transition.fadeIn(showDialogue[i], { time = dialogueFadeInTime })
 		end
 
-		if(i == 5) then
-			transition.fadeIn(nameGroup, { time = playerTime })
-			transition.fadeIn(player, { time = playerTime })
-			transition.dissolve(background1, background2, dialogueFadeInTime) --배경전환
-		elseif(i == 9 or i == 10) then
-			transition.fadeIn(nameGroup, { time = playerTime })
-			transition.fadeIn(player, { time = playerTime })
-		elseif(i == 6 or i == 11) then
-			transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
-		end
+		changeCharAndBack()
 	end
 	dialogueBox:addEventListener("tap", nextScript)
 
@@ -192,13 +207,20 @@ function scene:create(event)
 	end
 	skipButton:addEventListener("tap", skip)
 
+	local overlayOption =
+	{
+	    isModal = true
+	}
+
   	--메뉴열기--
   	local function menuOpen(event)
   		if(event.phase == "began") then
   			if fastforward_state == 1 then --메뉴오픈시 빨리감기종료
 				stopFastForward()
 			end
-			dialogueBox:removeEventListener("tap", nextScript)
+			-- dialogueBox:removeEventListener("tap", nextScript)
+			-- 현재 대사 위치 파라미터로 저장
+			composer.setVariable("scriptNum", i)
   			composer.showOverlay("menuScene")
   		end
   	end
@@ -208,6 +230,16 @@ function scene:create(event)
 	function scene:closeScene()
 		composer.removeScene("storyScene_gameIntro")
 		composer.gotoScene("scene1")
+	end
+
+	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동
+    if event.params then
+    	if event.params.scriptNum then
+			i = event.params.scriptNum
+			showDialogue[1].alpha = 0
+			showDialogue[i].alpha = 1
+			setCharAndBack()
+		end
 	end
 
 	-- composer.loadScene("choiceScene")

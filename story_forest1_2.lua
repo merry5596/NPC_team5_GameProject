@@ -74,7 +74,7 @@ function scene:create( event )
  		"이렇게까지 오래 안 오신 경우는 없었는데...",  -- 4 (evy)
  		"숲 밖까지 돌아다니진 말라는 얘기를 들었지만, 어쩔 수 없을 것 같네요.", 
  		"날이 밝고도 돌아오지 않으신다면 숲을 벗어나보는 것도... 어쩌면 괜찮은 선택일 수도 있겠네요.", 
- 		"그런 생각을 하며 당신은 밤을 보냅니다......", 
+ 		"그런 생각을 하며 당신은 밤을 보냅니다......", -- 7
  		"......", -- 8 (evy)
  		"아직도 돌아오지 않으셨네.", 
  		"아침이 밝았습니다만 오두막에선 아직도 당신의 목소리만이 울리고 있습니다.", 
@@ -116,6 +116,32 @@ function scene:create( event )
 	local dialogueFadeInTime = 400 --대사 페이드인과 배경 전환 시간 추가
 	local dialogueFadeOutTime = 200 --대사와 이름창 페이드아웃 시간 추가
 
+	function changeCharAndBack()
+		--플레이어와 이름창 변화 효과 수정--
+		if curScriptNum == 7 then
+			transition.fadeOut(player, { time = playerTime })
+		end
+		if curScriptNum == 4 or curScriptNum == 8 then
+			transition.fadeIn(nameGroup, { time = playerTime })
+			transition.fadeIn(player, { time = playerTime })
+		end
+		if curScriptNum == 5 or curScriptNum == 10 then
+			transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
+		end
+	end
+
+	-- 저장 load시 캐릭터와 배경 상태 setting
+	function setCharAndBack()
+		changeCharAndBack()
+		if curScriptNum > 4 and curScriptNum ~= 7 then
+			player.alpha = 1
+		end
+		if curScriptNum == 9 then
+			nameGroup.alpha = 1
+		end
+
+	end
+
 	function nextScript(event) --local 빼기 수정
 		print(#scripts)
 		print("curScriptNum: ", curScriptNum)
@@ -123,14 +149,12 @@ function scene:create( event )
 			if fastforward_state == 1 then --선택지에서 빨리감기종료 추가
 				stopFastForward()
 			end
-
 			composer.setVariable("options", options1)
 			composer.showOverlay("choiceScene", overlayOption)
 		elseif curScriptNum == 18 then
 			if fastforward_state == 1 then --선택지에서 빨리감기종료 추가
 				stopFastForward()
 			end
-
 			composer.setVariable("options", options2)
 			composer.showOverlay("choiceScene", overlayOption)
 		elseif curScriptNum < #scripts then
@@ -159,14 +183,7 @@ function scene:create( event )
 				transition.fadeIn(curScript[curScriptNum], { time = dialogueFadeInTime })
 			end
 
-			--플레이어와 이름창 변화 효과 수정--
-			if curScriptNum == 4 or curScriptNum == 8 then
-				transition.fadeIn(nameGroup, { time = playerTime })
-				transition.fadeIn(player, { time = playerTime })
-			end
-			if curScriptNum == 5 or curScriptNum == 10 then
-				transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
-			end
+			changeCharAndBack()
 		end
 	end
 
@@ -243,7 +260,9 @@ function scene:create( event )
   			if fastforward_state == 1 then --메뉴오픈시 빨리감기종료 추가
 				stopFastForward()
 			end
-      	-- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
+      		-- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
+      		-- 현재 대사 위치 파라미터로 저장
+	      	composer.setVariable("scriptNum", curScriptNum)
   			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
@@ -255,14 +274,23 @@ function scene:create( event )
 		composer.gotoScene("scene1")
 	end
 
+	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동
+    if event.params then
+    	if event.params.scriptNum then
+			curScriptNum = event.params.scriptNum
+			curScript[1].alpha = 0
+			curScript[curScriptNum].alpha = 1
+			setCharAndBack()
+		end
+	end
+
+	
 	-- composer.loadScene("choiceScene")
 end
 
 function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
-
-	print("show")
 	
 	if phase == "will" then
 		-- Called when the scene is still off screen and is about to move on screen

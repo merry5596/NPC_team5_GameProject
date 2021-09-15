@@ -59,12 +59,16 @@ function scene:create( event )
 		if saveList[i] ~= "" then
 			saveSlot = display.newImage("image/component/저장된데이터.png")
 			saveSlot.x, saveSlot.y = slotPosX[i], slotPosY[i]
-			-- local saveDate = display.newText(saveList[i].date, slotPosX[i], slotPosY[i])
-			local sceneTest = display.newText(saveList[i].scene, slotPosX[i], slotPosY[i])
+			local saveDate = display.newText(saveList[i].date, slotPosX[i], slotPosY[i], "fonts/GowunBatang-Bold", 22)
+			saveDate:setFillColor( 0.3, 0.2, 0.2 )
+			local saveTime = display.newText(saveList[i].time, slotPosX[i], slotPosY[i] + 30, "fonts/GowunBatang-Bold", 22)
+			saveTime:setFillColor( 0.3, 0.2, 0.2 )
+			-- local sceneTest = display.newText(saveList[i].scene, slotPosX[i], slotPosY[i])
 			local slotGroup = display.newGroup()
 			slotGroup:insert(saveSlot)
-			-- slotGroup:insert(saveDate)
-			slotGroup:insert(sceneTest)
+			slotGroup:insert(saveDate)
+			slotGroup:insert(saveTime)
+			-- slotGroup:insert(sceneTest)
 			sceneGroup:insert(slotGroup)
 			slotList[i] = slotGroup
 		else
@@ -95,10 +99,23 @@ function scene:create( event )
 		local targetScene = saveList[index].scene
 		local currentScene = composer.getSceneName( "current" )
 		composer.hideOverlay("loadScene")
+
+		print("loadScene: 이동 위치: ", saveList[index].scriptNum)
+		local loadOption =		-- loadOption
+		{
+		    effect = "fade",
+		    time = 400,
+		    params = {
+		    	targetScene = targetScene, 
+		        scriptNum = saveList[index].scriptNum
+		    }
+		}	
+
 		if targetScene == currentScene then
 			print("target == current!")
+			composer:gotoScene("movingEffectScene", loadOption)
 		else
-			composer:gotoScene(saveList[index].scene)
+			composer:gotoScene("movingEffectScene", loadOption)
 		end
 	end
 
