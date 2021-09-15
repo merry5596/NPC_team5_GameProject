@@ -9,7 +9,9 @@ local scene = composer.newScene()
 
 function scene:create( event )
 	local sceneGroup = self.view
-	
+
+	print("story_forest1_1: create")
+
 	-- 임시 배경 --
 	local background = display.newImageRect("image/background/forest임시배경.png", display.contentWidth, display.contentHeight)
 	background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
@@ -58,10 +60,10 @@ function scene:create( event )
 
 	--메뉴버튼 그림--
 	local menuButton = display.newImage("image/component/menu_button.png")
-  menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
-  sceneGroup:insert(menuButton)
+  	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
+  	sceneGroup:insert(menuButton)
   
-  --overlayOption: overlay 화면의 액션 이 씬에 전달 X
+  	--overlayOption: overlay 화면의 액션 이 씬에 전달 X
 	local overlayOption =
 	{
 	    isModal = true
@@ -100,6 +102,7 @@ function scene:create( event )
     local curScript = {}
     local curScriptGroup = display.newGroup() --대사배열그룹 작성 추가
     local curScriptNum = 1
+ 	
  	for i = 1, #scripts, 1 do
  		curScript[i] = display.newText(curScriptGroup, scripts[i], display.contentCenterX, display.contentCenterY*1.6, 1000, 0, "fonts/GowunBatang-Bold.ttf", 27)
 		curScript[i].alpha = 0
@@ -108,8 +111,6 @@ function scene:create( event )
 	curScript[1].alpha = 1
 	sceneGroup:insert(curScriptGroup)
 
-
-
 	--클릭으로 대사 전환 수정--
 	local fastforward_state = 0 --빨리감기상태 0꺼짐 1켜짐 추가
 
@@ -117,6 +118,29 @@ function scene:create( event )
 	local dialogueFadeInTime = 400 --대사 페이드인과 배경 전환 시간 추가
 	local dialogueFadeOutTime = 200 --대사와 이름창 페이드아웃 시간 추가
   
+	function changeCharAndBack()
+		--플레이어와 이름창 변화 효과 수정--
+		if curScriptNum == 4 or curScriptNum == 13 then
+			transition.fadeIn(nameGroup, { time = playerTime })
+			transition.fadeIn(player, { time = playerTime })
+		end
+		if curScriptNum == 5 or curScriptNum == 14 or curScriptNum == 15 or
+           curScriptNum == 16 or curScriptNum ==17 then
+			transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
+		end
+	end
+
+	-- 저장 load시 캐릭터와 배경 상태 setting
+	function setCharAndBack()
+		changeCharAndBack()
+		if curScriptNum > 4 then
+			player.alpha = 1
+		end
+		if curScriptNum ~= 4 and curScriptNum ~= 13 then
+			nameGroup.alpha = 0
+		end
+	end
+
 	function nextScript(event) --local 빼기 수정
 		print(#scripts)
 		print("curScriptNum: ", curScriptNum)
@@ -159,16 +183,7 @@ function scene:create( event )
 				end
 				transition.fadeIn(curScript[curScriptNum], { time = dialogueFadeInTime })
 			end
-
-			--플레이어와 이름창 변화 효과 수정--
-			if curScriptNum == 4 or curScriptNum == 13 then
-				transition.fadeIn(nameGroup, { time = playerTime })
-				transition.fadeIn(player, { time = playerTime })
-			end
-			if curScriptNum == 5 or curScriptNum == 14 or curScriptNum == 15 or
-               curScriptNum == 16 or curScriptNum ==17 then
-				transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
-			end
+			changeCharAndBack()
 		end
 
 	end
@@ -188,7 +203,7 @@ function scene:create( event )
 		elseif curScriptNum == 12 then
 			curScript[curScriptNum].alpha = 0
 				curScriptNum = 13
-				nameGroup.isVisible = true
+				nameGroup.alpha = 1
 		end
 
 		print("curScriptNum: ", curScriptNum)
@@ -251,7 +266,9 @@ function scene:create( event )
   			if fastforward_state == 1 then --메뉴오픈시 빨리감기종료 추가
 				stopFastForward()
 			end
-      	-- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
+      		-- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
+      		-- 현재 대사 위치 파라미터로 저장
+	      	composer.setVariable("scriptNum", curScriptNum)
   			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
@@ -263,6 +280,16 @@ function scene:create( event )
 		composer.gotoScene()
 	end
 
+	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동
+    if event.params then
+    	if event.params.scriptNum then
+			curScriptNum = event.params.scriptNum
+			curScript[1].alpha = 0
+			curScript[curScriptNum].alpha = 1
+			setCharAndBack()
+		end
+	end
+
 	-- composer.loadScene("choiceScene")
 end
 
@@ -270,8 +297,7 @@ function scene:show( event )
 	local sceneGroup = self.view
 	local phase = event.phase
 
-	print("show")
-	
+	print("story_forest1_1: show")
 	if phase == "will" then
 		-- Called when the scene is still off screen and is about to move on screen
 	elseif phase == "did" then
@@ -291,10 +317,10 @@ function scene:hide( event )
 		--
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
+		print("story_forest1_1: hide")
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 		composer.removeScene("story_forest1_1")
-
 	end
 end
 

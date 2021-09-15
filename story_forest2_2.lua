@@ -397,6 +397,8 @@ function scene:create(event)
 				stopFastForward()
 			end
   			-- dialogueBox:removeEventListener("tap", nextScript)
+  			-- 현재 대사 위치 파라미터로 저장
+			composer.setVariable("scriptNum", i)
   			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
@@ -406,6 +408,17 @@ function scene:create(event)
 	function scene:closeScene()
 		composer.removeScene("story_forest2_2") --현재 장면 이름 넣기 ex)storyScene
 		composer.gotoScene("scene1")
+	end
+
+	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동
+    if event.params then
+       	if event.params.scriptNum then
+			print("params.scriptNum: ", event.params.scriptNum)
+			i = event.params.scriptNum
+			showDialogue[1].alpha = 0
+			showDialogue[i].alpha = 1
+			playerAppear()
+		end
 	end
 
 	-- composer.loadScene("choiceScene")
@@ -436,7 +449,7 @@ function scene:hide( event )
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
-		composer.removeScene("story_forest1_2")
+		composer.removeScene("story_forest2_2")
 	end
 end
 

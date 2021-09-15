@@ -65,15 +65,19 @@ function scene:create( event )
 	-- 화면에 슬롯 출력
 	local slotList = {}
 	for i = 1, #saveList do
-		if saveList[i] ~= "" then
+				if saveList[i] ~= "" then
 			saveSlot = display.newImage("image/component/저장된데이터.png")
 			saveSlot.x, saveSlot.y = slotPosX[i], slotPosY[i]
-			-- local saveDate = display.newText(saveList[i].date, slotPosX[i], slotPosY[i])
-			local sceneTest = display.newText(saveList[i].scene, slotPosX[i], slotPosY[i])
+			local saveDate = display.newText(saveList[i].date, slotPosX[i], slotPosY[i], "fonts/GowunBatang-Bold", 22)
+			saveDate:setFillColor( 0.3, 0.2, 0.2 )
+			local saveTime = display.newText(saveList[i].time, slotPosX[i], slotPosY[i] + 30, "fonts/GowunBatang-Bold", 22)
+			saveTime:setFillColor( 0.3, 0.2, 0.2 )
+			-- local sceneTest = display.newText(saveList[i].scene, slotPosX[i], slotPosY[i])
 			local slotGroup = display.newGroup()
 			slotGroup:insert(saveSlot)
-			-- slotGroup:insert(saveDate)
-			slotGroup:insert(sceneTest)
+			slotGroup:insert(saveDate)
+			slotGroup:insert(saveTime)
+			-- slotGroup:insert(sceneTest)
 			sceneGroup:insert(slotGroup)
 			slotList[i] = slotGroup
 		else
@@ -98,12 +102,29 @@ function scene:create( event )
 		--     -- highestLevel = 7
 		-- }
 
+		-- 날짜와 시간 저장
+		local date = os.date( "*t" )    -- Returns table of date & time values in local time
+		-- print( date.year, date.month )  -- Print year and month
+		-- print( date.hour, date.min )    -- Print hour and minutes
+		local savingDate = date.year .. "-" .. date.month .. "-" .. date.day
+		local min = date.min
+		-- 0~9분은 00~09분으로 표기
+		if min / 10 < 1 then
+			min = 0 .. min
+		end
+		local savingTime = date.hour .. ":" .. min
+
+		-- 현재 대사 위치 저장
+		local scriptNum = composer.getVariable("scriptNum")
+		print("saveScene: 현재 위치: ", scriptNum)
 
 		local saveContent = {
 			-- 현재 씬 저장
 			scene = composer.getSceneName( "current" ),
 			-- 현재 시간 저장
-			date = "2021-09-08 12:24"
+			date = savingDate,
+			time = savingTime, 
+			scriptNum = scriptNum
 		}
 
 		local index = 0
@@ -123,7 +144,33 @@ function scene:create( event )
 		-- loadsave.saveTable( gameSettings, "settings.json" )
 		loadsave.saveTable(saveDatas, "saveDatas.json")
 
-		composer.showOverlay("saveCompleteScene", overlayOption)
+		-- 저장 완료시 텍스트 띄움
+		-- composer.showOverlay("saveCompleteScene", overlayOption)
+
+		local completeBox = display.newRect(display.contentCenterX, display.contentCenterY, 500, 100)
+		completeBox:setFillColor(1)
+		completeBox.alpha = 0.5
+		local completeText = display.newText("저장 완료", display.contentCenterX, display.contentCenterY, "fonts/GowunBatang-Bold", 25)
+		completeText:setFillColor(0.2)
+		completeText.alpha = 1
+
+		local completeGroup = display.newGroup()
+		completeGroup:insert(completeBox)
+		completeGroup:insert(completeText)
+
+		-- 세이브창 안보이게(hide는 아님) 하며 저장 완료 텍스트 출력
+		sceneGroup.alpha = 0
+		transition.to(completeGroup, {time = 600, delay=600, alpha = 0})
+		
+		-- 아래의 타이머 완료 후 completeGroup을 sceneGroup에 넣고 hide
+		local function afterTimer()
+			print("afterTimer runs!")
+			sceneGroup:insert(completeGroup)
+			composer.hideOverlay()
+		end
+
+		-- 텍스트 출력동안 대기
+		timer.performWithDelay( 1200, afterTimer)
 	end
 
 	-- 슬롯마다 이벤트 리스너
@@ -168,6 +215,7 @@ function scene:hide( event )
 		--
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
+
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 	end

@@ -81,6 +81,9 @@ function scene:create( event )
 	local function saveSceneOpen(event)
 		if(event.phase == "began") then
 			inSceneGroup()
+			-- local scriptNum = composer.getVariable("scriptNum")
+			-- print("menuScene: 현재 위치: ", scriptNum)
+			-- composer.setVariable("scriptNum", scriptNum)
 			composer.showOverlay("saveScene", overlayOption)
 		end
 	end

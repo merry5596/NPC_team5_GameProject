@@ -60,7 +60,7 @@ function scene:create(event)
   					"완연한 겨울이 당신을 맞이합니다.",
   					"당연한 일이죠. 이상기후의 발생은 늘 있던 일이니까요.",
   					"찬 겨울 바람을 그대로 맞으며 오두막으로 걸어갑니다.",
-  					"큰 마음을 먹고 숲 밖으로 나가봤건만, 선생님의 흔적은 무슨! 그 발자취의 실마리조차 찾지 못했습니다.",
+  					"큰 마음을 먹고 숲 밖으로 나가봤건만, 선생님의 흔적은커녕 그 발자취의 실마리조차 찾지 못했습니다.",
   					"그래도 이쯤이면 선생님께서 돌아온 후일 것 같지 않나요?",
   					"오래 찾아다니게 만들었으니, 만나면 여러 핀잔을 내뱉어봅시다. 선생님은 웃으며 늘 당신을 받아줬으니까요.",
   					"눈밭에 발자국을 남기며 걸어갈까요."}
@@ -168,6 +168,8 @@ function scene:create(event)
 				stopFastForward()
 			end
   			-- dialogueBox:removeEventListener("tap", nextScript)
+  			-- 현재 대사 위치 파라미터로 저장
+			composer.setVariable("scriptNum", i)
   			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
@@ -178,6 +180,18 @@ function scene:create(event)
 		composer.removeScene("story_forest2_1") --현재 장면 이름 넣기 ex)storyScene
 		composer.gotoScene("scene1")
 	end
+	
+	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동
+    if event.params then
+    	if event.params.scriptNum then
+			i = event.params.scriptNum
+			showDialogue[1].alpha = 0
+			showDialogue[i].alpha = 1
+			-- setCharAndBack()
+		end
+	end
+
+
 
 	-- composer.loadScene("choiceScene")
 end

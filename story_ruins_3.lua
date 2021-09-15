@@ -19,7 +19,7 @@ function scene:create( event )
 	local player = display.newImage("image/component/evy.png")
 	player.x, player.y = display.contentCenterX, display.contentCenterY*1.5
 	player:scale(1.2, 1.2)
-	player.isVisible = false
+	player.alpha = 0
 	sceneGroup:insert(player)
 
 	--대사창 그림--
@@ -70,7 +70,7 @@ function scene:create( event )
 	}
 
   	local scripts = {
-		"[정보 공인 대-안드로이드 연구소]가 있던 자리로 겨우겨우 발걸음을 하면, 그 위치엔 거대한 잔해가 가득합니다.", -- 1: 연구소 파트 시작
+		"『정보 공인 대-안드로이드 연구소』가 있던 자리로 겨우겨우 발걸음을 하면, 그 위치엔 거대한 잔해가 가득합니다.", -- 1: 연구소 파트 시작
 		"규모가 큰 시설이었으나 대부분 무너진 듯해요. 그래도 아주 작은 건물 하나는 남아있는 듯합니다.", -- 2 (options1)
 		"잔해를 피해 조심조심 작은 건물로 다가가보면, 너덜너덜한 문짝이 겨우 붙어있다는 것을 알아차릴 수 있습니다.", -- 3
 		"문을 기울여 열어젖히니... 아, 긴 복도 끝에 탕비실이라 적힌 푯말이 보입니다. 누가 봐도 좁아터진 방이에요.", -- 4
@@ -81,10 +81,10 @@ function scene:create( event )
 		"종이는 낡았지만, 모두 오래되어 상한 장소에서 서류만큼은 최근의 것이라 생각하기 족할 정도로 멀쩡합니다.", 
 		"최근에 누군가가 이곳에 와서 두고 간 것일지도 모르겠어요.", 
 		"종이를 흘겨보니 그 위엔 안드로이드에 관한 내용으로 가득하다는 사실을 알 수 있습니다. 출력물인 듯해요.", -- 11 (options3)
-		"안드로이드 신체 구조에 관한 내용이 적혀있다. 가정용 모델을 주로 적은 듯한데, 체내에 정수 기능과 공기 청정 기능이 있다는 내용인 듯하다.", -- 12
-		"그 아래에는 연구소의 과거에 대한 이야기가 있는데, 적자가 나서 망했다는 문장만 가득하다.", -- 13 (options4)
+		"안드로이드 신체 구조에 관한 내용이 적혀있어요. 가정용 모델을 주로 적은 듯한데, 체내에 정수 기능과 공기 청정 기능이 있다는 내용인 듯하네요.", -- 12
+		"그 아래에는 연구소의 과거에 대한 이야기가 있는데, 적자가 나서 망했다는 문장만 가득해요.", -- 13 (options4)
  		"이 거대한 잔해들 사이에서 터벅터벅 발소리를 내며 걸어보니, 많은 종이들이 찢겨 나풀댄다는 사실을 마주할 수 있었습니다.", -- 14
- 		"무너진 콘트리트 위에는 연구, 안드로이드, 개발, 멸망의 전조... 어딘가 석연찮은 단어가 가득한 자료만이 가득합니다.", 
+ 		"무너진 콘크리트 위에는 연구, 안드로이드, 개발, 멸망의 전조... 어딘가 석연찮은 단어가 가득한 자료만이 가득합니다.", 
  		"걷고, 또 걷습니다.", 
  		"선생님의 흔적을 찾고자 연구소에 오게 된 건데, 어째 이런 세상이 다가온 이유만을 알아버린 듯합니다.", 
  		"미약한 허탈함을 품고 계속해서 걸어갑니다.", 
@@ -97,15 +97,15 @@ function scene:create( event )
  	}
 
  	local options2 = {
- 		"[나무 탁자] 주위로 다가가본다."
+ 		"『나무 탁자』 주위로 다가가본다."
  	}
 
  	local options3 = {
- 		"[종이]를 확인한다."
+ 		"『종이』를 확인한다."
  	}
 
  	local options4 = {
- 		"[연구소 탕비실]을 나간다."
+ 		"『연구소 탕비실』을 나간다."
  	}
 
     local curScript = {}
@@ -124,6 +124,28 @@ function scene:create( event )
 	local playerTime = 400 --플레이어와 이름창 페이드인 시간 추가
 	local dialogueFadeInTime = 400 --대사 페이드인과 배경 전환 시간 추가
 	local dialogueFadeOutTime = 200 --대사와 이름창 페이드아웃 시간 추가
+
+	function changeCharAndBack()	
+		if curScriptNum == 14 then
+			transition.fadeIn(player, { time = playerTime })
+		end
+		-- 캐릭터 변화
+		-- if curScriptNum == 34 or curScriptNum == 8 then
+		-- 	nameGroup.isVisible = true
+		-- 	-- player.isVisible = true
+		-- end
+		-- if curScriptNum == 36 or curScriptNum == 10 then
+		-- 	nameGroup.isVisible = false
+		-- end
+	end
+	
+	-- 저장 load시 캐릭터와 배경 상태 setting
+	function setCharAndBack()
+		changeCharAndBack()
+		if curScriptNum > 3 and curScriptNum ~= 5 then
+			player.alpha = 1
+		end
+	end
 
 	function nextScript(event) --local 빼기 수정
 		print(#scripts)
@@ -191,18 +213,13 @@ function scene:create( event )
 				transition.fadeIn(curScript[curScriptNum], { time = dialogueFadeInTime })
 			end
 
-			-- 캐릭터 변화
-			-- if curScriptNum == 34 or curScriptNum == 8 then
-			-- 	nameGroup.isVisible = true
-			-- 	-- player.isVisible = true
-			-- end
-			-- if curScriptNum == 36 or curScriptNum == 10 then
-			-- 	nameGroup.isVisible = false
-			-- end
+			changeCharAndBack()
 		end
 	end
 
 	dialogueBox:addEventListener("tap", nextScript) --dialogueBoxGroup -> dialogueBox 수정
+
+	local playerTime = 400 --플레이어와 이름창 페이드인 시간
 
 	function scene:resumeGame()
 		if curScriptNum == 2 then
@@ -211,9 +228,11 @@ function scene:create( event )
 			curScript[curScriptNum].alpha = 0
 			if selectedOption == 1 then
 				curScriptNum = 3
+				transition.fadeIn(player, { time = playerTime })
 			elseif selectedOption == 2 then
 				curScriptNum = 5
 			end
+
 		elseif curScriptNum == 6 or curScriptNum == 11 or curScriptNum == 13 then
 			curScript[curScriptNum].alpha = 0
 			curScriptNum = curScriptNum + 1
@@ -280,6 +299,8 @@ function scene:create( event )
 				stopFastForward()
 			end
 			  -- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
+			-- 현재 대사 위치 파라미터로 저장
+			composer.setVariable("scriptNum", curScriptNum)
   			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
@@ -289,6 +310,16 @@ function scene:create( event )
 	function scene:closeScene()
 		composer.removeScene("story_forest1_2")
 		composer.gotoScene("scene1")
+	end
+
+	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동
+    if event.params then
+    	if event.params.scriptNum then
+			curScriptNum = event.params.scriptNum
+			curScript[1].alpha = 0
+			curScript[curScriptNum].alpha = 1
+			setCharAndBack()
+		end
 	end
 
 	-- composer.loadScene("choiceScene")

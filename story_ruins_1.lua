@@ -106,7 +106,26 @@ function scene:create(event)
 	local playerTime = 400 --플레이어와 이름창 페이드인 시간
 	local dialogueFadeInTime = 400 --대사 페이드인과 배경 전환 시간
 	local dialogueFadeOutTime = 200 --대사와 이름창 페이드아웃 시간
+
 	i = 1
+
+	function changeCharAndBack()
+		if(i == 9) then
+			transition.fadeIn(nameGroup, { time = playerTime })
+			transition.fadeIn(player, { time = playerTime })
+		elseif(i == 10) then
+			transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
+		end
+	end
+
+	-- 저장 load시 캐릭터와 배경 상태 setting
+	function setCharAndBack()
+		changeCharAndBack()
+		if i > 9 then
+			player.alpha = 1
+		end
+	end
+
 	function nextScript(event)
 		if(fastforward_state == 0) then
 			showDialogue[i].alpha = 0
@@ -124,12 +143,7 @@ function scene:create(event)
 			transition.fadeIn(showDialogue[i], { time = dialogueFadeInTime })
 		end
 
-		if(i == 9) then
-			transition.fadeIn(nameGroup, { time = playerTime })
-			transition.fadeIn(player, { time = playerTime })
-		elseif(i == 10) then
-			transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
-		end
+		changeCharAndBack()
 	end
 	dialogueBox:addEventListener("tap", nextScript)
 
@@ -188,6 +202,8 @@ function scene:create(event)
 				stopFastForward()
 			end
   			-- dialogueBox:removeEventListener("tap", nextScript)
+  			-- 현재 대사 위치 파라미터로 저장
+			composer.setVariable("scriptNum", i)
   			composer.showOverlay("menuScene", overlayOption)
   		end
   	end
@@ -197,6 +213,16 @@ function scene:create(event)
 	function scene:closeScene()
 		composer.removeScene("storyScene_ruins1")
 		composer.gotoScene("scene1")
+	end
+
+	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동
+    if event.params then
+    	if event.params.scriptNum then
+			i = event.params.scriptNum
+			showDialogue[1].alpha = 0
+			showDialogue[i].alpha = 1
+			setCharAndBack()
+		end
 	end
 
 	-- composer.loadScene("choiceScene")
@@ -228,6 +254,7 @@ function scene:hide( event )
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 		composer.removeScene("story_ruins_1")
+		print("story_ruins_1: hide")
 	end
 end
 
