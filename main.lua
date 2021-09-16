@@ -17,7 +17,7 @@ local function onFirstView( event )
 end
 
 local function onSecondView( event )
-	composer.gotoScene( "story_ruins_3" )
+	composer.gotoScene( "story_before_ending" )
 end
 
-onFirstView()	-- invoke first tab button's onPress event manually
+onSecondView()	-- invoke first tab button's onPress event manually

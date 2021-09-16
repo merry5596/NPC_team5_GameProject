@@ -30,17 +30,47 @@ function scene:create( event )
 	sceneGroup:insert(menuCloseButton)
 
 	--메뉴닫기--
-	local function menuClose(event)
-		if(event.phase == "began") then
-			if(composer.getVariable("sceneName") == home) then
+	local bounds_close = menuCloseButton.contentBounds
+	local isOut_close
+  	local function closeMenu(event)
+  		if event.phase == "began" then
+  			isOut_close = 0 	-- 이벤트 시작 시에는 이벤트가 버튼 안에 있음 (초기값)
 
-			else
-				dialogueBox:addEventListener("tap", nextScript)
+  			display.getCurrentStage():setFocus( event.target )
+    	    self.isFocus = true
+    	    
+    	    menuCloseButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	elseif self.isFocus then
+    		if event.phase == "moved" then
+    			-- 1. 이벤트가 버튼 밖에 있지만 isOut_close == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
+    			if (event.x < bounds_close.xMin or event.x > bounds_close.xMax or event.y < bounds_close.yMin or event.y > bounds_close.yMax) and isOut_close == 0 then
+    				menuCloseButton:scale(1.1, 1.1)	-- 버튼 커짐
+    				isOut_close = 1 	-- 이벤트가 버튼 밖에 있음을 상태로 저장
+
+    			-- 2. 이벤트가 버튼 안에 있지만 isOut_close == 1인 경우(방금까지 밖에 있었을 경우)에만 수행 (처음 안으로 들어올 때 한 번 수행)
+    			elseif (event.x >= bounds_close.xMin and event.x <= bounds_close.xMax and event.y >= bounds_close.yMin and event.y <= bounds_close.yMax) and isOut_close == 1 then
+    				menuCloseButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    				isOut_close = 0 	-- 이벤트가 버튼 안에 있음을 상태로 저장
+    			end
+	        elseif event.phase == "ended" or event.phase == "cancelled" then
+	            display.getCurrentStage():setFocus( nil )
+	            self.isFocus = false
+
+	        	-- 버튼 안에서 손을 뗐을 시에만 메뉴 실행
+  				if event.x >= bounds_close.xMin and event.x <= bounds_close.xMax and event.y >= bounds_close.yMin and event.y <= bounds_close.yMax then
+		        	menuCloseButton:scale(1.1, 1.1)
+		        	-- 여기부터가 실질적인 action에 해당
+		        	if(composer.getVariable("sceneName") == home) then
+
+					else
+						dialogueBox:addEventListener("tap", nextScript)
+					end
+					composer.hideOverlay()
+				end	
 			end
-			composer.hideOverlay()
-		end
-	end
-	menuCloseButton:addEventListener("touch", menuClose)
+	    end	
+  	end
+	menuCloseButton:addEventListener("touch", closeMenu)
 
 	local loadsave = require( "loadsave" )
 	local saveDatas = loadsave.loadTable("saveDatas.json")
@@ -82,56 +112,50 @@ function scene:create( event )
 
 	-- load 이벤트 함수
 	local function load(event)
-    	print("load function!")
-		-- 현재 씬 이름
-		print(composer.getSceneName( "current" ))
- 
-		local index = 0
-		for i = 1, #slotList do
-			if slotList[i] == event.target then
-				index = i
-				break
+		if event.phase == "ended" or event.phase == "cancelled" then
+	    	print("load function!")
+			-- 현재 씬 이름
+			print(composer.getSceneName( "current" ))
+	 
+			local index = 0
+			for i = 1, #slotList do
+				if slotList[i] == event.target then
+					index = i
+					break
+				end
 			end
-		end
 
-		-- 저장 위치(씬 이름) 출력
-		print("저장 위치: ", saveList[index].scene)
-		local targetScene = saveList[index].scene
-		local currentScene = composer.getSceneName( "current" )
-		composer.hideOverlay("loadScene")
+			-- 저장 위치(씬 이름) 출력
+			print("저장 위치: ", saveList[index].scene)
+			local targetScene = saveList[index].scene
+			local currentScene = composer.getSceneName( "current" )
+			composer.hideOverlay("loadScene")
 
-		print("loadScene: 이동 위치: ", saveList[index].scriptNum)
-		local loadOption =		-- loadOption
-		{
-		    effect = "fade",
-		    time = 400,
-		    params = {
-		    	targetScene = targetScene, 
-		        scriptNum = saveList[index].scriptNum
-		    }
-		}	
+			print("loadScene: 이동 위치: ", saveList[index].scriptNum)
+			local loadOption =		-- loadOption
+			{
+			    effect = "fade",
+			    time = 400,
+			    params = {
+			    	targetScene = targetScene, 
+			        scriptNum = saveList[index].scriptNum
+			    }
+			}	
 
-		if targetScene == currentScene then
-			print("target == current!")
-			composer:gotoScene("movingEffectScene", loadOption)
-		else
-			composer:gotoScene("movingEffectScene", loadOption)
+			if targetScene == currentScene then
+				print("target == current!")
+				composer:gotoScene("movingEffectScene", loadOption)
+			else
+				composer:gotoScene("movingEffectScene", loadOption)
+			end
 		end
 	end
 
 	-- 슬롯마다 이벤트 리스너
 	for i = 1, #slotList do
 		if saveList[i] ~= "" then
-			slotList[i]:addEventListener("tap", load)
+			slotList[i]:addEventListener("touch", load)
 		end
-		-- slotList[2]:addEventListener("tap", load)
-		-- slotList[3]:addEventListener("tap", load)
-		-- slotList[4]:addEventListener("tap", load)
-		-- slotList[5]:addEventListener("tap", load)
-		-- slotList[6]:addEventListener("tap", load)
-		-- slotList[7]:addEventListener("tap", load)
-		-- slotList[8]:addEventListener("tap", load)
-		-- slotList[9]:addEventListener("tap", load)
 	end
 
 	--composer.gotoScene("view2")

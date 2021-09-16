@@ -54,49 +54,170 @@ function scene:create( event )
 	end
 
 	--메뉴닫기--
-	local function menuClose(event)
-		if(event.phase == "began") then
-			inSceneGroup()
-			dialogueBox:addEventListener("tap", nextScript)
-			-- if(composer.getVariable("sceneName") == home) then
-			-- else
-			-- 	dialogueBox:addEventListener("tap", nextScript)
-			-- end
-			composer.hideOverlay("menuScene")
-		end
-	end
-	menuCloseButton:addEventListener("touch", menuClose)
+	local bounds_close = menuCloseButton.contentBounds
+	local isOut_close
+  	local function closeMenu(event)
+  		if event.phase == "began" then
+  			isOut_close = 0 	-- 이벤트 시작 시에는 이벤트가 버튼 안에 있음 (초기값)
+
+  			display.getCurrentStage():setFocus( event.target )
+    	    self.isFocus = true
+    	    
+    	    menuCloseButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	elseif self.isFocus then
+    		if event.phase == "moved" then
+    			-- 1. 이벤트가 버튼 밖에 있지만 isOut_close == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
+    			if (event.x < bounds_close.xMin or event.x > bounds_close.xMax or event.y < bounds_close.yMin or event.y > bounds_close.yMax) and isOut_close == 0 then
+    				menuCloseButton:scale(1.1, 1.1)	-- 버튼 커짐
+    				isOut_close = 1 	-- 이벤트가 버튼 밖에 있음을 상태로 저장
+
+    			-- 2. 이벤트가 버튼 안에 있지만 isOut_close == 1인 경우(방금까지 밖에 있었을 경우)에만 수행 (처음 안으로 들어올 때 한 번 수행)
+    			elseif (event.x >= bounds_close.xMin and event.x <= bounds_close.xMax and event.y >= bounds_close.yMin and event.y <= bounds_close.yMax) and isOut_close == 1 then
+    				menuCloseButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    				isOut_close = 0 	-- 이벤트가 버튼 안에 있음을 상태로 저장
+    			end
+	        elseif event.phase == "ended" or event.phase == "cancelled" then
+	            display.getCurrentStage():setFocus( nil )
+	            self.isFocus = false
+
+	        	-- 버튼 안에서 손을 뗐을 시에만 메뉴 실행
+  				if event.x >= bounds_close.xMin and event.x <= bounds_close.xMax and event.y >= bounds_close.yMin and event.y <= bounds_close.yMax then
+		        	menuCloseButton:scale(1.1, 1.1)
+		        	-- 여기부터가 실질적인 action에 해당
+		        	inSceneGroup()
+					-- dialogueBox:addEventListener("tap", nextScript)
+					-- if(composer.getVariable("sceneName") == home) then
+					-- else
+					-- 	dialogueBox:addEventListener("tap", nextScript)
+					-- end
+					composer.hideOverlay("menuScene")
+				end	
+			end
+	    end	
+  	end
+	menuCloseButton:addEventListener("touch", closeMenu)
 
 	--시작화면으로 버튼 클릭시 타이틀화면으로 이동--
-	local function goTitleScreen(event)
-		if(event.phase == "began") then
-			inSceneGroup()
-			composer.hideOverlay("menuScene")
-			parent:closeScene() --이전 장면의 함수 실행
-		end
-	end
-	menuTitleScreen:addEventListener("touch", goTitleScreen)
+	local bounds_title = menuTitleScreen.contentBounds
+	local isOut_title
+  	local function goTitleScreen(event)
+  		if event.phase == "began" then
+  			isOut_title = 0 	-- 이벤트 시작 시에는 이벤트가 버튼 안에 있음 (초기값)
+
+  			display.getCurrentStage():setFocus( event.target )
+    	    self.isFocus = true
+    	    
+    	    menuTitleScreen:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	elseif self.isFocus then
+    		if event.phase == "moved" then
+    			-- 1. 이벤트가 버튼 밖에 있지만 isOut_title == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
+    			if (event.x < bounds_title.xMin or event.x > bounds_title.xMax or event.y < bounds_title.yMin or event.y > bounds_title.yMax) and isOut_title == 0 then
+    				menuTitleScreen:scale(1.1, 1.1)	-- 버튼 커짐
+    				isOut_title = 1 	-- 이벤트가 버튼 밖에 있음을 상태로 저장
+
+    			-- 2. 이벤트가 버튼 안에 있지만 isOut_title == 1인 경우(방금까지 밖에 있었을 경우)에만 수행 (처음 안으로 들어올 때 한 번 수행)
+    			elseif (event.x >= bounds_title.xMin and event.x <= bounds_title.xMax and event.y >= bounds_title.yMin and event.y <= bounds_title.yMax) and isOut_title == 1 then
+    				menuTitleScreen:scale(0.9, 0.9) 	-- 버튼 작아짐
+    				isOut_title = 0 	-- 이벤트가 버튼 안에 있음을 상태로 저장
+    			end
+	        elseif event.phase == "ended" or event.phase == "cancelled" then
+	            display.getCurrentStage():setFocus( nil )
+	            self.isFocus = false
+
+	        	-- 버튼 안에서 손을 뗐을 시에만 메뉴 실행
+  				if event.x >= bounds_title.xMin and event.x <= bounds_title.xMax and event.y >= bounds_title.yMin and event.y <= bounds_title.yMax then
+		        	menuTitleScreen:scale(1.1, 1.1)
+		        	-- 여기부터가 실질적인 action에 해당
+		        	inSceneGroup()
+					composer.hideOverlay("menuScene")
+					parent:closeScene() --이전 장면의 함수 실행
+				end	
+			end
+	    end	
+  	end
+  	menuTitleScreen:addEventListener("touch", goTitleScreen)
 
 	--저장하기 버튼 클릭시 세이브화면으로 이동--
-	local function saveSceneOpen(event)
-		if(event.phase == "began") then
-			inSceneGroup()
-			-- local scriptNum = composer.getVariable("scriptNum")
-			-- print("menuScene: 현재 위치: ", scriptNum)
-			-- composer.setVariable("scriptNum", scriptNum)
-			composer.showOverlay("saveScene", overlayOption)
-		end
-	end
+	local bounds_save = menuSave.contentBounds
+	local isOut_save
+  	local function saveSceneOpen(event)
+  		if event.phase == "began" then
+  			isOut_save = 0 	-- 이벤트 시작 시에는 이벤트가 버튼 안에 있음 (초기값)
+
+  			display.getCurrentStage():setFocus( event.target )
+    	    self.isFocus = true
+    	    
+    	    menuSave:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	elseif self.isFocus then
+    		if event.phase == "moved" then
+    			-- 1. 이벤트가 버튼 밖에 있지만 isOut_save == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
+    			if (event.x < bounds_save.xMin or event.x > bounds_save.xMax or event.y < bounds_save.yMin or event.y > bounds_save.yMax) and isOut_save == 0 then
+    				menuSave:scale(1.1, 1.1)	-- 버튼 커짐
+    				isOut_save = 1 	-- 이벤트가 버튼 밖에 있음을 상태로 저장
+
+    			-- 2. 이벤트가 버튼 안에 있지만 isOut_save == 1인 경우(방금까지 밖에 있었을 경우)에만 수행 (처음 안으로 들어올 때 한 번 수행)
+    			elseif (event.x >= bounds_save.xMin and event.x <= bounds_save.xMax and event.y >= bounds_save.yMin and event.y <= bounds_save.yMax) and isOut_save == 1 then
+    				menuSave:scale(0.9, 0.9) 	-- 버튼 작아짐
+    				isOut_save = 0 	-- 이벤트가 버튼 안에 있음을 상태로 저장
+    			end
+	        elseif event.phase == "ended" or event.phase == "cancelled" then
+	            display.getCurrentStage():setFocus( nil )
+	            self.isFocus = false
+
+	        	-- 버튼 안에서 손을 뗐을 시에만 메뉴 실행
+  				if event.x >= bounds_save.xMin and event.x <= bounds_save.xMax and event.y >= bounds_save.yMin and event.y <= bounds_save.yMax then
+		        	menuSave:scale(1.1, 1.1)
+		        	-- 여기부터가 실질적인 action에 해당
+		        	inSceneGroup()
+					-- local scriptNum = composer.getVariable("scriptNum")
+					-- print("menuScene: 현재 위치: ", scriptNum)
+					-- composer.setVariable("scriptNum", scriptNum)
+					composer.showOverlay("saveScene", overlayOption)
+				end	
+			end
+	    end	
+  	end
 	menuSave:addEventListener("touch", saveSceneOpen)
 
 	--불러오기 버튼 클릭시 세이브파일목록화면으로 이동--
-	local function saveFileListOpen(event)
-		if(event.phase == "began") then
-			inSceneGroup()
-			composer.showOverlay("loadScene", overlayOption)
-		end
-	end
+	local bounds_load = menuLoad.contentBounds
+	local isOut_load
+  	local function saveFileListOpen(event)
+  		if event.phase == "began" then
+  			isOut_load = 0 	-- 이벤트 시작 시에는 이벤트가 버튼 안에 있음 (초기값)
+
+  			display.getCurrentStage():setFocus( event.target )
+    	    self.isFocus = true
+    	    
+    	    menuLoad:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	elseif self.isFocus then
+    		if event.phase == "moved" then
+    			-- 1. 이벤트가 버튼 밖에 있지만 isOut_load == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
+    			if (event.x < bounds_load.xMin or event.x > bounds_load.xMax or event.y < bounds_load.yMin or event.y > bounds_load.yMax) and isOut_load == 0 then
+    				menuLoad:scale(1.1, 1.1)	-- 버튼 커짐
+    				isOut_load = 1 	-- 이벤트가 버튼 밖에 있음을 상태로 저장
+
+    			-- 2. 이벤트가 버튼 안에 있지만 isOut_load == 1인 경우(방금까지 밖에 있었을 경우)에만 수행 (처음 안으로 들어올 때 한 번 수행)
+    			elseif (event.x >= bounds_load.xMin and event.x <= bounds_load.xMax and event.y >= bounds_load.yMin and event.y <= bounds_load.yMax) and isOut_load == 1 then
+    				menuLoad:scale(0.9, 0.9) 	-- 버튼 작아짐
+    				isOut_load = 0 	-- 이벤트가 버튼 안에 있음을 상태로 저장
+    			end
+	        elseif event.phase == "ended" or event.phase == "cancelled" then
+	            display.getCurrentStage():setFocus( nil )
+	            self.isFocus = false
+
+	        	-- 버튼 안에서 손을 뗐을 시에만 메뉴 실행
+  				if event.x >= bounds_load.xMin and event.x <= bounds_load.xMax and event.y >= bounds_load.yMin and event.y <= bounds_load.yMax then
+		        	menuLoad:scale(1.1, 1.1)
+		        	-- 여기부터가 실질적인 action에 해당
+		        	inSceneGroup()
+					composer.showOverlay("loadScene", overlayOption)
+				end	
+			end
+	    end	
+  	end
 	menuLoad:addEventListener("touch", saveFileListOpen)
+
 end
 
 function scene:show( event )
