@@ -76,30 +76,129 @@ function scene:create( event )
 	closeButton.isVisible = false
 	sceneGroup:insert(closeButton)
 
-	local function openBag(event)
-		inventoryBox.isVisible = true
-		scrollbar.isVisible = true
-		closeButton.isVisible = true
-	end
+	-- 소지품 열기
+	local bounds_bag = bag.contentBounds
+	local isOut_bag
+  	local function openBag(event)
+  		if event.phase == "began" then
+  			isOut_bag = 0 	-- 이벤트 시작 시에는 이벤트가 버튼 안에 있음 (초기값)
 
-	bag:addEventListener("tap", openBag)
+  			display.getCurrentStage():setFocus( event.target )
+    	    self.isFocus = true
+    	    
+    	    bag:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	elseif self.isFocus then
+    		if event.phase == "moved" then
+    			-- 1. 이벤트가 버튼 밖에 있지만 isOut_bag == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
+    			if (event.x < bounds_bag.xMin or event.x > bounds_bag.xMax or event.y < bounds_bag.yMin or event.y > bounds_bag.yMax) and isOut_bag == 0 then
+    				bag:scale(1.1, 1.1)	-- 버튼 커짐
+    				isOut_bag = 1 	-- 이벤트가 버튼 밖에 있음을 상태로 저장
 
-	local function closeBag(event)
-		inventoryBox.isVisible = false
-		scrollbar.isVisible = false
-		closeButton.isVisible = false
-	end
+    			-- 2. 이벤트가 버튼 안에 있지만 isOut_bag == 1인 경우(방금까지 밖에 있었을 경우)에만 수행 (처음 안으로 들어올 때 한 번 수행)
+    			elseif (event.x >= bounds_bag.xMin and event.x <= bounds_bag.xMax and event.y >= bounds_bag.yMin and event.y <= bounds_bag.yMax) and isOut_bag == 1 then
+    				bag:scale(0.9, 0.9) 	-- 버튼 작아짐
+    				isOut_bag = 0 	-- 이벤트가 버튼 안에 있음을 상태로 저장
+    			end
+	        elseif event.phase == "ended" or event.phase == "cancelled" then
+	            display.getCurrentStage():setFocus( nil )
+	            self.isFocus = false
 
-	closeButton:addEventListener("tap", closeBag)
-
-	--메뉴열기--
-  	local function menuOpen(event)
-  		if(event.phase == "began") then
-  			composer.setVariable("sceneName", home)
-  			composer.showOverlay("menuScene")
-  		end
+	        	-- 버튼 안에서 손을 뗐을 시에만 메뉴 실행
+  				if event.x >= bounds_bag.xMin and event.x <= bounds_bag.xMax and event.y >= bounds_bag.yMin and event.y <= bounds_bag.yMax then
+		        	bag:scale(1.1, 1.1)
+		        	-- 여기부터가 실질적인 action에 해당
+		        	inventoryBox.isVisible = true
+					scrollbar.isVisible = true
+					closeButton.isVisible = true
+				end	
+			end
+	    end	
   	end
-  	menuButton:addEventListener("touch", menuOpen)
+	bag:addEventListener("touch", openBag)
+
+	-- 소지품 닫기
+	local bounds_close = closeButton.contentBounds
+	local isOut_close
+  	local function closeBag(event)
+  		if event.phase == "began" then
+  			isOut_close = 0 	-- 이벤트 시작 시에는 이벤트가 버튼 안에 있음 (초기값)
+
+  			display.getCurrentStage():setFocus( event.target )
+    	    self.isFocus = true
+    	    
+    	    closeButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	elseif self.isFocus then
+    		if event.phase == "moved" then
+    			-- 1. 이벤트가 버튼 밖에 있지만 isOut_close == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
+    			if (event.x < bounds_close.xMin or event.x > bounds_close.xMax or event.y < bounds_close.yMin or event.y > bounds_close.yMax) and isOut_close == 0 then
+    				closeButton:scale(1.1, 1.1)	-- 버튼 커짐
+    				isOut_close = 1 	-- 이벤트가 버튼 밖에 있음을 상태로 저장
+
+    			-- 2. 이벤트가 버튼 안에 있지만 isOut_close == 1인 경우(방금까지 밖에 있었을 경우)에만 수행 (처음 안으로 들어올 때 한 번 수행)
+    			elseif (event.x >= bounds_close.xMin and event.x <= bounds_close.xMax and event.y >= bounds_close.yMin and event.y <= bounds_close.yMax) and isOut_close == 1 then
+    				closeButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    				isOut_close = 0 	-- 이벤트가 버튼 안에 있음을 상태로 저장
+    			end
+	        elseif event.phase == "ended" or event.phase == "cancelled" then
+	            display.getCurrentStage():setFocus( nil )
+	            self.isFocus = false
+
+	        	-- 버튼 안에서 손을 뗐을 시에만 메뉴 실행
+  				if event.x >= bounds_close.xMin and event.x <= bounds_close.xMax and event.y >= bounds_close.yMin and event.y <= bounds_close.yMax then
+		        	closeButton:scale(1.1, 1.1)
+		        	-- 여기부터가 실질적인 action에 해당
+		        	inventoryBox.isVisible = false
+					scrollbar.isVisible = false
+					closeButton.isVisible = false
+				end	
+			end
+	    end	
+  	end
+	closeButton:addEventListener("touch", closeBag)
+
+	local overlayOption =
+	{
+	    isModal = true
+	}
+
+	--메뉴열기--	
+	local bounds = menuButton.contentBounds
+	local isOut
+  	local function openMenu(event)
+  		if event.phase == "began" then
+  			isOut = 0 	-- 이벤트 시작 시에는 이벤트가 버튼 안에 있음 (초기값)
+
+  			display.getCurrentStage():setFocus( event.target )
+    	    self.isFocus = true
+    	    
+    	    menuButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	elseif self.isFocus then
+    		if event.phase == "moved" then
+    			-- 1. 이벤트가 버튼 밖에 있지만 isOut == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
+    			if (event.x < bounds.xMin or event.x > bounds.xMax or event.y < bounds.yMin or event.y > bounds.yMax) and isOut == 0 then
+    				menuButton:scale(1.1, 1.1)	-- 버튼 커짐
+    				isOut = 1 	-- 이벤트가 버튼 밖에 있음을 상태로 저장
+
+    			-- 2. 이벤트가 버튼 안에 있지만 isOut == 1인 경우(방금까지 밖에 있었을 경우)에만 수행 (처음 안으로 들어올 때 한 번 수행)
+    			elseif (event.x >= bounds.xMin and event.x <= bounds.xMax and event.y >= bounds.yMin and event.y <= bounds.yMax) and isOut == 1 then
+    				menuButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    				isOut = 0 	-- 이벤트가 버튼 안에 있음을 상태로 저장
+    			end
+	        elseif event.phase == "ended" or event.phase == "cancelled" then
+	            display.getCurrentStage():setFocus( nil )
+	            self.isFocus = false
+
+	        	-- 버튼 안에서 손을 뗐을 시에만 메뉴 실행
+  				if event.x >= bounds.xMin and event.x <= bounds.xMax and event.y >= bounds.yMin and event.y <= bounds.yMax then
+		        	menuButton:scale(1.1, 1.1)
+		        	-- 여기부터가 실질적인 action에 해당
+		  			composer.setVariable("scriptNum", 0)
+  					composer.showOverlay("menuScene", overlayOption)
+				end	
+			end
+	    end	
+  	end
+  	menuButton:addEventListener("touch", openMenu)
 
   	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()

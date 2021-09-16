@@ -212,17 +212,47 @@ function scene:create(event)
 	    isModal = true
 	}
 
-  	--메뉴열기--
+	--메뉴열기--  	
+	local bounds = menuButton.contentBounds
+	local isOut
   	local function menuOpen(event)
-  		if(event.phase == "began") then
-  			if fastforward_state == 1 then --메뉴오픈시 빨리감기종료
-				stopFastForward()
+  		if event.phase == "began" then
+  			isOut = 0 	-- 이벤트 시작 시에는 이벤트가 버튼 안에 있음 (초기값)
+
+  			display.getCurrentStage():setFocus( event.target )
+    	    self.isFocus = true
+    	    
+    	    menuButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	elseif self.isFocus then
+    		if event.phase == "moved" then
+    			-- 1. 이벤트가 버튼 밖에 있지만 isOut == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
+    			if (event.x < bounds.xMin or event.x > bounds.xMax or event.y < bounds.yMin or event.y > bounds.yMax) and isOut == 0 then
+    				menuButton:scale(1.1, 1.1)	-- 버튼 커짐
+    				isOut = 1 	-- 이벤트가 버튼 밖에 있음을 상태로 저장
+
+    			-- 2. 이벤트가 버튼 안에 있지만 isOut == 1인 경우(방금까지 밖에 있었을 경우)에만 수행 (처음 안으로 들어올 때 한 번 수행)
+    			elseif (event.x >= bounds.xMin and event.x <= bounds.xMax and event.y >= bounds.yMin and event.y <= bounds.yMax) and isOut == 1 then
+    				menuButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    				isOut = 0 	-- 이벤트가 버튼 안에 있음을 상태로 저장
+    			end
+	        elseif event.phase == "ended" or event.phase == "cancelled" then
+	            display.getCurrentStage():setFocus( nil )
+	            self.isFocus = false
+
+	        	-- 버튼 안에서 손을 뗐을 시에만 메뉴 실행
+  				if event.x >= bounds.xMin and event.x <= bounds.xMax and event.y >= bounds.yMin and event.y <= bounds.yMax then
+		        	menuButton:scale(1.1, 1.1)
+		        	-- 여기부터가 실질적인 action에 해당
+		        	if fastforward_state == 1 then --메뉴오픈시 빨리감기종료 추가
+						stopFastForward()
+					end
+		      		-- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
+		      		-- 현재 대사 위치 파라미터로 저장
+			      	composer.setVariable("scriptNum", i)
+		  			composer.showOverlay("menuScene", overlayOption)
+				end	
 			end
-			-- dialogueBox:removeEventListener("tap", nextScript)
-			-- 현재 대사 위치 파라미터로 저장
-			composer.setVariable("scriptNum", i)
-  			composer.showOverlay("menuScene")
-  		end
+	    end	
   	end
   	menuButton:addEventListener("touch", menuOpen)
 
