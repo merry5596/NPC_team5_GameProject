@@ -16,7 +16,7 @@ function scene:create(event)
 	local background1 = display.newImage("image/background/inside_cabin_임시.jpg", display.contentWidth, display.contentHeight)
 	background1.x, background1.y = display.contentCenterX, display.contentCenterY
 	background1.alpha = 0
-	local background2 = display.newImage("image/background/outside_cabin_임시.jpg", display.contentWidth, display.contentHeight)
+	local background2 = display.newImage("image/background/outside_cabin.png", display.contentWidth, display.contentHeight)
 	background2.x, background2.y = display.contentCenterX, display.contentCenterY
 	sceneGroup:insert(background1)
 	sceneGroup:insert(background2)
@@ -375,14 +375,14 @@ function scene:create(event)
 		if(i <= 14) then --대사
 			i = 14
 			dialogueNum = 14
-		elseif(i >= 15 and i <= 18) then
+		elseif(i > 15 and i <= 18) then
 			i = 18
 			dialogueNum = 18
-		elseif(i >= 19 and i <= 47) then
+		elseif(i > 19 and i <= 47) then
 			i = 47
 			dialogueNum = 24
 			-- bookStoryNum = #bookStory - 1
-		elseif(i >= 48 and i < #dialogue + #bookStory - 1) then
+		elseif(i > 48 and i < #dialogue + #bookStory - 1) then
 			i = #dialogue + #bookStory - 2
 			dialogueNum = #dialogue - 1
 		end

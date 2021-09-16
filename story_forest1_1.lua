@@ -13,7 +13,7 @@ function scene:create( event )
 	print("story_forest1_1: create")
 
 	-- 임시 배경 --
-	local background = display.newImageRect("image/background/forest임시배경.png", display.contentWidth, display.contentHeight)
+	local background = display.newImageRect("image/background/forest(봄).png", display.contentWidth, display.contentHeight)
 	background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
 	sceneGroup:insert(background)
 

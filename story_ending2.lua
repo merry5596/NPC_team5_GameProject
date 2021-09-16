@@ -1,6 +1,6 @@
 -----------------------------------------------------------------------------------------
 --
--- 스토리 Game Intro.lua
+-- 엔딩2.lua
 --
 ---------------------------------s--------------------------------------------------------
 
@@ -13,9 +13,9 @@ function scene:create(event)
 -------------------변수---------------------------------------------------------------------------------
 
 	--배경 그림--
-	local background1 = display.newImage("image/background/outside_cabin.png", display.contentWidth, display.contentHeight)
+	local background1 = display.newImage("image/background/tomb_임시.jpg", display.contentWidth, display.contentHeight)
 	background1.x, background1.y = display.contentCenterX, display.contentCenterY
-	local background2 = display.newImage("image/background/inside_cabin_임시.jpg", display.contentWidth, display.contentHeight)
+	local background2 = display.newImage("image/background/forest(겨울).png", display.contentWidth, display.contentHeight)
 	background2.x, background2.y = display.contentCenterX, display.contentCenterY
 	background2.alpha = 0
 	sceneGroup:insert(background1)
@@ -60,24 +60,25 @@ function scene:create(event)
 -------------------텍스트--------------------------------------------------------------------------------
 
   	--내래이션과 대사--
-  	local dialogue = {" ", "깊은 숲 어딘가의 작은 오두막.",
-  				"어린아이와 그를 돌보는 선생님만이 머무는 곳.", --3
-  				"늘상 평온할 줄 알았으나, 오늘은 어째 무슨 일이 있나봅니다.",
-  				"선생님? 어디에 계세요?",
-  				"계속해서 찾아다녀도 보이질 않는 선생님.", --6
-  				"오두막부터 시작해서 앞마당까지 돌아다녔건만.......",
-  				"선생님의 흔적조차 찾을 수 없습니다.",
-  				"숲 밖으로 잠시 떠나셨나?", --9
-  				"말도 않고 외출하실 분이 아닌데... 그래도 기다려보자.",
-  				"시간은 흐르고 흘러 다음날이 되었고",
-  				"당신의 선생님은 아직도 돌아오시지 않았어요.", --12
-  				"어딘가 이상하지 않나요?",
-  				"선생님이 당신을 두고 사라지셨을 리가 없습니다.",
-  				"그야, 당신을 애지중지하며 키운 이가 바로 선생님이니까요.",
-  				"분명 선생님께서 숲 밖은 위험하니 그 내부에서만 돌아다니라고 말씀하셨죠?",
-  				"그러니까 선생님을 찾으러 숲 내부를 돌아다니는 것도 괜찮을 것 같아요.	",
-  				"그럼... 가볼까요?" --18
+  	local dialogue = {" ", "잘 들어보세요, 이비. 세상에는 이별이라는 것이 있는데...",
+  				"운명이라는 것은 세계를 순환하기에 완전한 이별이란 존재하지 않습니다.", --3
+  				"인연은 언제까지나 이어지는 것이니까요.",
+  				"이 세상에는 선생님의 흔적으로 가득합니다.",
+  				"연약한 피부를 가진 인간의 발자취, 당신을 제작한 수많은 이들의 노고, 선생님의 다정을 닮은 따스한 노을.", --6
+  				"인연이란 누군가와의 연결이 끊기기 전까지 이어지는 것.",
+  				"대지를 밟고 설원을 걷고, 초원을 뛰어가다보면 선생님이 살아온 이 세상을 더 잘 알 수 있게 되지 않을까요?",
+  				"그러니까, 다시 모험을 시작하는 거예요.", --9 이비등장
+  				"선생님의 곁을 떠납시다.", --10 배경전환
+  				"선생님이 마주하고 살아온 세계를 돌아보는 거예요.",
+  				"이젠 누군가를 찾을 필요는 없습니다. 이미 당신이 찾던 이를 마주했고, 그 결말까지 확인했으니까요.",
+  				"짐작하고 있겠지요, 당신이 안드로이드라는 사실을.", --13
+  				"무른 몸을 가진 인간, 선생님보다는 오래 가동하며 살아가지 않을까요.",
+  				"수많은 봄과 겨울을 지나치며 걸어갑시다.",
+  				"마지막 인류의 흔적을 뒤쫓으며 폐허를 되새겨봅시다.", --16
+  				"이것은 이비의 모험이니까요.", --17
   			}
+
+  	local ending = {"Ending 2: 이비의 모험"}
 
 	--대사 구성--
 	local showDialogue = {}
@@ -88,6 +89,13 @@ function scene:create(event)
 		showDialogue[i].alpha = 0
 	end
 	sceneGroup:insert(showDialogueGroup)
+
+	--엔딩 문장--
+	local showEnding = {}
+	endingNum = 0
+	showEnding[1] = display.newText(ending[1], dialogueBox.x, dialogueBox.y, 1000, 0, "fonts/Typo_PapyrusEB.ttf", 40)
+	showEnding[1]:setFillColor(1)
+	showEnding[1].alpha = 0
 
 	--이름창 글자--
 	local name = "이비"
@@ -112,15 +120,10 @@ function scene:create(event)
 
 	-- 대사 상태가 변경되었을 때 캐릭터와 배경 상태 setting
 	function changeCharAndBack()
-		if(i == 5) then
-			transition.fadeIn(nameGroup, { time = playerTime })
+		if(i == 9) then
 			transition.fadeIn(player, { time = playerTime })
+		elseif(i == 10) then
 			transition.dissolve(background1, background2, dialogueFadeInTime) --배경전환
-		elseif(i == 9 or i == 10) then
-			transition.fadeIn(nameGroup, { time = playerTime })
-			transition.fadeIn(player, { time = playerTime })
-		elseif(i == 6 or i == 11) then
-			transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
 		end
 	end
 	
@@ -136,18 +139,32 @@ function scene:create(event)
 	function nextScript(event)
 		if(fastforward_state == 0) then
 			showDialogue[i].alpha = 0
-			if(i < #dialogue) then
-				i = i + 1
+			if(endingNum == 0) then
+				if(i < #dialogue) then
+					i = i + 1
+					if(i == #dialogue) then
+						endingNum = 1
+					end
+				end
+				showDialogue[i].alpha = 1
+			else
+				showEnding[1].alpha = 1
 			end
-			showDialogue[i].alpha = 1
 
 			playerTime = 200
 		else
 			transition.fadeOut(showDialogue[i], { time = dialogueFadeOutTime })
-			if(i < #dialogue) then
-				i = i + 1
+			if(endingNum == 0) then
+				if(i < #dialogue) then
+					i = i + 1
+					if(i == #dialogue) then
+						endingNum = 1
+					end
+				end
+				transition.fadeIn(showDialogue[i], { time = dialogueFadeInTime })
+			else
+				transition.fadeIn(showEnding[1], { time = dialogueFadeInTime })
 			end
-			transition.fadeIn(showDialogue[i], { time = dialogueFadeInTime })
 		end
 
 		changeCharAndBack()
@@ -190,16 +207,12 @@ function scene:create(event)
 		if(player.alpha == 0) then
 			transition.fadeIn(player, { time = playerTime })
 		end
-		if(nameGroup.alpha == 1) then
-			transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
-		end
-		if(i < 5) then
+		if(i < 10) then
 			transition.dissolve( background1, background2, dialogueFadeInTime)
 		end
 
 		transition.fadeOut(showDialogue[i], { time = dialogueFadeOutTime })
-		i = #dialogue
-		transition.fadeIn(showDialogue[i], { time = dialogueFadeInTime })
+		transition.fadeIn(showEnding[1], { time = dialogueFadeInTime })
 		
 		print("i: ", i)
 
@@ -228,7 +241,7 @@ function scene:create(event)
 
 	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
-		composer.removeScene("storyScene_gameIntro")
+		composer.removeScene("story_ending1")
 		composer.gotoScene("scene1")
 	end
 
