@@ -93,7 +93,7 @@ function scene:create(event)
 	--엔딩 문장--
 	local showEnding = {}
 	endingNum = 0
-	showEnding[1] = display.newText(ending[1], dialogueBox.x, dialogueBox.y, 1000, 0, "fonts/Typo_PapyrusEB.ttf", 40)
+	showEnding[1] = display.newText(ending[1], dialogueBox.x, dialogueBox.y, 1000, 0, "fonts/국립박물관문화재단클래식B.ttf", 27)
 	showEnding[1]:setFillColor(1)
 	showEnding[1].alpha = 0
 
