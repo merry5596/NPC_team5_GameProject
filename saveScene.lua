@@ -39,17 +39,47 @@ function scene:create( event )
 
 
 	--메뉴닫기--
-	local function menuClose(event)
-		if(event.phase == "began") then
-			if(composer.getVariable("sceneName") == home) then
+	local bounds_close = menuCloseButton.contentBounds
+	local isOut_close
+  	local function closeMenu(event)
+  		if event.phase == "began" then
+  			isOut_close = 0 	-- 이벤트 시작 시에는 이벤트가 버튼 안에 있음 (초기값)
 
-			else
-				dialogueBox:addEventListener("tap", nextScript)
+  			display.getCurrentStage():setFocus( event.target )
+    	    self.isFocus = true
+    	    
+    	    menuCloseButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	elseif self.isFocus then
+    		if event.phase == "moved" then
+    			-- 1. 이벤트가 버튼 밖에 있지만 isOut_close == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
+    			if (event.x < bounds_close.xMin or event.x > bounds_close.xMax or event.y < bounds_close.yMin or event.y > bounds_close.yMax) and isOut_close == 0 then
+    				menuCloseButton:scale(1.1, 1.1)	-- 버튼 커짐
+    				isOut_close = 1 	-- 이벤트가 버튼 밖에 있음을 상태로 저장
+
+    			-- 2. 이벤트가 버튼 안에 있지만 isOut_close == 1인 경우(방금까지 밖에 있었을 경우)에만 수행 (처음 안으로 들어올 때 한 번 수행)
+    			elseif (event.x >= bounds_close.xMin and event.x <= bounds_close.xMax and event.y >= bounds_close.yMin and event.y <= bounds_close.yMax) and isOut_close == 1 then
+    				menuCloseButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    				isOut_close = 0 	-- 이벤트가 버튼 안에 있음을 상태로 저장
+    			end
+	        elseif event.phase == "ended" or event.phase == "cancelled" then
+	            display.getCurrentStage():setFocus( nil )
+	            self.isFocus = false
+
+	        	-- 버튼 안에서 손을 뗐을 시에만 메뉴 실행
+  				if event.x >= bounds_close.xMin and event.x <= bounds_close.xMax and event.y >= bounds_close.yMin and event.y <= bounds_close.yMax then
+		        	menuCloseButton:scale(1.1, 1.1)
+		        	-- 여기부터가 실질적인 action에 해당
+		        	if(composer.getVariable("sceneName") == home) then
+
+					else
+						dialogueBox:addEventListener("tap", nextScript)
+					end
+					composer.hideOverlay()
+				end	
 			end
-			composer.hideOverlay()
-		end
-	end
-	menuCloseButton:addEventListener("touch", menuClose)
+	    end	
+  	end
+	menuCloseButton:addEventListener("touch", closeMenu)
 
 	local loadsave = require( "loadsave" )
 	local saveDatas = loadsave.loadTable("saveDatas.json")
@@ -65,7 +95,7 @@ function scene:create( event )
 	-- 화면에 슬롯 출력
 	local slotList = {}
 	for i = 1, #saveList do
-				if saveList[i] ~= "" then
+		if saveList[i] ~= "" then
 			saveSlot = display.newImage("image/component/저장된데이터.png")
 			saveSlot.x, saveSlot.y = slotPosX[i], slotPosY[i]
 			local saveDate = display.newText(saveList[i].date, slotPosX[i], slotPosY[i], "fonts/GowunBatang-Bold", 22)
@@ -90,106 +120,93 @@ function scene:create( event )
 	end
 
 	-- save 이벤트 함수
-	local function save(event)
-    	print("save function!")
-		-- 현재 씬 이름
-		print(composer.getSceneName( "current" ))
-		-- local gameSettings = {
-		--     -- musicOn = true,
-		--     -- soundOn = true,
-		--     -- difficulty = "easy",
-		--     -- highScore = 10000,
-		--     -- highestLevel = 7
-		-- }
+  	local function save(event)
+        if event.phase == "ended" or event.phase == "cancelled" then
+	    	print("save function!")
+			-- 현재 씬 이름
+			-- print(composer.getSceneName( "current" ))
 
-		-- 날짜와 시간 저장
-		local date = os.date( "*t" )    -- Returns table of date & time values in local time
-		-- print( date.year, date.month )  -- Print year and month
-		-- print( date.hour, date.min )    -- Print hour and minutes
-		local savingDate = date.year .. "-" .. date.month .. "-" .. date.day
-		local min = date.min
-		-- 0~9분은 00~09분으로 표기
-		if min / 10 < 1 then
-			min = 0 .. min
-		end
-		local savingTime = date.hour .. ":" .. min
+			-- local gameSettings = {
+			--     -- musicOn = true,
+			--     -- soundOn = true,
+			--     -- difficulty = "easy",
+			--     -- highScore = 10000,
+			--     -- highestLevel = 7
+			-- }
 
-		-- 현재 대사 위치 저장
-		local scriptNum = composer.getVariable("scriptNum")
-		print("saveScene: 현재 위치: ", scriptNum)
-
-		local saveContent = {
-			-- 현재 씬 저장
-			scene = composer.getSceneName( "current" ),
-			-- 현재 시간 저장
-			date = savingDate,
-			time = savingTime, 
-			scriptNum = scriptNum
-		}
-
-		local index = 0
-		for i = 1, #slotList do
-			if slotList[i] == event.target then
-				index = i
-				break
+			-- 날짜와 시간 저장
+			local date = os.date( "*t" )    -- Returns table of date & time values in local time
+			-- print( date.year, date.month )  -- Print year and month
+			-- print( date.hour, date.min )    -- Print hour and minutes
+			local savingDate = date.year .. "-" .. date.month .. "-" .. date.day
+			local min = date.min
+			-- 0~9분은 00~09분으로 표기
+			if min / 10 < 1 then
+				min = 0 .. min
 			end
-		end
+			local savingTime = date.hour .. ":" .. min
 
-		saveList[index] = saveContent
+			-- 현재 대사 위치 저장
+			local scriptNum = composer.getVariable("scriptNum")
+			print("saveScene: 현재 위치: ", scriptNum)
 
-		local saveDatas = {
-			saveList = saveList
-		}
+			local saveContent = {
+				-- 현재 씬 저장
+				scene = composer.getSceneName( "current" ),
+				-- 현재 시간 저장
+				date = savingDate,
+				time = savingTime, 
+				scriptNum = scriptNum
+			}
 
-		-- loadsave.saveTable( gameSettings, "settings.json" )
-		loadsave.saveTable(saveDatas, "saveDatas.json")
+			local index = 0
+			for i = 1, #slotList do
+				if slotList[i] == event.target then
+					index = i
+					break
+				end
+			end
 
-		-- 저장 완료시 텍스트 띄움
-		-- composer.showOverlay("saveCompleteScene", overlayOption)
+			saveList[index] = saveContent
 
-		local completeBox = display.newRect(display.contentCenterX, display.contentCenterY, 500, 100)
-		completeBox:setFillColor(1)
-		completeBox.alpha = 0.5
-		local completeText = display.newText("저장 완료", display.contentCenterX, display.contentCenterY, "fonts/GowunBatang-Bold", 25)
-		completeText:setFillColor(0.2)
-		completeText.alpha = 1
+			local saveDatas = {
+				saveList = saveList
+			}
 
-		local completeGroup = display.newGroup()
-		completeGroup:insert(completeBox)
-		completeGroup:insert(completeText)
+			-- loadsave.saveTable( gameSettings, "settings.json" )
+			loadsave.saveTable(saveDatas, "saveDatas.json")
 
-		-- 세이브창 안보이게(hide는 아님) 하며 저장 완료 텍스트 출력
-		sceneGroup.alpha = 0
-		transition.to(completeGroup, {time = 600, delay=600, alpha = 0})
-		
-		-- 아래의 타이머 완료 후 completeGroup을 sceneGroup에 넣고 hide
-		local function afterTimer()
-			print("afterTimer runs!")
-			sceneGroup:insert(completeGroup)
-			composer.hideOverlay()
-		end
+			-- 저장 완료시 텍스트 띄움
+			local completeBox = display.newRect(display.contentCenterX, display.contentCenterY, 500, 100)
+			completeBox:setFillColor(1)
+			completeBox.alpha = 0.5
+			local completeText = display.newText("저장 완료", display.contentCenterX, display.contentCenterY, "fonts/GowunBatang-Bold", 25)
+			completeText:setFillColor(0.2)
+			completeText.alpha = 1
 
-		-- 텍스트 출력동안 대기
-		timer.performWithDelay( 1200, afterTimer)
-	end
+			local completeGroup = display.newGroup()
+			completeGroup:insert(completeBox)
+			completeGroup:insert(completeText)
 
-	-- 슬롯마다 이벤트 리스너
-	-- 반복문으로 못하는 이유는...?
+			-- 세이브창 안보이게(hide는 아님) 하며 저장 완료 텍스트 출력
+			sceneGroup.alpha = 0
+			transition.to(completeGroup, {time = 600, delay=600, alpha = 0})
+			
+			-- 아래의 타이머 완료 후 completeGroup을 sceneGroup에 넣고 hide
+			local function afterTimer()
+				print("afterTimer runs!")
+				sceneGroup:insert(completeGroup)
+				composer.hideOverlay()
+			end
+
+			-- 텍스트 출력동안 대기
+			timer.performWithDelay( 1200, afterTimer)
+	    end	
+  	end
+  	-- 슬롯마다 이벤트 리스너
 	for i = 1, #slotList do
-		slotList[i]:addEventListener("tap", save)
+		slotList[i]:addEventListener("touch", save)
 	end
-	-- slotList[1]:addEventListener("tap", save(1))
-	-- slotList[2]:addEventListener("tap", save(2))
-	-- slotList[3]:addEventListener("tap", save(3))
-	-- slotList[4]:addEventListener("tap", save(4))
-	-- slotList[5]:addEventListener("tap", save(5))
-	-- slotList[6]:addEventListener("tap", save(6))
-	-- slotList[7]:addEventListener("tap", save(7))
-	-- slotList[8]:addEventListener("tap", save(8))
-	-- slotList[9]:addEventListener("tap", save(9))
-
-	--composer.gotoScene("view2")
-
 end
 
 function scene:show( event )
