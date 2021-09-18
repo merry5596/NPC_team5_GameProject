@@ -11,12 +11,10 @@ background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
 --메뉴버튼--
 local menuButton = display.newImage("image/component/menu_button.png")
 menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
-sceneGroup:insert(menuButton)
 
 --레벨--
 local level = display.newImage("image/component/level.png")
 level.x, level.y = display.contentWidth*0.095, display.contentHeight*0.115
-sceneGroup:insert(level)
 
 --레벨에 스코어 표시--
 local score = 0 
