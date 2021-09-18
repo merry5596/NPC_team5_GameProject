@@ -231,25 +231,43 @@ function scene:create(event)
 		end
 	end
 
+	function setCharAndBack()
+		playerAppear()
+		if i >= 7 then
+			transition.dissolve(background2, background1, dialogueFadeInTime) --배경전환
+		end
+		if i >= 42 and i <= 47 then
+			teacher.alpha = 1
+		end
+		if i == 60 then
+			nameGroup.alpha = 1
+			player.alpha = 1
+		end
+		if i >= 62 and i <= 65 then
+			teacher.alpha = 1
+		end
+	end
+
+
 	--클릭으로 대사 전환+선택지 전개--
 	i = 1
 	function nextScript(event)
-		print("i: ", i)
+		-- print("i: ", i)
 		if(fastforward_state == 0) then
 			--스토리 전환
-			if(i < #dialogue + #bookStory - 1) then
+			if(i < #dialogue + #bookStory) then
 				if(i <= 22 or i >= 47) then --대사 전환
 					if(i == 47) then
 						showBookStory[#bookStory].alpha = 0
 					end
 					showDialogue[dialogueNum].alpha = 0
 					dialogueNum = dialogueNum + 1
-					if(i < #dialogue + #bookStory - 1) then
+					if(i < #dialogue + #bookStory) then
 						i = i + 1
 						showDialogue[dialogueNum].alpha = 1
 					end
 				else --책내용 전환
-					if(i == 23) then
+					if(i == 23) then						
 						showDialogue[22].alpha = 0
 					end
 					showBookStory[bookStoryNum].alpha = 0
@@ -260,19 +278,23 @@ function scene:create(event)
 				if(i == 22 or i == 45) then
 					i = i + 1
 				end
+				print("\ni: ", i)
+				print("dialogueNum: ", dialogueNum)
+				-- print("bookStoryNum: ", bookStoryNum)
+
 			end
 
 			playerTime = 200
 		else
 			--스토리 전환
-			if(i < #dialogue + #bookStory - 1) then
+			if(i < #dialogue + #bookStory) then
 				if(i <= 22 or i >= 47) then --대사 전환
 					if(i == 47) then
 						transition.fadeOut(showBookStory[#bookStory], { time = dialogueFadeOutTime })
 					end
 					transition.fadeOut(showDialogue[dialogueNum], { time = dialogueFadeOutTime })
 					dialogueNum = dialogueNum + 1
-					if(i < #dialogue + #bookStory - 1) then
+					if(i < #dialogue + #bookStory) then
 						i = i + 1
 						transition.fadeIn(showDialogue[dialogueNum], { time = dialogueFadeInTime })
 					end
@@ -324,7 +346,7 @@ function scene:create(event)
 			i = 20
 		elseif(dialogueNum == 25) then
 			dialogueNum = 26
-			i = 49
+			i = 50
 		end
 		showDialogue[dialogueNum].alpha = 1
 	end
@@ -445,9 +467,38 @@ function scene:create(event)
        	if event.params.scriptNum then
 			print("params.scriptNum: ", event.params.scriptNum)
 			i = event.params.scriptNum
-			showDialogue[1].alpha = 0
-			showDialogue[i].alpha = 1
-			playerAppear()
+
+			-- 첫 대사는 안보이게
+			showDialogue[2].alpha = 0
+			
+			if i <= 23 then		-- 책 전 대사
+				if i == 23 then	-- 책 전 마지막 대사
+					dialogueNum = 22
+				else
+					dialogueNum = i
+				end
+					showDialogue[dialogueNum].alpha = 1				
+			elseif i >= 24 and i < 48 then		-- 책 내용
+				dialogueNum = 22
+				
+				if i >= 46 then
+					bookStoryNum = i - 23
+				else
+					bookStoryNum = i - 22
+				end
+
+				showBookStory[bookStoryNum].alpha = 1
+			elseif i >= 48 and i < 50 then 	-- 책 후 대사 1
+				dialogueNum = i - 25
+				bookStoryNum = 24
+				showDialogue[dialogueNum].alpha = 1
+			elseif i >= 50 then
+				dialogueNum = i - 24
+				bookStoryNum = 24
+				showDialogue[dialogueNum].alpha = 1
+			end
+
+			setCharAndBack()
 		end
 	end
 
