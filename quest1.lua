@@ -5,30 +5,30 @@ function scene:create( event )
 local sceneGroup = self.view
 
 --배경--
-local background = display.newImage("image/background/ruins_nature.jpg", display.contentWidth, display.contentHeight)
-background.x, background.y = display.contentCenterX, display.contentCenterY
+local background = display.newImageRect("image/background/퀘스트.png", display.contentWidth, display.contentHeight)
+background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
 
+--메뉴--
 local menuButton = display.newImage("image/component/menu_button.png")
 menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
 
--- 퀘스트 박스--
-local quest1 = display.newImage("image/component/퀘스트클리어.png")
-quest1.x, quest1.y = display.contentCenterX, display.contentCenterY
+-- 퀘스트 제시 박스--
+local quest = display.newImageRect("image/component/퀘스트제시(수정).png", 700, 600)
+quest.x, quest.y = display.contentCenterX, display.contentCenterY
 
+--퀘스트 설명--
 local options = 
 {
-    text = "정말로 저곳에 선생님이 계실까?\n\n역시 잘 모르겠다만, 선생님은 늘 연장을 들고 계셨으니까.\n\n늘 숲에서 찾기 어려운 물품을 갖고 계시지 않았나.",
+    text = "숲을 돌아다녀 보자.\n\n선생님은 어디에 계신 걸까?\n\n맑은 하늘 아래를 쏘다니고\n\n수풀 속에 얼굴을 들이밀면 선생님을 찾을 수 있을지도 모른다.",
     x = display.contentCenterX,
-    y = display.contentCenterY-70,
+    y = display.contentCenterY+25,
     font = "fonts/GowunBatang-Bold.ttf",
-    fontSize = 20,
+    fontSize = 24,
     align = "center"
 }
 
 local myText = display.newText( options )
 myText:setFillColor( 1 )
-
-local quest = display.newText("아이템을 터치하여 선생님을 찾기 위한 경험치를 획득하자.", display.contentCenterX, display.contentCenterY+150, "fonts/GowunBatang-Bold.ttf", 20)
 
 local inventoryBox = display.newImage("image/component/inventory_box.png")
 inventoryBox.x, inventoryBox.y = display.contentWidth*0.365, display.contentHeight*0.58
@@ -113,6 +113,8 @@ local sceneGroup = self.view
 -- INSERT code here to cleanup the scene
 -- e.g. remove display objects, remove touch listeners, save state, etc.
 end
+
+
 ---------------------------------------------------------------------------------
 
 -- Listener setup

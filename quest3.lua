@@ -4,31 +4,31 @@ local scene = composer.newScene()
 function scene:create( event )
 local sceneGroup = self.view
 
--- 임시 배경 --
-local background = display.newImageRect("image/background/오두막내부임시배경.jpg", display.contentWidth, display.contentHeight)
+--배경--
+local background = display.newImageRect("image/background/퀘스트.png", display.contentWidth, display.contentHeight)
 background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
 
+--메뉴--
 local menuButton = display.newImage("image/component/menu_button.png")
 menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
 
---퀘스트 박스--
-local quest1 = display.newImage("image/component/퀘스트클리어.png")
-quest1.x, quest1.y = display.contentCenterX, display.contentCenterY
+-- 퀘스트 제시 박스--
+local quest = display.newImageRect("image/component/퀘스트제시(수정).png", 700, 600)
+quest.x, quest.y = display.contentCenterX, display.contentCenterY
 
+--퀘스트 설명--
 local options = 
 {
-    text = "선생님은 어디에 계신 걸까?\n\n목소리를 더 높여서 선생님을 외쳐보면 불쑥 튀어나오시지 않을까?",
+    text = "폐허 가득한 세계\n\n푸른 녹음은 어디로 사라진 걸까?\n\n이상하게도,\n\n선생님과 머물던 그 숲만 화려한 색채를 유지하고 있었다.",
     x = display.contentCenterX,
-    y = display.contentCenterY-70,
+    y = display.contentCenterY+25,
     font = "fonts/GowunBatang-Bold.ttf",
-    fontSize = 20,
+    fontSize = 24,
     align = "center"
 }
 
 local myText = display.newText( options )
 myText:setFillColor( 1 )
-
-local quest = display.newText("아이템을 터치하여 선생님을 찾기 위한 경험치를 획득하자.", display.contentCenterX, display.contentCenterY+150, "fonts/GowunBatang-Bold.ttf", 20 )
 
 local inventoryBox = display.newImage("image/component/inventory_box.png")
 inventoryBox.x, inventoryBox.y = display.contentWidth*0.365, display.contentHeight*0.58
@@ -113,6 +113,8 @@ local sceneGroup = self.view
 -- INSERT code here to cleanup the scene
 -- e.g. remove display objects, remove touch listeners, save state, etc.
 end
+
+
 ---------------------------------------------------------------------------------
 
 -- Listener setup
@@ -122,4 +124,3 @@ scene:addEventListener( "hide", scene )
 scene:addEventListener( "destroy", scene )
 
 return scene
-

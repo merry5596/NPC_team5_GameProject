@@ -5,17 +5,28 @@ function scene:create( event )
 local sceneGroup = self.view
 
 --배경--
-local background = display.newImage("image/background/ruins_nature.jpg", display.contentWidth, display.contentHeight)
-background.x, background.y = display.contentCenterX, display.contentCenterY
+local background = display.newImageRect("image/background/퀘스트.png", display.contentWidth, display.contentHeight)
+background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
 
 local menuButton = display.newImage("image/component/menu_button.png")
 menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
 
--- 퀘스트 박스--
-local quest1 = display.newImageRect("image/component/퀘스트제시.png", 700, 200)
-quest1.x, quest1.y = display.contentCenterX, display.contentCenterY
+-- 퀘스트 제시 박스--
+local quest = display.newImageRect("image/component/퀘스트제시(수정).png", 700, 600)
+quest.x, quest.y = display.contentCenterX, display.contentCenterY
 
-local title = display.newText("선생님이 풍기던 기름 냄새를 뒤쫓자.", display.contentCenterX+150, display.contentCenterY,"fonts/GowunBatang-Bold.ttf", 22)
+local options = 
+{
+    text = "숲을 돌아다녀 보자.\n\n선생님은 어디에 계신 걸까?\n\n목소리를 더 높여서 선생님을 외쳐보면\n\n불쑥 튀어나오시지 않을까?",
+    x = display.contentCenterX,
+    y = display.contentCenterY+25,
+    font = "fonts/GowunBatang-Bold.ttf",
+    fontSize = 24,
+    align = "center"
+}
+
+local myText = display.newText( options )
+myText:setFillColor( 1 )
 
 local inventoryBox = display.newImage("image/component/inventory_box.png")
 inventoryBox.x, inventoryBox.y = display.contentWidth*0.365, display.contentHeight*0.58
@@ -100,8 +111,6 @@ local sceneGroup = self.view
 -- INSERT code here to cleanup the scene
 -- e.g. remove display objects, remove touch listeners, save state, etc.
 end
-
-
 ---------------------------------------------------------------------------------
 
 -- Listener setup

@@ -5,19 +5,28 @@ function scene:create( event )
 local sceneGroup = self.view
 
 --배경--
-local background = display.newImageRect("image/background/forest(겨울).png", display.contentWidth, display.contentHeight)
+local background = display.newImageRect("image/background/퀘스트.png", display.contentWidth, display.contentHeight)
 background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
 
 local menuButton = display.newImage("image/component/menu_button.png")
 menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
 
--- 퀘스트 박스--
-local quest1 = display.newImageRect("image/component/퀘스트제시.png", 700, 200)
-quest1.x, quest1.y = display.contentCenterX, display.contentCenterY
+-- 퀘스트 제시 박스--
+local quest = display.newImageRect("image/component/퀘스트제시(수정).png", 700, 600)
+quest.x, quest.y = display.contentCenterX, display.contentCenterY
 
---퀘스트 제목--
-local title = display.newText("설원 위 숨바꼭질", display.contentCenterX+150, display.contentCenterY,"fonts/GowunBatang-Bold.ttf", 30)
+local options = 
+{
+    text = "무덤가에 피는 꽃\n\n선생님의 방에서 약도를 찾았다.\n\n선생님 동료들의 무덤가가 있는 장소인 듯하다.\n\n일단 가보는 것이 좋겠지...\n\n선생님의 말씀을 되새겨보며 가보도록 하자.",
+    x = display.contentCenterX,
+    y = display.contentCenterY+30,
+    font = "fonts/GowunBatang-Bold.ttf",
+    fontSize = 24,
+    align = "center"
+}
 
+local myText = display.newText( options )
+myText:setFillColor( 1 )
 
 local inventoryBox = display.newImage("image/component/inventory_box.png")
 inventoryBox.x, inventoryBox.y = display.contentWidth*0.365, display.contentHeight*0.58
@@ -102,6 +111,7 @@ local sceneGroup = self.view
 -- INSERT code here to cleanup the scene
 -- e.g. remove display objects, remove touch listeners, save state, etc.
 end
+
 
 ---------------------------------------------------------------------------------
 
