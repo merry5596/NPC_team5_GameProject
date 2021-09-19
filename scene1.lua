@@ -15,30 +15,41 @@ function scene:create(event)
 -------------------변수---------------------------------------------------------------------------------
 
 	--배경 이미지 흰 바탕으로 대체
-	local background = display.newRect(display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight)
-	background:setFillColor(1)
+	-- local background = display.newRect(display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight)
+	-- background:setFillColor(1)
+	-- sceneGroup:insert(background)
+	local background = display.newImageRect("image/background/title.png", display.contentWidth, display.contentHeight)
+	background.x, background.y = display.contentCenterX, display.contentCenterY
 	sceneGroup:insert(background)
 
-	--타이틀 이미지 텍스트로 대체
-	local Title = "이비의 모험 : 선생님을 찾아서"
-	local showTitle = display.newText(Title, display.contentWidth/2, display.contentHeight/2-50) 
-	showTitle:setFillColor(0) 
-	showTitle.size = 80
-	sceneGroup:insert(showTitle)
+	-- --타이틀 이미지 텍스트로 대체
+	-- local Title = "이비의 모험 : 선생님을 찾아서"
+	-- local showTitle = display.newText(Title, display.contentWidth/2, display.contentHeight/2-50) 
+	-- showTitle:setFillColor(0) 
+	-- showTitle.size = 80
+	-- sceneGroup:insert(showTitle)
 
 	-- 불러오기 버튼
-	local load_button = display.newImageRect("image/component/menu_import.png", 350, 85)
-	load_button.x, load_button.y = display.contentWidth/2, display.contentHeight/2+150
+	local load_button = display.newImage("image/component/start_불러오기.png")
+	load_button.x, load_button.y = display.contentCenterX, display.contentHeight/2+160
 	sceneGroup:insert(load_button)
 
-	-- 시작하기 버튼 불러오기 버튼으로 대체
-	local start_button = display.newImageRect("image/component/menu_import.png", 350, 85)
-	start_button.x, start_button.y = display.contentWidth/2, display.contentHeight/2+260
+	-- 시작하기 버튼 불러오기 버튼으로 대체menu_import
+	local start_button = display.newImage("image/component/start_시작하기.png")
+	start_button.x, start_button.y = display.contentCenterX, display.contentHeight/2+230
 	sceneGroup:insert(start_button)		
 
-	local resetButton = display.newImageRect("image/component/menu_import.png", 350, 85)
-	resetButton.x, resetButton.y = display.contentWidth/2 + 150, display.contentHeight/2-150
-	sceneGroup:insert(resetButton)
+	-- 초기화 (테스트용)
+	local resetBox = display.newRect(display.contentWidth * 0.1, display.contentHeight * 0.08, 180, 60)
+	resetBox.alpha = 0.55
+
+	local resetButton = display.newText("데이터 초기화", display.contentWidth * 0.1, display.contentHeight * 0.08, "fonts/GowunBatang-Bold.ttf", 25)
+	resetButton:setFillColor(0)
+
+	local resetGroup = display.newGroup()
+	resetGroup:insert(resetBox)
+	resetGroup:insert(resetButton)
+	sceneGroup:insert(resetGroup)
 
 	 local overlayOption =
 	{
@@ -138,23 +149,80 @@ function scene:create(event)
   	end
 	start_button:addEventListener("touch", gameStart)
 
-	-- 초기화 가능 (ui 없으면 테스트용으로 사용)
-	function reset(event)
-		print("reset")
-		local json = require( "json" )
-		local destDir = system.DocumentsDirectory
-		local result1, reason1 = os.remove( system.pathForFile( "saveDatas.json", destDir ) )
-  		local result2, reason2 = os.remove( system.pathForFile( "userSettings.json", destDir ) )
+	local bounds_reset = resetGroup.contentBounds
+	local isOut_reset
+	-- 초기화 가능 (테스트용)
+	local function reset(event)
+  		if event.phase == "began" then
+  			isOut_reset = 0 	-- 이벤트 시작 시에는 이벤트가 버튼 안에 있음 (초기값)
 
-		if result1 or result2 then
-		   print( "File removed" )
-		elseif result2 then		-- 1 존재
-		   print( "File does not exist", reason1 )  --> File does not exist    apple.txt: No such file or directory
-		elseif result1 then 	-- 2 존재
-			rint( "File does not exist", reason2 )  --> File does not exist    apple.txt: No such file or directory
-		end
-	end
-	resetButton:addEventListener("touch", reset)
+  			display.getCurrentStage():setFocus( event.target )
+    	    self.isFocus = true
+    	    
+    	    resetBox.alpha = 0.75
+    	elseif self.isFocus then
+    		if event.phase == "moved" then
+    			-- 1. 이벤트가 버튼 밖에 있지만 isOut_reset == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
+    			if (event.x < bounds_reset.xMin or event.x > bounds_reset.xMax or event.y < bounds_reset.yMin or event.y > bounds_reset.yMax) and isOut_reset == 0 then
+    				resetBox.alpha = 0.55
+    				isOut_reset = 1 	-- 이벤트가 버튼 밖에 있음을 상태로 저장
+
+    			-- 2. 이벤트가 버튼 안에 있지만 isOut_reset == 1인 경우(방금까지 밖에 있었을 경우)에만 수행 (처음 안으로 들어올 때 한 번 수행)
+    			elseif (event.x >= bounds_reset.xMin and event.x <= bounds_reset.xMax and event.y >= bounds_reset.yMin and event.y <= bounds_reset.yMax) and isOut_reset == 1 then
+    				resetBox.alpha = 0.75
+    				isOut_reset = 0 	-- 이벤트가 버튼 안에 있음을 상태로 저장
+    			end
+	        elseif event.phase == "ended" or event.phase == "cancelled" then
+	            display.getCurrentStage():setFocus( nil )
+	            self.isFocus = false
+
+	        	-- 버튼 안에서 손을 뗐을 시에만 메뉴 실행
+  				if event.x >= bounds_reset.xMin and event.x <= bounds_reset.xMax and event.y >= bounds_reset.yMin and event.y <= bounds_reset.yMax then
+		        	resetBox.alpha = 0.55
+		        	-- 여기부터가 실질적인 action에 해당
+		        	print("reset")
+					local json = require( "json" )
+					local destDir = system.DocumentsDirectory
+					local result1, reason1 = os.remove( system.pathForFile( "saveDatas.json", destDir ) )
+			  		local result2, reason2 = os.remove( system.pathForFile( "userSettings.json", destDir ) )
+
+					if result1 or result2 then
+					   	print( "File removed" )
+					   	-- 초기화 완료시 텍스트 띄움
+						local completeBox = display.newRect(display.contentCenterX, display.contentCenterY, 500, 100)
+						completeBox:setFillColor(1)
+						completeBox.alpha = 0.5
+						local completeText = display.newText("초기화 완료", display.contentCenterX, display.contentCenterY, "fonts/GowunBatang-Bold", 25)
+						completeText:setFillColor(0.2)
+						completeText.alpha = 1
+
+						local completeGroup = display.newGroup()
+						completeGroup:insert(completeBox)
+						completeGroup:insert(completeText)
+
+						-- 세이브창 안보이게(hide는 아님) 하며 저장 완료 텍스트 출력
+						-- sceneGroup.alpha = 0
+						transition.to(completeGroup, {time = 600, delay=600, alpha = 0})
+						
+						-- 아래의 타이머 완료 후 completeGroup을 sceneGroup에 넣고 hide
+						local function afterTimer()
+							print("afterTimer runs!")
+							sceneGroup:insert(completeGroup)
+							-- composer.hideOverlay()
+						end
+
+						-- 텍스트 출력동안 대기
+						timer.performWithDelay( 1200, afterTimer)
+					elseif result2 then		-- 1 존재
+					   print( "File does not exist", reason1 )  --> File does not exist    apple.txt: No such file or directory
+					elseif result1 then 	-- 2 존재
+						rint( "File does not exist", reason2 )  --> File does not exist    apple.txt: No such file or directory
+					end
+				end	
+			end
+	    end	
+  	end
+	resetGroup:addEventListener("touch", reset)
 
 end
 
