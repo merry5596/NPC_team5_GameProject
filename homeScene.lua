@@ -10,51 +10,55 @@ local scene = composer.newScene()
 function scene:create( event )
 	local sceneGroup = self.view
 	
-	-- 배경 --
-	-- local background = display.newRect(display.contentWidth/2, display.contentHeight/2, display.contentWidth, display.contentHeight)
-	-- background:setFillColor(1)
-	
 	-- 임시 배경 --
 	local background = display.newImageRect("image/background/forest임시배경.png", display.contentWidth, display.contentHeight)
 	background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
 	sceneGroup:insert(background)
 
+	--플레이어 그림--
 	local evy = display.newImage("image/component/evy.png")
 	evy.x, evy.y = display.contentWidth*0.5, display.contentHeight*0.6
-
 	sceneGroup:insert(evy)
 
+	--메뉴 버튼 그림--
 	local menuButton = display.newImage("image/component/menu_button.png")
    	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
 	sceneGroup:insert(menuButton)
 
+	--레벨 박스 그림--
 	local level = display.newImage("image/component/level.png")
    	level.x, level.y = display.contentWidth*0.095, display.contentHeight*0.115
 	sceneGroup:insert(level)
 
+	--지역이름 박스 그림--
 	local area = display.newImage("image/component/area.png")
 	area.x, area.y = display.contentWidth*0.31, display.contentHeight*0.115
 	sceneGroup:insert(area)
 
+	--재화 그림--
 	local money = display.newImage("image/component/money.png")
 	money.x, money.y = display.contentWidth*0.47, display.contentHeight*0.115
 	sceneGroup:insert(money)
 
+
+	--가방 그림--
 	local bag = display.newImage("image/component/bag.png")
 	bag.x, bag.y = display.contentWidth*0.07, display.contentHeight*0.275
 	sceneGroup:insert(bag)
 
-
+	--상자 클릭시 열리는 인벤토리 박스 그림--
 	local inventoryBox = display.newImage("image/component/inventory_box.png")
 	inventoryBox.x, inventoryBox.y = display.contentWidth*0.365, display.contentHeight*0.58
 	inventoryBox.isVisible = false
 	sceneGroup:insert(inventoryBox)
 
+	--인벤토리 박스 속 스크롤바 그림--
 	local scrollbar = display.newImage("image/component/inventory_scroll.png")
 	scrollbar.x, scrollbar.y = display.contentWidth*0.6736, display.contentHeight*0.35
 	scrollbar.isVisible = false
 	sceneGroup:insert(scrollbar)
 
+	--???--
 	local function fitImage( displayObject, fitWidth, fitHeight, enlarge )
 		--
 		-- first determine which edge is out of bounds
@@ -70,11 +74,41 @@ function scene:create( event )
 		displayObject:scale( scaleFactor, scaleFactor )
 	end
 
+	--인벤토리 박스 닫기버튼 그림--
 	local closeButton = display.newImage("image/component/menu_close.png")
 	fitImage( closeButton, 50, 50, true )
 	closeButton.x, closeButton.y = display.contentWidth*0.6736, display.contentHeight*0.24
 	closeButton.isVisible = false
 	sceneGroup:insert(closeButton)
+
+	--아이템 보석 그림--
+	local jewerly = {"", "", "", "", ""}
+	local jewerlyGroup = display.newGroup()
+	local jewerlyEXP = {10, 20, 40, 80, 160} --보석별 주는 경험치 배열
+
+	jewerly[1] = display.newImage(jewerlyGroup, "image/component/보석_빨.png") --루비
+	jewerly[2] = display.newImage(jewerlyGroup, "image/component/보석_노.png") --호박
+	jewerly[3] = display.newImage(jewerlyGroup, "image/component/보석_초.png") --에메랄드
+	jewerly[4] = display.newImage(jewerlyGroup, "image/component/보석_파.png") --사파이어
+	jewerly[5] = display.newImage(jewerlyGroup, "image/component/보석_흰.png") --다이아몬드
+	for i = 1, #jewerly do
+		jewerly[i]:scale(0.5, 0.5)
+		jewerly[i].alpha = 0
+	end
+	sceneGroup:insert(jewerlyGroup)
+
+	--인벤토리 박스 그룹 (보석이 인벤토리상자 뒤로 위치됨)--
+	local inventoryGroup = display.newGroup()
+	inventoryGroup:insert(inventoryBox)
+	inventoryGroup:insert(scrollbar)
+	inventoryGroup:insert(closeButton)
+
+	--아이템 보석 개수 변수--
+	jewerly1Num = 0
+	jewerly2Num = 0
+	jewerly3Num = 0
+	jewerly4Num = 0
+	jewerly5Num = 0
 
 	-- 소지품 열기
 	local bounds_bag = bag.contentBounds
@@ -110,11 +144,68 @@ function scene:create( event )
 		        	inventoryBox.isVisible = true
 					scrollbar.isVisible = true
 					closeButton.isVisible = true
-				end	
+				end
+
+				--인벤토리 내 아이템 보석 그림--
+				--루비--
+				jewerly1 = display.newImageRect("image/component/보석_빨.png", 80, 80)
+				jewerly1.x, jewerly1.y = inventoryBox.x - 340, inventoryBox.y - 160
+				-- sceneGroup:insert(jewerly1)
+				--호박--
+				jewerly2 = display.newImageRect("image/component/보석_노.png", 80, 80)
+				jewerly2.x, jewerly2.y = inventoryBox.x - 340, inventoryBox.y - 70
+				-- sceneGroup:insert(jewerly2)
+				--에메랄드--
+				jewerly3 = display.newImageRect("image/component/보석_초.png", 80, 80)
+				jewerly3.x, jewerly3.y = inventoryBox.x - 340, inventoryBox.y + 20
+				-- sceneGroup:insert(jewerly3)
+				--사파이어--
+				jewerly4 = display.newImageRect("image/component/보석_파.png", 80, 80)
+				jewerly4.x, jewerly4.y = inventoryBox.x - 340, inventoryBox.y + 110
+				-- sceneGroup:insert(jewerly4)
+				--다이아몬드--
+				jewerly5 = display.newImageRect("image/component/보석_흰.png", 80, 80)
+				jewerly5.x, jewerly5.y = inventoryBox.x - 340, inventoryBox.y + 200
+				-- sceneGroup:insert(jewerly5)
+
+				--인벤토리 내 아이템 보석 설명--
+				jewerly1Explain = display.newText("곱게 붉은 작은 루비. 손톱보다 작아서 그런 건지, 들고 다니기\n아주 간편합니다.", 
+					inventoryBox.x + 90, inventoryBox.y - 160, "fonts/GowunBatang-Bold.ttf", 20)
+				jewerly2Explain = display.newText("은은한 색채를 내뿜는 호박. 알찬 아름다움이 녹아들어 있습\n니다. 손톱보다는 조금 큼지막해요.", 
+					inventoryBox.x + 85, inventoryBox.y - 70, "fonts/GowunBatang-Bold.ttf", 20)
+				jewerly3Explain = display.newText("맑은 녹빛이 화려게 빛납니다. 꽤 묵직한 걸로 보아, 손가락 하\n나 정도의 크기인 듯합니다.", 
+					inventoryBox.x + 91, inventoryBox.y + 17, "fonts/GowunBatang-Bold.ttf", 20)
+				jewerly4Explain = display.newText("청명한 여름 하늘을 모아 담은 듯한 보석. 손바닥과 얼추 비\n슷한 면적입니다.", 
+					inventoryBox.x + 85, inventoryBox.y + 106, "fonts/GowunBatang-Bold.ttf", 20)
+				jewerly5Explain = display.newText("투명하게 반짝이는 다이아몬드. 크기도 큼직해서 그런 걸까요,\n탐스럽기 그지 없습니다.", 
+					inventoryBox.x + 93, inventoryBox.y + 196, "fonts/GowunBatang-Bold.ttf", 20)
+				-- sceneGroup:insert(jewerly1Explain)
+				-- sceneGroup:insert(jewerly2Explain)
+				-- sceneGroup:insert(jewerly3Explain)
+				-- sceneGroup:insert(jewerly4Explain)
+				-- sceneGroup:insert(jewerly5Explain)
+
+				--인벤토리 내 아이템 개수--
+				jewerly1ShowNum = display.newText("X " .. jewerly1Num, inventoryBox.x - 245, inventoryBox.y - 163, "fonts/GowunBatang-Bold.ttf", 40)
+				jewerly2ShowNum = display.newText("X " .. jewerly2Num, inventoryBox.x - 245, inventoryBox.y - 73, "fonts/GowunBatang-Bold.ttf", 40)
+				jewerly3ShowNum = display.newText("X " .. jewerly3Num, inventoryBox.x - 245, inventoryBox.y + 17, "fonts/GowunBatang-Bold.ttf", 40)
+				jewerly4ShowNum = display.newText("X " .. jewerly4Num, inventoryBox.x - 245, inventoryBox.y + 108, "fonts/GowunBatang-Bold.ttf", 40)
+				jewerly5ShowNum = display.newText("X " .. jewerly5Num, inventoryBox.x - 245, inventoryBox.y + 199, "fonts/GowunBatang-Bold.ttf", 40)
+				-- sceneGroup:insert(jewerly1ShowNum)
+				-- sceneGroup:insert(jewerly2ShowNum)
+				-- sceneGroup:insert(jewerly3ShowNum)
+				-- sceneGroup:insert(jewerly4ShowNum)
+				-- sceneGroup:insert(jewerly5ShowNum)
 			end
-	    end	
+	    end
   	end
 	bag:addEventListener("touch", openBag)
+
+	--인벤토리상자 클릭시 아래 보석 클릭 금지 함수--
+	local function inBag(event)
+		return true
+	end
+	inventoryGroup:addEventListener("tap", inBag)
 
 	-- 소지품 닫기
 	local bounds_close = closeButton.contentBounds
@@ -127,6 +218,24 @@ function scene:create( event )
     	    self.isFocus = true
     	    
     	    closeButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+
+    	    jewerly1.isVisible = false --인벤토리 내 아이템 보석 사라짐
+    	    jewerly2.isVisible = false
+    	    jewerly3.isVisible = false
+    	    jewerly4.isVisible = false
+    	    jewerly5.isVisible = false
+
+    	    jewerly1Explain.isVisible = false --인벤토리 내 아이템 보석 설명 사라짐
+    	    jewerly2Explain.isVisible = false
+    	    jewerly3Explain.isVisible = false
+    	    jewerly4Explain.isVisible = false
+    	    jewerly5Explain.isVisible = false
+
+    	    jewerly1ShowNum.isVisible = false --인벤토리 내 아이템 보석 개수 사라짐
+    	    jewerly2ShowNum.isVisible = false
+    	    jewerly3ShowNum.isVisible = false
+    	    jewerly4ShowNum.isVisible = false
+    	    jewerly5ShowNum.isVisible = false
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut_close == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
@@ -149,8 +258,8 @@ function scene:create( event )
 		        	-- 여기부터가 실질적인 action에 해당
 		        	inventoryBox.isVisible = false
 					scrollbar.isVisible = false
-					closeButton.isVisible = false
-				end	
+					closeButton.isVisible = falses
+				end
 			end
 	    end	
   	end
@@ -160,6 +269,147 @@ function scene:create( event )
 	{
 	    isModal = true
 	}
+
+----------------------------------------------------------------------------------
+
+	local level = 1 --임시 레벨 변수
+	local function levelUp(event) --임시 레벨업 함수
+		print("level:", level)
+		level = level + 1
+	end
+	timerLevel = timer.performWithDelay(10000, levelUp, 0)
+
+	-- local maxJewerlyNum = event.params.maxJewerly (사용 예정) --
+	local maxJewerlyNum = 5 --임시 maxJewerly 변수
+
+	if level < 7 then --targetLevel 넣을 예정
+		--보석 종류 구분 함수--
+		local function findJewerlyNum(timerParams)
+			local num
+			if timerParams == "j1" then
+				num = 1
+			elseif timerParams == "j2" then
+				num = 2
+			elseif timerParams == "j3" then
+				num = 3
+			elseif timerParams == "j4" then
+				num = 4
+			elseif timerParams == "j5" then
+				num = 5
+			end
+
+			return num
+		end
+			
+		--보석 등장 함수--
+		local function jewerlyfadeInOut(event)
+			local timerParams = event.source.params.params
+			local i = findJewerlyNum(timerParams)
+			-- print("i", i)
+
+			if jewerly[i].alpha == 0 then
+				jewerly[i].x, jewerly[i].y = display.contentCenterX + math.random(-450, 550),  
+					display.contentCenterY + math.random(-200, 300)
+				if jewerly[i].x > evy.x - 130 and jewerly[i].x < evy.x + 130 then
+					jewerly[i].x = jewerly[i].x + 200
+				end
+				transition.fadeIn(jewerly[i], { time = 1000 })
+			end
+
+			if level >= 7 then --targetLevel 넣을 예정 --타겟레벨 넘으면 보석 등장 종료
+				if maxJewerlyNum >= 1 then
+					timer.cancel(timer1)
+					if maxJewerlyNum >= 2 then
+						timer.cancel(timer2)
+						if maxJewerlyNum >= 3 then
+							timer.cancel(timer3)
+							if maxJewerlyNum >= 4 then
+								timer.cancel(timer4)
+								if maxJewerlyNum == 5 then
+									timer.cancel(timer5)
+								end
+							end
+						end
+					end
+				end
+				timer.cancel(timerLevel)
+			end
+		end
+
+		local presentEXP = 0 --현재 경험치 양
+		local increaseEXP = 0 --초당 증가하는 경험치 양
+
+		--보석 클릭해서 획득--
+		local function jewerlyClick_1(event)
+			transition.fadeOut(jewerly[1], { time = 100 })
+			jewerly1Num = jewerly1Num + 1
+			presentEXP = presentEXP + jewerlyEXP[1]
+			increaseEXP = increaseEXP + jewerlyEXP[1]
+		end
+		jewerly[1]:addEventListener("tap", jewerlyClick_1)
+		local function jewerlyClick_2(event)
+			transition.fadeOut(jewerly[2], { time = 100 })
+			jewerly2Num = jewerly2Num + 1
+			presentEXP = presentEXP + jewerlyEXP[2]
+			increaseEXP = increaseEXP + jewerlyEXP[2]
+		end
+		jewerly[2]:addEventListener("tap", jewerlyClick_2)
+		local function jewerlyClick_3(event)
+			transition.fadeOut(jewerly[3], { time = 100 })
+			jewerly3Num = jewerly3Num + 1
+			presentEXP = presentEXP + jewerlyEXP[3]
+			increaseEXP = increaseEXP + jewerlyEXP[3]
+		end
+		jewerly[3]:addEventListener("tap", jewerlyClick_3)
+		local function jewerlyClick_4(event)
+			transition.fadeOut(jewerly[4], { time = 100 })
+			jewerly4Num = jewerly4Num + 1
+			presentEXP = presentEXP + jewerlyEXP[4]
+			increaseEXP = increaseEXP + jewerlyEXP[4]
+		end
+		jewerly[4]:addEventListener("tap", jewerlyClick_4)
+		local function jewerlyClick_5(event)
+			transition.fadeOut(jewerly[5], { time = 100 })
+			jewerly5Num = jewerly5Num + 1
+			presentEXP = presentEXP + jewerlyEXP[5]
+			increaseEXP = increaseEXP + jewerlyEXP[5]
+		end
+		jewerly[5]:addEventListener("tap", jewerlyClick_5)
+
+		--경험치 자동증가 함수--
+		local function autoEXPUp(event)
+			presentEXP = presentEXP + increaseEXP
+			print("autoPresentEXP", presentEXP)
+			print("autoIncreaseEXP", increaseEXP)
+			if level >= 7 then --targetLevel 넣을 예정
+				timer.cancel(timerEXP)
+			end
+		end
+		timerEXP = timer.performWithDelay(1000, autoEXPUp, 0)
+
+		--보석 등장 메인 부분--
+		timer1 = timer.performWithDelay(5000, jewerlyfadeInOut, 0)
+		timer1.params = { params = "j1" }
+		if maxJewerlyNum >= 2 then
+			timer2 = timer.performWithDelay(10000, jewerlyfadeInOut, 0)
+			timer2.params = { params = "j2" }
+			if maxJewerlyNum >= 3 then
+				timer3 = timer.performWithDelay(16000, jewerlyfadeInOut, 0)
+				timer3.params = { params = "j3" }
+				if maxJewerlyNum >= 4 then
+					timer4 = timer.performWithDelay(25000, jewerlyfadeInOut, 0)
+					timer4.params = { params = "j4" }
+					if maxJewerlyNum == 5 then
+						timer5 = timer.performWithDelay(47000, jewerlyfadeInOut, 0)
+						timer5.params = { params = "j5" }
+					end
+				end
+			end
+		end
+
+	end
+
+-----------------------------------------------------------------------------------------
 
 	--메뉴열기--	
 	local bounds = menuButton.contentBounds

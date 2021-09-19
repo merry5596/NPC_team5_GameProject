@@ -17,7 +17,7 @@ local function onFirstView( event )
 end
 
 local function onSecondView( event )
-	composer.gotoScene( "quest6" )
+	composer.gotoScene( "homeScene" )
 end
 
 onSecondView()	-- invoke first tab button's onPress event manually
