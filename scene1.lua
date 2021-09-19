@@ -51,7 +51,10 @@ function scene:create(event)
 	resetGroup:insert(resetButton)
 	sceneGroup:insert(resetGroup)
 
-	 local overlayOption =
+	--sound
+	local buttonSound = audio.loadSound( "sound/buttonSound.mp3" )
+
+	local overlayOption =
 	{
 	    isModal = true
 	}
@@ -76,6 +79,7 @@ function scene:create(event)
     	    self.isFocus = true
     	    
     	    load_button:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	    audio.play( buttonSound )
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut_load == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
@@ -115,6 +119,7 @@ function scene:create(event)
     	    self.isFocus = true
     	    
     	    start_button:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	    audio.play( buttonSound )
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut_start == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
@@ -160,6 +165,7 @@ function scene:create(event)
     	    self.isFocus = true
     	    
     	    resetBox.alpha = 0.75
+    	    audio.play( buttonSound )
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut_reset == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)

@@ -9,9 +9,9 @@ function scene:create( event )
 	background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
 	sceneGroup:insert(background)
 
-	local menuButton = display.newImage("image/component/menu_button.png")
-	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
-	sceneGroup:insert(menuButton)
+	-- local menuButton = display.newImage("image/component/menu_button.png")
+	-- menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
+	-- sceneGroup:insert(menuButton)
 
 	-- 퀘스트 클리어 박스--
 	local qclearBox = display.newImageRect("image/component/퀘스트클리어(수정).png", 800, 270)
@@ -51,14 +51,14 @@ function scene:create( event )
 	closeButton.isVisible = false
 	sceneGroup:insert(closeButton)
 
-	--메뉴열기--
-	local function menuOpen(event)
-	  	if(event.phase == "began") then
-	  		composer.setVariable("sceneName", home)
-	  		composer.showOverlay("menuScene")
-	  	end
-	end
-	menuButton:addEventListener("touch", menuOpen)
+	-- --메뉴열기--
+	-- local function menuOpen(event)
+	--   	if(event.phase == "began") then
+	--   		composer.setVariable("sceneName", home)
+	--   		composer.showOverlay("menuScene")
+	--   	end
+	-- end
+	-- menuButton:addEventListener("touch", menuOpen)
 
 	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
