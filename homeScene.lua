@@ -636,7 +636,7 @@ function scene:hide( event )
 		-- timer.pause(timerEXP)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
-		composer.removeScene("home")
+		composer.removeScene("homeScene")
 
 	end
 end
