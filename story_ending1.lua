@@ -32,9 +32,9 @@ function scene:create(event)
 	sceneGroup:insert(player)
 
 	--어두운 플레이어 그림--
-	local player_dark = display.newImage("image/component/evy.png")
-	player_dark.x, player_dark.y = display.contentCenterX, display.contentCenterY*1.5
-	player_dark:scale(1.2, 1.2)
+	local player_dark = display.newImage("image/component/evy2.png")
+	player_dark.x, player_dark.y = display.contentCenterX*0.99, display.contentCenterY*1.51
+	player_dark:scale(1.3, 1.3)
 	player_dark:setFillColor(0.5)
 	player_dark.alpha = 0
 	sceneGroup:insert(player_dark)
@@ -133,6 +133,7 @@ function scene:create(event)
 		if(i == 2) then
 			transition.fadeIn(player, { time = playerTime })
 		elseif(i == 13) then
+			transition.fadeOut(player, { time = dialogueFadeOutTime })
 			transition.fadeIn(nameGroup, { time = playerTime })
 			transition.fadeIn(player_dark, { time = playerTime })
 		elseif(i == 14) then
@@ -233,6 +234,7 @@ function scene:create(event)
 
 	--스킵기능--
 	function skip(event)
+		print("here")
 		if(player.alpha == 0) then
 			transition.fadeIn(player, { time = playerTime })
 		end

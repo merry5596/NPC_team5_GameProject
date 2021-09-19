@@ -37,9 +37,9 @@ function scene:create(event)
 	sceneGroup:insert(player)
 
 	--선생님 그림--
-	local teacher = display.newImage("image/component/스탠딩_선생님.png")
-	teacher.x, teacher.y = display.contentCenterX, display.contentCenterY*1.6
-	teacher:scale(1.6, 1.6)
+	local teacher = display.newImage("image/component/스탠딩_쌤2.png")
+	teacher.x, teacher.y = display.contentCenterX, display.contentCenterY*1.7
+	teacher:scale(1.7, 1.7)
 	teacher.alpha = 0
 	sceneGroup:insert(teacher)
 

@@ -41,6 +41,11 @@ function scene:create( event )
 	background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
 	sceneGroup:insert(background)
 
+	--임시 배경2--
+	-- local background1 = display.newImage("image/background/outside_cabin.png", display.contentWidth, display.contentHeight)
+	-- background1.x, background1.y = display.contentCenterX, display.contentCenterY
+	-- background1:toBack()
+
 	--플레이어 그림--
 	local evy = display.newImage("image/component/evy.png")
 	evy.x, evy.y = display.contentWidth*0.5, display.contentHeight*0.6
@@ -72,15 +77,31 @@ function scene:create( event )
 	local showQuest = display.newText(questName, display.contentWidth*0.31, display.contentHeight*0.15, "fonts/GowunBatang-Bold.ttf", 20)
 	showQuest:setFillColor(1)
 	-- sceneGroup:insert(showQuest)
-	-- local money = display.newImage("image/component/money.png")
-	-- money.x, money.y = display.contentWidth*0.47, display.contentHeight*0.115
-	-- sceneGroup:insert(money)
 
 	local areaQuestGroup = display.newGroup()
 	areaQuestGroup:insert(area)
 	areaQuestGroup:insert(showArea)
 	areaQuestGroup:insert(showQuest)
 	sceneGroup:insert(areaQuestGroup)
+
+	--경험치바 그림--
+	local EXPBar = {"", "", "", "", "", ""}
+	local EXPBarGroup = display.newGroup()
+
+	EXPBar[1] = display.newImage(EXPBarGroup, "image/component/경험치바_0.png") --0%
+	EXPBar[2] = display.newImage(EXPBarGroup, "image/component/경험치바_20.png") --20%
+	EXPBar[3] = display.newImage(EXPBarGroup, "image/component/경험치바_40.png") --40%
+	EXPBar[4] = display.newImage(EXPBarGroup, "image/component/경험치바_60.png") --60%
+	EXPBar[5] = display.newImage(EXPBarGroup, "image/component/경험치바_80.png") --80%
+	EXPBar[6] = display.newImage(EXPBarGroup, "image/component/경험치바_100.png") --100%
+
+	for i = 1, #EXPBar do
+		EXPBar[i].x, EXPBar[i].y = level.x, level.y + 30
+		EXPBar[i]:scale(0.23, 0.25)
+		EXPBar[i].alpha = 0
+	end
+	EXPBar[1].alpha = 1
+	sceneGroup:insert(EXPBarGroup)
   
 	--가방 그림--
 	local bag = display.newImage("image/component/bag.png")
@@ -91,13 +112,13 @@ function scene:create( event )
 	local inventoryBox = display.newImage("image/component/inventory_box.png")
 	inventoryBox.x, inventoryBox.y = display.contentWidth*0.365, display.contentHeight*0.58
 	inventoryBox.isVisible = false
-	sceneGroup:insert(inventoryBox)
+	-- sceneGroup:insert(inventoryBox)
 
 	--인벤토리 박스 속 스크롤바 그림--
 	local scrollbar = display.newImage("image/component/inventory_scroll.png")
 	scrollbar.x, scrollbar.y = display.contentWidth*0.6736, display.contentHeight*0.35
 	scrollbar.isVisible = false
-	sceneGroup:insert(scrollbar)
+	-- sceneGroup:insert(scrollbar)
 
 	--???--
 	local function fitImage( displayObject, fitWidth, fitHeight, enlarge )
@@ -120,7 +141,7 @@ function scene:create( event )
 	fitImage( closeButton, 50, 50, true )
 	closeButton.x, closeButton.y = display.contentWidth*0.6736, display.contentHeight*0.24
 	closeButton.isVisible = false
-	sceneGroup:insert(closeButton)
+	-- sceneGroup:insert(closeButton)
 
 	--아이템 보석 그림--
 	local jewerly = {"", "", "", "", ""}
@@ -143,6 +164,7 @@ function scene:create( event )
 	inventoryGroup:insert(inventoryBox)
 	inventoryGroup:insert(scrollbar)
 	inventoryGroup:insert(closeButton)
+	sceneGroup:insert(inventoryGroup)
 
 	--아이템 보석 개수 변수--
 
@@ -308,16 +330,12 @@ function scene:create( event )
 	}
 ----------------------------------------------------------------------------------
 
-	-- local level = presentLevel --임시 레벨 변수
+
 	local function levelUp(event) --임시 레벨업 함수
 	   	presentLevel = presentLevel + 1
     	print("levelup: ", presentLevel)
     	showLevel.text = presentLevel
 	end
-	-- timerLevel = timer.performWithDelay(10000, levelUp, 0)
-
-	-- local maxJewerlyNum = event.params.maxJewerly (사용 예정) --
-	-- local maxJewerlyNum = 5 --임시 maxJewerly 변수
 
 	local loadOption =
 	{
@@ -325,7 +343,7 @@ function scene:create( event )
 	    time = 400,
 	}
 
-	if presentLevel < targetLevel then --targetLevel 넣을 예정
+	if presentLevel < targetLevel then
 		--보석 종류 구분 함수--
 		local function findJewerlyNum(timerParams)
 			local num
@@ -343,6 +361,26 @@ function scene:create( event )
 
 			return num
 		end
+
+		--보석 등장 타이머 종료 함수 (추가)--
+		function jewerlyAppearStop()
+			if maxJewerlyNum >= 1 then
+				timer.cancel(timer1)
+				if maxJewerlyNum >= 2 then
+					timer.cancel(timer2)
+					if maxJewerlyNum >= 3 then
+						timer.cancel(timer3)
+						if maxJewerlyNum >= 4 then
+							timer.cancel(timer4)
+							if maxJewerlyNum == 5 then
+								timer.cancel(timer5)
+							end
+						end
+					end
+				end
+			end
+		end
+
 			
 		--보석 등장 함수--
 		local function jewerlyfadeInOut(event)
@@ -359,28 +397,15 @@ function scene:create( event )
 				transition.fadeIn(jewerly[i], { time = 1000 })
 			end
 
-			if presentLevel >= targetLevel then --targetLevel 넣을 예정 --타겟레벨 넘으면 보석 등장 종료
-				if maxJewerlyNum >= 1 then
-					timer.cancel(timer1)
-					if maxJewerlyNum >= 2 then
-						timer.cancel(timer2)
-						if maxJewerlyNum >= 3 then
-							timer.cancel(timer3)
-							if maxJewerlyNum >= 4 then
-								timer.cancel(timer4)
-								if maxJewerlyNum == 5 then
-									timer.cancel(timer5)
-								end
-							end
-						end
-					end
-				end
-				-- timer.cancel(timerLevel)
+			print("타겟레벨", targetLevel)
+			if presentLevel >= targetLevel then --타겟레벨 넘으면 보석 등장 종료
+				jewerlyAppearStop() --타켓레벨 달성시 보석 등장 멈춤
 			end
 		end
 
 		-- local presentEXP = 0 --현재 경험치 양
-		local increaseEXP = 0 --초당 증가하는 경험치 양
+		local increaseEXP = jewerly1Num * 10 + jewerly2Num * 20 + jewerly3Num * 40
+		 + jewerly4Num * 80 + jewerly5Num * 160 --초당 증가하는 경험치 양
 
 		--보석 클릭해서 획득--
 		local function jewerlyClick_1(event)
@@ -429,16 +454,15 @@ function scene:create( event )
 		end
 		jewerly[5]:addEventListener("tap", jewerlyClick_5)
 
-		--경험치 자동증가 함수--
-		local function autoEXPUp(event)
-			local targetEXP
-		 	-- 2~7레벨은 700으로,
-			-- 8~30레벨은 1,200으로,
-			-- 31~68레벨은 3,600으로,
-			-- 69~118레벨은 12,180으로,
-			-- 119~168레벨은 36,084으로,
-			-- 169~252레벨은 59,300으로
-
+		--현재레벨에 따른 타켓경험치 제시 함수--
+		local targetEXP
+	 	-- 2~7레벨은 700으로,
+		-- 8~30레벨은 1,200으로,
+		-- 31~68레벨은 3,600으로,
+		-- 69~118레벨은 12,180으로,
+		-- 119~168레벨은 36,084으로,
+		-- 169~252레벨은 59,300으로
+		local function setTargetEXP()
 		    if presentLevel < 7 then
 		    	targetEXP = 700
 		    elseif presentLevel < 30 then
@@ -452,14 +476,45 @@ function scene:create( event )
 		    elseif presentLevel < 252 then
 		    	targetEXP = 59300
 		    end
+		end
+
+		--경험치 자동증가 함수--
+		local function autoEXPUp(event)
+
+			print("현재레벨, 타켓경험치", presentLevel, targetEXP)
+
+			if targetEXP == nil then
+				setTargetEXP()
+			end
 			presentEXP = presentEXP + increaseEXP
 			print("autoPresentEXP", presentEXP)
 			print("autoIncreaseEXP", increaseEXP)
 
+			--경험치바 변화--
+			if presentEXP < targetEXP * 0.2 then
+				EXPBar[6].alpha = 0
+				EXPBar[1].alpha = 1
+			elseif presentEXP < targetEXP * 0.4 then
+				EXPBar[1].alpha = 0
+				EXPBar[2].alpha = 1
+			elseif presentEXP < targetEXP * 0.6 then
+				EXPBar[2].alpha = 0
+				EXPBar[3].alpha = 1
+			elseif presentEXP < targetEXP * 0.8 then
+				EXPBar[3].alpha = 0
+				EXPBar[4].alpha = 1
+			elseif presentEXP < targetEXP then
+				EXPBar[4].alpha = 0
+				EXPBar[5].alpha = 1
+			elseif presentEXP >= targetEXP then
+				EXPBar[5].alpha = 0
+				EXPBar[6].alpha = 1
+			end
+
 		    if presentEXP >= targetEXP then
 		    	levelUp()
 		    	presentEXP = presentEXP - targetEXP
-		    end 
+		    end
 
 		    -- 저장
 		    userSettings.presentLevel = presentLevel
@@ -467,9 +522,13 @@ function scene:create( event )
 
 			loadsave.saveTable(userSettings, "userSettings.json")
 
-			if presentLevel >= targetLevel then --targetLevel 넣을 예정
+			if presentLevel >= targetLevel then
+				EXPBar[6].alpha = 0
+				EXPBar[1].alpha = 1
 				timer.cancel(timerEXP)
+				jewerlyAppearStop() --이동시 보석 등장 중지
 				composer.setVariable("questNum", questNum)
+				-- composer.removeScene("homeScene", true)
       	 		composer.gotoScene("quest_clear", loadOption)
 			end
 		end
@@ -541,6 +600,8 @@ function scene:create( event )
 
   	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
+		timer.cancel(timerEXP) --이동시 경험치 자동증가 중지
+		jewerlyAppearStop() --이동시 보석 등장 중지
 		composer.removeScene("homeScene") --현재 장면 이름 넣기 ex)storyScene
 		-- composer.gotoScene("scene1")
 	end
@@ -560,7 +621,7 @@ function scene:show( event )
 		-- 
 		-- INSERT code here to make the scene come alive
 		-- e.g. start timers, begin animation, play audio, etc.
-	end	
+	end
 end
 
 function scene:hide( event )
@@ -572,7 +633,7 @@ function scene:hide( event )
 		--
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
-		timer.cancel(timerEXP)
+		-- timer.pause(timerEXP)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 		composer.removeScene("home")
