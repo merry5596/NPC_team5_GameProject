@@ -10,6 +10,7 @@ local scene = composer.newScene()
 function scene:create( event )
 	local sceneGroup = self.view
   
+  	print("home created")
 -------------------유저 정보 로드 및 저장---------------------------------------------------------------------------------
 	local loadsave = require( "loadsave" )
 	local userSettings = loadsave.loadTable("userSettings.json")
@@ -17,6 +18,11 @@ function scene:create( event )
 	local presentLevel = userSettings.presentLevel
 	local presentEXP = userSettings.presentEXP
 	local itemList = userSettings.itemList
+	jewerly1Num = itemList[1]
+	jewerly2Num = itemList[2]
+	jewerly3Num = itemList[3]
+	jewerly4Num = itemList[4]
+	jewerly5Num = itemList[5]
 
 	userSettings.presentScene = "homeScene"
 -------------------퀘스트 정보 로드---------------------------------------------------------------------------------
@@ -139,11 +145,7 @@ function scene:create( event )
 	inventoryGroup:insert(closeButton)
 
 	--아이템 보석 개수 변수--
-	jewerly1Num = 0
-	jewerly2Num = 0
-	jewerly3Num = 0
-	jewerly4Num = 0
-	jewerly5Num = 0
+
 
 	-- 소지품 열기
 	local bounds_bag = bag.contentBounds
@@ -439,21 +441,20 @@ function scene:create( event )
 
 		    if presentLevel < 7 then
 		    	targetEXP = 700
-		    elseif presentEXP < 30 then
+		    elseif presentLevel < 30 then
 		    	targetEXP = 1200
-		    elseif presentEXP < 68 then
+		    elseif presentLevel < 68 then
 		    	targetEXP = 3600
-		    elseif presentEXP < 118 then
+		    elseif presentLevel < 118 then
 		    	targetEXP = 12180
-		    elseif presentEXP < 168 then
+		    elseif presentLevel < 168 then
 		    	targetEXP = 36084
-		    elseif presentEXP < 252 then
+		    elseif presentLevel < 252 then
 		    	targetEXP = 59300
 		    end
 			presentEXP = presentEXP + increaseEXP
 			print("autoPresentEXP", presentEXP)
 			print("autoIncreaseEXP", increaseEXP)
-
 
 		    if presentEXP >= targetEXP then
 		    	levelUp()

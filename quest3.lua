@@ -4,6 +4,8 @@ local scene = composer.newScene()
 function scene:create( event )
 	local sceneGroup = self.view
 
+	local loadsave = require( "loadsave" )
+
 	local userSettings = loadsave.loadTable("userSettings.json")
 	userSettings.questInfo = {
     	questNum = 3,

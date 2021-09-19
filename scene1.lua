@@ -40,6 +40,10 @@ function scene:create(event)
 	resetButton.x, resetButton.y = display.contentWidth/2 + 150, display.contentHeight/2-150
 	sceneGroup:insert(resetButton)
 
+	 local overlayOption =
+	{
+	    isModal = true
+	}
 
 -------------------함수----------------------------------------------------------------------------------
 	-- scene group 담기
@@ -82,7 +86,7 @@ function scene:create(event)
 		        	load_button:scale(1.1, 1.1)
 		        	-- 여기부터가 실질적인 action에 해당
 		        	-- inSceneGroup()
-					composer.showOverlay("loadScene")				
+					composer.showOverlay("loadScene", overlayOption)				
 				end	
 			end
 	    end	
@@ -136,6 +140,7 @@ function scene:create(event)
 
 	-- 초기화 가능 (ui 없으면 테스트용으로 사용)
 	function reset(event)
+		print("reset")
 		local json = require( "json" )
 		local destDir = system.DocumentsDirectory
 		local result1, reason1 = os.remove( system.pathForFile( "saveDatas.json", destDir ) )
