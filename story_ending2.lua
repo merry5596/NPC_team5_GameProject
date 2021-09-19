@@ -19,6 +19,12 @@ function scene:create(event)
 	loadsave.saveTable(userSettings, "userSettings.json")
 -------------------변수---------------------------------------------------------------------------------
 
+	--배경음악--
+	local Ending2Music = audio.loadStream("audio/엔딩2음악.mp3")
+
+	local playMusic = audio.play(Ending2Music, { channel = 12, fadein = 70000,loops = 0 })
+	audio.setVolume( 0.5, { channel = 12 } )
+
 	--배경 그림--
 	local background1 = display.newImage("image/background/tomb.png", display.contentWidth, display.contentHeight)
 	background1.x, background1.y = display.contentCenterX, display.contentCenterY
@@ -157,10 +163,11 @@ function scene:create(event)
 
 	function nextScript(event)
 		if(fastforward_state == 0) then
-			if i <= #dialogue then
+			if i < #dialogue then
 				showDialogue[i].alpha = 0
-			elseif i > #dialogue then
+			elseif i >= #dialogue then
 				showEnding[1].alpha = 0
+				audio.stop(playMusic)
 				composer.gotoScene("scene1", loadOption)
 			end
 			if(endingNum == 0) then
@@ -171,6 +178,9 @@ function scene:create(event)
 					end
 				end
 				showDialogue[i].alpha = 1
+				if i == #dialogue then
+					showDialogue[i].alpha = 0
+				end
 			else
 				showEnding[1].alpha = 1
 				i = i + 1
@@ -243,6 +253,7 @@ function scene:create(event)
 		end
 
 		transition.fadeOut(showDialogue[i], { time = dialogueFadeOutTime })
+		i = #dialogue
 		transition.fadeIn(showEnding[1], { time = dialogueFadeInTime })
 		
 		print("i: ", i)
@@ -304,6 +315,7 @@ function scene:create(event)
 
 	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
+		audio.stop(playMusic)
 		composer.removeScene("story_ending1")
 		-- composer.gotoScene("scene1")
 	end

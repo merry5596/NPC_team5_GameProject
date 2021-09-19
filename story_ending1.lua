@@ -163,10 +163,12 @@ function scene:create(event)
 
 	function nextScript(event)
 		if(fastforward_state == 0) then
-			if i <= #dialogue then
+			if i < #dialogue then
 				showDialogue[i].alpha = 0
-			elseif i > #dialogue then
+			elseif i >= #dialogue then
 				showEnding[1].alpha = 0
+				local music = composer.getVariable("audio")
+				audio.stop(music)
 				composer.gotoScene("scene1", loadOption)
 			end
 			if(endingNum == 0) then
@@ -177,6 +179,9 @@ function scene:create(event)
 					end
 				end
 				showDialogue[i].alpha = 1
+				if i == #dialogue then
+					showDialogue[i].alpha = 0
+				end
 			else
 				showEnding[1].alpha = 1
 				i = i + 1
@@ -249,6 +254,7 @@ function scene:create(event)
 		end
 
 		transition.fadeOut(showDialogue[i], { time = dialogueFadeOutTime })
+		i = #dialogue
 		transition.fadeIn(showEnding[1], { time = dialogueFadeInTime })
 		
 		print("i: ", i)
@@ -311,6 +317,8 @@ function scene:create(event)
 
 	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
+		local music = composer.getVariable("audio")
+		audio.stop(music)
 		composer.removeScene("story_ending1")
 		-- composer.gotoScene("scene1")
 	end
