@@ -9,13 +9,34 @@ local scene = composer.newScene()
 
 function scene:create(event)
 	local sceneGroup = self.view
+	print("intro create!")
+
+-------------------유저 정보 저장(처음이기 때문에 로드 아닌 저장)---------------------------------------------------------------------------------
+	local loadsave = require( "loadsave" )
+
+	local userSettings = {
+		presentScene = "storyScene_gameIntro", 
+		presentLevel = 1,
+		presentEXP = 0,
+		itemList = {0, 0, 0, 0, 0},
+		questInfo = {
+			questNum = 0, 
+			questName = "", 
+			maxJewerlyNum = 0, 
+			targetLevel = 0, 
+			areaName = "", 
+			backgroundImage = ""
+		}
+	}
+
+	loadsave.saveTable(userSettings, "userSettings.json")
 	
 -------------------변수---------------------------------------------------------------------------------
 
 	--배경 그림--
 	local background1 = display.newImage("image/background/outside_cabin.png", display.contentWidth, display.contentHeight)
 	background1.x, background1.y = display.contentCenterX, display.contentCenterY
-	local background2 = display.newImage("image/background/inside_cabin_임시.jpg", display.contentWidth, display.contentHeight)
+	local background2 = display.newImage("image/background/inside_cabin.png", display.contentWidth, display.contentHeight)
 	background2.x, background2.y = display.contentCenterX, display.contentCenterY
 	background2.alpha = 0
 	sceneGroup:insert(background1)
@@ -133,17 +154,29 @@ function scene:create(event)
 		end
 	end
 
+	local loadOption =
+	{
+	    effect = "fade",
+	    time = 400,
+	}
+
 	function nextScript(event)
 		if(fastforward_state == 0) then
 			showDialogue[i].alpha = 0
 			if(i < #dialogue) then
 				i = i + 1
+			else
+				composer.gotoScene("quest1", loadOption)
 			end
 			showDialogue[i].alpha = 1
 
 			playerTime = 200
 		else
 			transition.fadeOut(showDialogue[i], { time = dialogueFadeOutTime })
+			if i == #dialogue then
+				stopFastForward()
+				composer.gotoScene("quest1", loadOption)
+			end
 			if(i < #dialogue) then
 				i = i + 1
 			end
@@ -249,6 +282,7 @@ function scene:create(event)
 		      		-- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
 		      		-- 현재 대사 위치 파라미터로 저장
 			      	composer.setVariable("scriptNum", i)
+			      	composer.setVariable("userSettings", userSettings)
 		  			composer.showOverlay("menuScene", overlayOption)
 				end	
 			end
@@ -259,7 +293,7 @@ function scene:create(event)
 	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
 		composer.removeScene("storyScene_gameIntro")
-		composer.gotoScene("scene1")
+		-- composer.gotoScene("scene1")
 	end
 
 	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동
@@ -298,6 +332,8 @@ function scene:hide( event )
 		--
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
+		print("intro closed")
+
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 		composer.removeScene("storyScene_gameIntro")

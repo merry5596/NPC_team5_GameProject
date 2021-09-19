@@ -148,6 +148,7 @@ function scene:create( event )
 
 			-- 현재 대사 위치 저장
 			local scriptNum = composer.getVariable("scriptNum")
+			local userSettings = composer.getVariable("userSettings")
 			print("saveScene: 현재 위치: ", scriptNum)
 
 			local saveContent = {
@@ -156,7 +157,8 @@ function scene:create( event )
 				-- 현재 시간 저장
 				date = savingDate,
 				time = savingTime, 
-				scriptNum = scriptNum
+				scriptNum = scriptNum,
+				userSettings = userSettings
 			}
 
 			local index = 0

@@ -15,26 +15,32 @@ function scene:create( event )
 	local background = display.newRect(display.contentCenterX, display.contentCenterY, 
 	display.contentWidth, display.contentHeight)
 	background:setFillColor(1, 0.5)
+	sceneGroup:insert(background)
 
 	--메뉴창 그림--
 	local menuBox = display.newImage("image/component/menu_box.png")
 	menuBox.x, menuBox.y = display.contentCenterX, display.contentCenterY
+	sceneGroup:insert(menuBox)
 
 	--메뉴창 닫기버튼 그림--
 	local menuCloseButton = display.newImage("image/component/menu_close.png")
 	menuCloseButton.x, menuCloseButton.y = display.contentCenterX*1.635, display.contentCenterY*0.55
+	sceneGroup:insert(menuCloseButton)
 
 	--메뉴창 시작화면으로 그림--
 	local menuTitleScreen = display.newImage("image/component/menu_gotomain.png")
 	menuTitleScreen.x, menuTitleScreen.y = display.contentCenterX, display.contentCenterY*0.65
+	sceneGroup:insert(menuTitleScreen)
 
 	--메뉴창 저장하기 그림--
 	local menuSave = display.newImage("image/component/menu_save.png")
 	menuSave.x, menuSave.y = display.contentCenterX, display.contentCenterY
+	sceneGroup:insert(menuSave)
 
 	--메뉴창 불러오기 그림--
 	local menuLoad = display.newImage("image/component/menu_import.png")
 	menuLoad.x, menuLoad.y = display.contentCenterX, display.contentCenterY*1.35
+	sceneGroup:insert(menuLoad)
 
 	--overlayOption: overlay 화면의 액션 이 씬에 전달 X
 	local overlayOption =
@@ -44,14 +50,14 @@ function scene:create( event )
 -------------------함수----------------------------------------------------------------------------
 	
 	--변수들 sceneGroup에 포함--
-	local function inSceneGroup()
-		sceneGroup:insert(background)
-		sceneGroup:insert(menuBox)
-		sceneGroup:insert(menuCloseButton)
-		sceneGroup:insert(menuTitleScreen)
-		sceneGroup:insert(menuSave)
-		sceneGroup:insert(menuLoad)
-	end
+	-- local function inSceneGroup()
+	-- 	sceneGroup:insert(background)
+	-- 	sceneGroup:insert(menuBox)
+	-- 	sceneGroup:insert(menuCloseButton)
+	-- 	sceneGroup:insert(menuTitleScreen)
+	-- 	sceneGroup:insert(menuSave)
+	-- 	sceneGroup:insert(menuLoad)
+	-- end
 
 	--메뉴닫기--
 	local bounds_close = menuCloseButton.contentBounds
@@ -84,7 +90,7 @@ function scene:create( event )
   				if event.x >= bounds_close.xMin and event.x <= bounds_close.xMax and event.y >= bounds_close.yMin and event.y <= bounds_close.yMax then
 		        	menuCloseButton:scale(1.1, 1.1)
 		        	-- 여기부터가 실질적인 action에 해당
-		        	inSceneGroup()
+		        	-- inSceneGroup()
 					-- dialogueBox:addEventListener("tap", nextScript)
 					-- if(composer.getVariable("sceneName") == home) then
 					-- else
@@ -98,6 +104,11 @@ function scene:create( event )
 	menuCloseButton:addEventListener("touch", closeMenu)
 
 	--시작화면으로 버튼 클릭시 타이틀화면으로 이동--
+	local loadOption =
+	{
+	    effect = "fade",
+	    time = 400,
+	}
 	local bounds_title = menuTitleScreen.contentBounds
 	local isOut_title
   	local function goTitleScreen(event)
@@ -128,9 +139,10 @@ function scene:create( event )
   				if event.x >= bounds_title.xMin and event.x <= bounds_title.xMax and event.y >= bounds_title.yMin and event.y <= bounds_title.yMax then
 		        	menuTitleScreen:scale(1.1, 1.1)
 		        	-- 여기부터가 실질적인 action에 해당
-		        	inSceneGroup()
-					composer.hideOverlay("menuScene")
-					parent:closeScene() --이전 장면의 함수 실행
+		        	-- inSceneGroup()
+					-- composer.hideOverlay("menuScene")
+					parent:closeScene() --이전 장면의 함수 실행	
+					composer.gotoScene("scene1", loadOption)
 				end	
 			end
 	    end	
@@ -168,7 +180,7 @@ function scene:create( event )
   				if event.x >= bounds_save.xMin and event.x <= bounds_save.xMax and event.y >= bounds_save.yMin and event.y <= bounds_save.yMax then
 		        	menuSave:scale(1.1, 1.1)
 		        	-- 여기부터가 실질적인 action에 해당
-		        	inSceneGroup()
+		        	-- inSceneGroup()
 					-- local scriptNum = composer.getVariable("scriptNum")
 					-- print("menuScene: 현재 위치: ", scriptNum)
 					-- composer.setVariable("scriptNum", scriptNum)
@@ -210,7 +222,7 @@ function scene:create( event )
   				if event.x >= bounds_load.xMin and event.x <= bounds_load.xMax and event.y >= bounds_load.yMin and event.y <= bounds_load.yMax then
 		        	menuLoad:scale(1.1, 1.1)
 		        	-- 여기부터가 실질적인 action에 해당
-		        	inSceneGroup()
+		        	-- inSceneGroup()
 					composer.showOverlay("loadScene", overlayOption)
 				end	
 			end
@@ -247,6 +259,7 @@ function scene:hide( event )
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 		print("menu closed")
+		composer.removeScene("menuScene")
 	end
 end
 
