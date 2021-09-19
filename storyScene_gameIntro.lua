@@ -235,8 +235,6 @@ function scene:create(event)
 		transition.fadeIn(showDialogue[i], { time = dialogueFadeInTime })
 		
 		print("i: ", i)
-
-		return true
 	end
 	skipButton:addEventListener("tap", skip)
 
