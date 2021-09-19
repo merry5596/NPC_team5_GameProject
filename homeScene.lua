@@ -479,28 +479,32 @@ function scene:create( event )
 		end
 
 		--경험치 자동증가 함수--
+		local EXPBarValue = {"", "", "", ""}
 		local function autoEXPUp(event)
 
 			print("현재레벨, 타켓경험치", presentLevel, targetEXP)
 
 			if targetEXP == nil then
 				setTargetEXP()
+				for i = 1, #EXPBarValue do
+					EXPBarValue[i] = targetEXP * 0.2 * i
+				end
 			end
 			presentEXP = presentEXP + increaseEXP
 			print("autoPresentEXP", presentEXP)
 			print("autoIncreaseEXP", increaseEXP)
 
 			--경험치바 변화--
-			if presentEXP < targetEXP * 0.2 then
+			if presentEXP < EXPBarValue[1] then
 				EXPBar[6].alpha = 0
 				EXPBar[1].alpha = 1
-			elseif presentEXP < targetEXP * 0.4 then
+			elseif presentEXP < EXPBarValue[2] then
 				EXPBar[1].alpha = 0
 				EXPBar[2].alpha = 1
-			elseif presentEXP < targetEXP * 0.6 then
+			elseif presentEXP < EXPBarValue[3] then
 				EXPBar[2].alpha = 0
 				EXPBar[3].alpha = 1
-			elseif presentEXP < targetEXP * 0.8 then
+			elseif presentEXP < EXPBarValue[4] then
 				EXPBar[3].alpha = 0
 				EXPBar[4].alpha = 1
 			elseif presentEXP < targetEXP then
@@ -528,7 +532,6 @@ function scene:create( event )
 				timer.cancel(timerEXP)
 				jewerlyAppearStop() --이동시 보석 등장 중지
 				composer.setVariable("questNum", questNum)
-				-- composer.removeScene("homeScene", true)
       	 		composer.gotoScene("quest_clear", loadOption)
 			end
 		end
