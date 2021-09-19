@@ -51,20 +51,17 @@ function scene:create(event)
 	resetGroup:insert(resetButton)
 	sceneGroup:insert(resetGroup)
 
+	--배경음악--
+	local mainMusic = audio.loadStream("audio/scene1배경음악.mp3")
+	local playMusic = audio.play(mainMusic, { channel = 10, fadein = 2000, loops = -1 })
+
 	 local overlayOption =
 	{
 	    isModal = true
 	}
 
 -------------------함수----------------------------------------------------------------------------------
-	-- scene group 담기
-	-- local function inSceneGroup()
-	-- 	sceneGroup:insert(background)
-	-- 	sceneGroup:insert(showTitle)
-	-- 	sceneGroup:insert(load_button)
-	-- 	sceneGroup:insert(start_button)		
-	-- end
-
+	
 	--불러오기 버튼 클릭시 장면 전환
 	local bounds_load = load_button.contentBounds
 	local isOut_load
@@ -76,8 +73,10 @@ function scene:create(event)
     	    self.isFocus = true
     	    
     	    load_button:scale(0.9, 0.9) 	-- 버튼 작아짐
+
     	elseif self.isFocus then
     		if event.phase == "moved" then
+
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut_load == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
     			if (event.x < bounds_load.xMin or event.x > bounds_load.xMax or event.y < bounds_load.yMin or event.y > bounds_load.yMax) and isOut_load == 0 then
     				load_button:scale(1.1, 1.1)	-- 버튼 커짐
@@ -115,6 +114,8 @@ function scene:create(event)
     	    self.isFocus = true
     	    
     	    start_button:scale(0.9, 0.9) 	-- 버튼 작아짐
+
+   	    	audio.stopWithDelay(100, { channel = 10 })
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut_start == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)

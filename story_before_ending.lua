@@ -19,6 +19,10 @@ function scene:create(event)
 	loadsave.saveTable(userSettings, "userSettings.json")
 -------------------변수-------------------------------------------------------------------------------
 	
+	--배경음악--
+	local EndingMusic = audio.loadStream("audio/엔딩음악2.mp3")
+	local playMusic = audio.play(EndingMusic, { channel = 11, loops = 0 })
+
 	--배경 그림--
 	local background1 = display.newImage("image/background/forest(winter).png", display.contentWidth, display.contentHeight)
 	background1.x, background1.y = display.contentCenterX, display.contentCenterY
@@ -240,8 +244,11 @@ function scene:create(event)
 			local selectedOption = composer.getVariable("selectedOption")
 			print("selectedOption:", selectedOption)
 			if selectedOption == 1 then
+				audio.stopWithDelay(2000, { channel = 11 })
 				composer.gotoScene("story_ending1")
 			elseif selectedOption == 2 then
+				audio.fadeOut( { channel = 11, time = 1200 } )
+				audio.stopWithDelay(2000, { channel = 11 })
 				composer.gotoScene("story_ending2")
 			end
 		end

@@ -19,6 +19,12 @@ function scene:create(event)
 	loadsave.saveTable(userSettings, "userSettings.json")
 -------------------변수---------------------------------------------------------------------------------
 
+	--배경음악--
+	local Ending2Music = audio.loadStream("audio/엔딩2음악.mp3")
+
+	local playMusic = audio.play(Ending2Music, { channel = 12, fadein = 70000,loops = 0 })
+	audio.setVolume( 0.5, { channel = 12 } )
+
 	--배경 그림--
 	local background1 = display.newImage("image/background/tomb.png", display.contentWidth, display.contentHeight)
 	background1.x, background1.y = display.contentCenterX, display.contentCenterY
@@ -158,6 +164,7 @@ function scene:create(event)
 				showDialogue[i].alpha = 0
 			elseif i > #dialogue then
 				showEnding[1].alpha = 0
+				audio.stop(playMusic)
 				composer.gotoScene("scene1", loadOption)
 			end
 			if(endingNum == 0) then

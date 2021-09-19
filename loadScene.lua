@@ -117,6 +117,7 @@ function scene:create( event )
 			-- 현재 씬 이름
 			print(composer.getSceneName( "current" ))
 	 
+   	    	audio.stopWithDelay(100, { channel = 10 })
 			local index = 0
 			for i = 1, #slotList do
 				if slotList[i] == event.target then
