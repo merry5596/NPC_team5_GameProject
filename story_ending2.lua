@@ -70,6 +70,9 @@ function scene:create(event)
   	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
 	sceneGroup:insert(menuButton)
 
+	--sound
+	local buttonSound = audio.loadSound( "sound/buttonSound.mp3" )
+
 -------------------텍스트--------------------------------------------------------------------------------
 
   	--내래이션과 대사--
@@ -160,9 +163,9 @@ function scene:create(event)
 
 	function nextScript(event)
 		if(fastforward_state == 0) then
-			if i <= #dialogue then
+			if i < #dialogue then
 				showDialogue[i].alpha = 0
-			elseif i > #dialogue then
+			elseif i >= #dialogue then
 				showEnding[1].alpha = 0
 				audio.stop(playMusic)
 				composer.gotoScene("scene1", loadOption)
@@ -175,6 +178,9 @@ function scene:create(event)
 					end
 				end
 				showDialogue[i].alpha = 1
+				if i == #dialogue then
+					showDialogue[i].alpha = 0
+				end
 			else
 				showEnding[1].alpha = 1
 				i = i + 1
@@ -209,6 +215,8 @@ function scene:create(event)
 	end
 
 	function fastforward(event)
+		audio.play( buttonSound )
+
 		if(fastforward_state == 0) then
 			fastforward_state = 1
 			dialogueBox:removeEventListener("tap", nextScript)
@@ -235,6 +243,8 @@ function scene:create(event)
 
 	--스킵기능--
 	function skip(event)
+		audio.play( buttonSound )
+
 		if(player.alpha == 0) then
 			transition.fadeIn(player, { time = playerTime })
 		end
@@ -243,6 +253,7 @@ function scene:create(event)
 		end
 
 		transition.fadeOut(showDialogue[i], { time = dialogueFadeOutTime })
+		i = #dialogue
 		transition.fadeIn(showEnding[1], { time = dialogueFadeInTime })
 		
 		print("i: ", i)
@@ -267,6 +278,7 @@ function scene:create(event)
     	    self.isFocus = true
     	    
     	    menuButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	    audio.play( buttonSound )
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
@@ -303,6 +315,7 @@ function scene:create(event)
 
 	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
+		audio.stop(playMusic)
 		composer.removeScene("story_ending1")
 		-- composer.gotoScene("scene1")
 	end

@@ -31,6 +31,10 @@ function scene:create( event )
 	menuCloseButton.x, menuCloseButton.y = display.contentCenterX*1.56, display.contentCenterY*0.33
 	sceneGroup:insert(menuCloseButton)
 
+	--sound
+	local buttonSound = audio.loadSound("sound/buttonSound.mp3")
+	local savingSound = audio.loadSound( "sound/savingSound.mp3" )
+
 	--overlayOption: overlay 화면의 액션 이 씬에 전달 X
 	local overlayOption =
 	{
@@ -49,6 +53,7 @@ function scene:create( event )
     	    self.isFocus = true
     	    
     	    menuCloseButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	    audio.play( buttonSound )
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut_close == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
@@ -122,6 +127,8 @@ function scene:create( event )
 	-- save 이벤트 함수
   	local function save(event)
         if event.phase == "ended" or event.phase == "cancelled" then
+        	audio.play( savingSound )
+
 	    	print("save function!")
 			-- 현재 씬 이름
 			-- print(composer.getSceneName( "current" ))
@@ -237,6 +244,9 @@ function scene:hide( event )
 
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
+		if composer.getSceneName("current") == "homeScene" then
+			parent:resumeTimer() --이전 장면의 함수 실행
+		end	
 	end
 end
 

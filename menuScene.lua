@@ -42,6 +42,9 @@ function scene:create( event )
 	menuLoad.x, menuLoad.y = display.contentCenterX, display.contentCenterY*1.35
 	sceneGroup:insert(menuLoad)
 
+	--sound
+	local buttonSound = audio.loadSound( "sound/buttonSound.mp3" )
+
 	--overlayOption: overlay 화면의 액션 이 씬에 전달 X
 	local overlayOption =
 	{
@@ -69,7 +72,9 @@ function scene:create( event )
   			display.getCurrentStage():setFocus( event.target )
     	    self.isFocus = true
     	    
-    	    menuCloseButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	    menuCloseButton:scale(0.9, 0.9) 	-- 버튼 작아짐	
+    	    audio.play( buttonSound )
+
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut_close == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
@@ -96,6 +101,10 @@ function scene:create( event )
 					-- else
 					-- 	dialogueBox:addEventListener("tap", nextScript)
 					-- end
+					print(composer.getSceneName( "current" ))
+					if composer.getSceneName("current") == "homeScene" then
+						parent:resumeTimer() --이전 장면의 함수 실행
+					end	
 					composer.hideOverlay("menuScene")
 				end	
 			end
@@ -118,7 +127,9 @@ function scene:create( event )
   			display.getCurrentStage():setFocus( event.target )
     	    self.isFocus = true
     	    
-    	    menuTitleScreen:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	    menuTitleScreen:scale(0.9, 0.9) 	-- 버튼 작아짐	
+    	    audio.play( buttonSound )
+
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut_title == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
@@ -159,7 +170,9 @@ function scene:create( event )
   			display.getCurrentStage():setFocus( event.target )
     	    self.isFocus = true
     	    
-    	    menuSave:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	    menuSave:scale(0.9, 0.9) 	-- 버튼 작아짐	
+    	    audio.play( buttonSound )
+
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut_save == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
@@ -201,7 +214,9 @@ function scene:create( event )
   			display.getCurrentStage():setFocus( event.target )
     	    self.isFocus = true
     	    
-    	    menuLoad:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	    menuLoad:scale(0.9, 0.9) 	-- 버튼 작아짐	
+    	    audio.play( buttonSound )
+
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut_load == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)

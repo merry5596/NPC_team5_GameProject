@@ -17,6 +17,9 @@ function scene:create( event )
 	
 	-- create a white background to fill screen
 
+	--sound
+	local optionSound = audio.loadSound( "sound/optionSound.mp3" )
+
 	--반투명 배경 그림--
 	local background = display.newRect(display.contentCenterX, display.contentCenterY, 
 	display.contentWidth, display.contentHeight)
@@ -57,21 +60,27 @@ function scene:create( event )
 
 	-- 혜연 수정 --
 	-- 1번 선택지 선택 시 --
-	local function selectOption1(event)
+	local function selectOption1(event)	
+		audio.play( optionSound )
+
 		print("tap1")
 		composer.setVariable("selectedOption", 1) -- selectedOption에 1 저장
 		composer.hideOverlay() -- 이때 scene:hide( event ) 호출
 	end
 
 	-- 2번 선택지 선택 시 --
-	local function selectOption2(event)
+	local function selectOption2(event)	
+		audio.play( optionSound )
+
 		print("tap2")
 		composer.setVariable("selectedOption", 2) -- selectedOption에 2 저장
 		composer.hideOverlay() -- 이때 scene:hide( event ) 호출
 	end
 
 	-- 3번 선택지 선택 시 --
-	local function selectOption3(event)
+	local function selectOption3(event)	
+		audio.play( optionSound )
+
 		print("tap3")
 		composer.setVariable("selectedOption", 3) -- selectedOption에 2 저장
 		composer.hideOverlay() -- 이때 scene:hide( event ) 호출
