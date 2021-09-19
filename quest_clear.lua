@@ -83,6 +83,13 @@ function scene:create( event )
 	end
 	print(targetScene)
 
+	local loadsave = require( "loadsave" )
+
+	local userSettings = loadsave.loadTable("userSettings.json")
+
+	userSettings.presentScene = targetScene
+	loadsave.saveTable(userSettings, "userSettings.json")
+
 	local loadOption =
 	{
 	    effect = "fade",
