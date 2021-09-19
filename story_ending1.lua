@@ -9,11 +9,18 @@ local scene = composer.newScene()
 
 function scene:create(event)
 	local sceneGroup = self.view
-	
+
+-------------------유저 정보 로드---------------------------------------------------------------------------------
+	local loadsave = require( "loadsave" )
+
+	local userSettings = loadsave.loadTable("userSettings.json")
+
+	userSettings.presentScene = "story_ending1"
+	loadsave.saveTable(userSettings, "userSettings.json")
 -------------------변수---------------------------------------------------------------------------------
 
 	--배경 그림--
-	local background = display.newImage("image/background/tomb_임시.jpg", display.contentWidth, display.contentHeight)
+	local background = display.newImage("image/background/tomb.png", display.contentWidth, display.contentHeight)
 	background.x, background.y = display.contentCenterX, display.contentCenterY
 	sceneGroup:insert(background)
 
@@ -69,7 +76,7 @@ function scene:create(event)
   				"인연은 언제까지나 이어지는 것이니까요.",
   				"다시 볼 수 없는 곳으로 떠나지만 않으면 이 짧은 생에서라도 만남을 가질 수 있을 겁니다.",
   				"늘 이 말 뒤에 따라붙었던 선생님의 말씀이 있었죠.", --6
-  				"오늘은 혼자 놀아보도록 할래, 이비?'",
+  				"'오늘은 혼자 놀아보도록 할래, 이비?'",
   				"그러니 마지막으로 선생님 옆에서 놀음을 가지도록 해봅시다.",
   				"당신이 안드로이드라는 사실은 이미 짐작하고 있겠죠.", --9
   				"직감할 수 있습니다. 선생님의 곁에 영원히 머물러 늘과 같은 봄을 꿈꾸기 위해서라면......",
@@ -98,6 +105,7 @@ function scene:create(event)
 	showEnding[1] = display.newText(ending[1], dialogueBox.x, dialogueBox.y, 1000, 0, "fonts/국립박물관문화재단클래식B.ttf", 27)
 	showEnding[1]:setFillColor(1)
 	showEnding[1].alpha = 0
+	sceneGroup:insert(showEnding[1])
 
 	--이름창 글자--
 	local name = "이비"
@@ -143,9 +151,20 @@ function scene:create(event)
 		end
 	end
 
+	local loadOption =
+	{
+	    effect = "fade",
+	    time = 400,
+	}
+
 	function nextScript(event)
 		if(fastforward_state == 0) then
-			showDialogue[i].alpha = 0
+			if i <= #dialogue then
+				showDialogue[i].alpha = 0
+			elseif i > #dialogue then
+				showEnding[1].alpha = 0
+				composer.gotoScene("scene1", loadOption)
+			end
 			if(endingNum == 0) then
 				if(i < #dialogue) then
 					i = i + 1
@@ -156,6 +175,7 @@ function scene:create(event)
 				showDialogue[i].alpha = 1
 			else
 				showEnding[1].alpha = 1
+				i = i + 1
 			end
 
 			playerTime = 200
@@ -171,6 +191,8 @@ function scene:create(event)
 				transition.fadeIn(showDialogue[i], { time = dialogueFadeInTime })
 			else
 				transition.fadeIn(showEnding[1], { time = dialogueFadeInTime })
+				stopFastForward()
+				i = i + 1
 			end
 		end
 
@@ -269,6 +291,7 @@ function scene:create(event)
 		      		-- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
 		      		-- 현재 대사 위치 파라미터로 저장
 			      	composer.setVariable("scriptNum", i)
+			      	composer.setVariable("userSettings", userSettings)
 		  			composer.showOverlay("menuScene", overlayOption)
 				end	
 			end
@@ -279,7 +302,7 @@ function scene:create(event)
 	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
 		composer.removeScene("story_ending1")
-		composer.gotoScene("scene1")
+		-- composer.gotoScene("scene1")
 	end
 
 	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동

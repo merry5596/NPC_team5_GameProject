@@ -10,10 +10,18 @@ local scene = composer.newScene()
 function scene:create(event)
 	local sceneGroup = self.view
 	
+
+-------------------유저 정보 로드---------------------------------------------------------------------------------
+	local loadsave = require( "loadsave" )
+
+	local userSettings = loadsave.loadTable("userSettings.json")
+
+	userSettings.presentScene = "story_ruins_1"
+	loadsave.saveTable(userSettings, "userSettings.json")
 -------------------변수-------------------------------------------------------------------------------
 
 	--배경 그림--
-	local background = display.newImage("image/background/ruins_nature.jpg", display.contentWidth, display.contentHeight)
+	local background = display.newImage("image/background/ruins.png", display.contentWidth, display.contentHeight)
 	background.x, background.y = display.contentCenterX, display.contentCenterY
 	sceneGroup:insert(background)
 
@@ -126,17 +134,29 @@ function scene:create(event)
 		end
 	end
 
+	local loadOption =
+	{
+	    effect = "fade",
+	    time = 400,
+	}
+
 	function nextScript(event)
 		if(fastforward_state == 0) then
 			showDialogue[i].alpha = 0
 			if(i < #dialogue) then
 				i = i + 1
+			else
+				composer.gotoScene("quest3", loadOption)
 			end
 			showDialogue[i].alpha = 1
 
 			playerTime = 200
 		else
 			transition.fadeOut(showDialogue[i], { time = dialogueFadeOutTime })
+			if i == #dialogue then
+				stopFastForward()
+				composer.gotoScene("quest3", loadOption)
+			end
 			if(i < #dialogue) then
 				i = i + 1
 			end
@@ -232,6 +252,7 @@ function scene:create(event)
 		      		-- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
 		      		-- 현재 대사 위치 파라미터로 저장
 			      	composer.setVariable("scriptNum", i)
+			      	composer.setVariable("userSettings", userSettings)
 		  			composer.showOverlay("menuScene", overlayOption)
 				end	
 			end
@@ -242,7 +263,7 @@ function scene:create(event)
   	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
 		composer.removeScene("storyScene_ruins1")
-		composer.gotoScene("scene1")
+		-- composer.gotoScene("scene1")
 	end
 
 	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동

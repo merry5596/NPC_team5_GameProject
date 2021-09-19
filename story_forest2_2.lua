@@ -10,10 +10,18 @@ local scene = composer.newScene()
 function scene:create(event)
 	local sceneGroup = self.view
 
+
+-------------------유저 정보 로드---------------------------------------------------------------------------------
+	local loadsave = require( "loadsave" )
+
+	local userSettings = loadsave.loadTable("userSettings.json")
+
+	userSettings.presentScene = "story_forest2_2"
+	loadsave.saveTable(userSettings, "userSettings.json")
 -------------------변수-------------------------------------------------------------------------------
 	
 	--배경 그림--
-	local background1 = display.newImage("image/background/inside_cabin_임시.jpg", display.contentWidth, display.contentHeight)
+	local background1 = display.newImage("image/background/inside_cabin.png", display.contentWidth, display.contentHeight)
 	background1.x, background1.y = display.contentCenterX, display.contentCenterY
 	background1.alpha = 0
 	local background2 = display.newImage("image/background/outside_cabin.png", display.contentWidth, display.contentHeight)
@@ -248,6 +256,11 @@ function scene:create(event)
 		end
 	end
 
+	local loadOption =
+	{
+	    effect = "fade",
+	    time = 400,
+	}
 
 	--클릭으로 대사 전환+선택지 전개--
 	i = 1
@@ -255,6 +268,9 @@ function scene:create(event)
 		-- print("i: ", i)
 		if(fastforward_state == 0) then
 			--스토리 전환
+			if (i == #dialogue + #bookStory) then
+				composer.gotoScene("quest6", loadOption)
+			end
 			if(i < #dialogue + #bookStory) then
 				if(i <= 22 or i >= 47) then --대사 전환
 					if(i == 47) then
@@ -287,6 +303,10 @@ function scene:create(event)
 			playerTime = 200
 		else
 			--스토리 전환
+			if (i == #dialogue + #bookStory) then
+				stopFastForward()
+				composer.gotoScene("quest6", loadOption)
+			end
 			if(i < #dialogue + #bookStory) then
 				if(i <= 22 or i >= 47) then --대사 전환
 					if(i == 47) then
@@ -397,6 +417,7 @@ function scene:create(event)
 		if(i <= 14) then --대사
 			i = 14
 			dialogueNum = 14
+			transition.dissolve(background2, background1, dialogueFadeInTime) --배경전환
 		elseif(i > 15 and i <= 18) then
 			i = 18
 			dialogueNum = 18
@@ -405,7 +426,7 @@ function scene:create(event)
 			dialogueNum = 24
 			-- bookStoryNum = #bookStory - 1
 		elseif(i > 48 and i < #dialogue + #bookStory - 1) then
-			i = #dialogue + #bookStory - 2
+			i = #dialogue + #bookStory - 1
 			dialogueNum = #dialogue - 1
 		end
 		showDialogue[dialogueNum].alpha = 1
@@ -449,6 +470,7 @@ function scene:create(event)
 		      		-- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
 		      		-- 현재 대사 위치 파라미터로 저장
 			      	composer.setVariable("scriptNum", i)
+			      	composer.setVariable("userSettings", userSettings)
 		  			composer.showOverlay("menuScene", overlayOption)
 				end	
 			end
@@ -459,7 +481,7 @@ function scene:create(event)
   	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
 		composer.removeScene("story_forest2_2") --현재 장면 이름 넣기 ex)storyScene
-		composer.gotoScene("scene1")
+		-- composer.gotoScene("scene1")
 	end
 
 	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동

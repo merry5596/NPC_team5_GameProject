@@ -10,10 +10,17 @@ local scene = composer.newScene()
 function scene:create( event )
 	local sceneGroup = self.view
 
-	print("story_forest1_1: create")
+	-------------------유저 정보 로드---------------------------------------------------------------------------------
+	local loadsave = require( "loadsave" )
+
+	local userSettings = loadsave.loadTable("userSettings.json")
+
+	userSettings.presentScene = "story_forest1_1"
+	loadsave.saveTable(userSettings, "userSettings.json")
+	----------------------------------------------------------------------------------------
 
 	-- 임시 배경 --
-	local background = display.newImageRect("image/background/forest(봄).png", display.contentWidth, display.contentHeight)
+	local background = display.newImageRect("image/background/forest(spring).png", display.contentWidth, display.contentHeight)
 	background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
 	sceneGroup:insert(background)
 
@@ -141,6 +148,12 @@ function scene:create( event )
 		end
 	end
 
+	local loadOption =
+	{
+	    effect = "fade",
+	    time = 400,
+	}
+
 	function nextScript(event) --local 빼기 수정
 		print(#scripts)
 		print("curScriptNum: ", curScriptNum)
@@ -184,6 +197,11 @@ function scene:create( event )
 				transition.fadeIn(curScript[curScriptNum], { time = dialogueFadeInTime })
 			end
 			changeCharAndBack()
+		elseif curScriptNum == #scripts then
+			if(fastforward_state == 1) then
+				stopFastForward()
+			end
+			composer.gotoScene("quest2", loadOption)
 		end
 
 	end
@@ -299,6 +317,7 @@ function scene:create( event )
 		      		-- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
 		      		-- 현재 대사 위치 파라미터로 저장
 			      	composer.setVariable("scriptNum", curScriptNum)
+			      	composer.setVariable("userSettings", userSettings)
 		  			composer.showOverlay("menuScene", overlayOption)
 				end	
 			end
@@ -309,7 +328,7 @@ function scene:create( event )
 	--메뉴의 시작화면으로 버튼 클릭시 현재 장면 닫고 타이틀화면으로 이동 (추가)--
 	function scene:closeScene()
 		composer.removeScene("story_forest1_1")
-		composer.gotoScene()
+		-- composer.gotoScene()
 	end
 
 	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동
@@ -349,7 +368,6 @@ function scene:hide( event )
 		--
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
-		print("story_forest1_1: hide")
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 		composer.removeScene("story_forest1_1")

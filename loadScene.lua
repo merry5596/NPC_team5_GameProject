@@ -140,14 +140,10 @@ function scene:create( event )
 			    	targetScene = targetScene, 
 			        scriptNum = saveList[index].scriptNum
 			    }
-			}	
-
-			if targetScene == currentScene then
-				print("target == current!")
-				composer:gotoScene("movingEffectScene", loadOption)
-			else
-				composer:gotoScene("movingEffectScene", loadOption)
-			end
+			}
+			local userSettings = saveDatas.saveList[index].userSettings
+			loadsave.saveTable(userSettings, "userSettings.json") 	-- 로드할때 그 때의 유저 세팅을 현재 유저 세팅으로 저장
+			composer:gotoScene("movingEffectScene", loadOption)
 		end
 	end
 

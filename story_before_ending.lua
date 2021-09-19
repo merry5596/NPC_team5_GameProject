@@ -10,12 +10,19 @@ local scene = composer.newScene()
 function scene:create(event)
 	local sceneGroup = self.view
 
+-------------------유저 정보 로드---------------------------------------------------------------------------------
+	local loadsave = require( "loadsave" )
+
+	local userSettings = loadsave.loadTable("userSettings.json")
+
+	userSettings.presentScene = "story_before_ending"
+	loadsave.saveTable(userSettings, "userSettings.json")
 -------------------변수-------------------------------------------------------------------------------
 	
 	--배경 그림--
-	local background1 = display.newImage("image/background/forest(겨울).png", display.contentWidth, display.contentHeight)
+	local background1 = display.newImage("image/background/forest(winter).png", display.contentWidth, display.contentHeight)
 	background1.x, background1.y = display.contentCenterX, display.contentCenterY
-	local background2 = display.newImage("image/background/tomb_임시.jpg", display.contentWidth, display.contentHeight)
+	local background2 = display.newImage("image/background/tomb.png", display.contentWidth, display.contentHeight)
 	background2.x, background2.y = display.contentCenterX, display.contentCenterY
 	background2.alpha = 0
 	sceneGroup:insert(background1)
@@ -339,6 +346,7 @@ function scene:create(event)
 		      		-- dialogueBox:removeEventListener("tap", nextScript) --메뉴오픈시 탭 이벤트 제거 추가
 		      		-- 현재 대사 위치 파라미터로 저장
 			      	composer.setVariable("scriptNum", i)
+			      	composer.setVariable("userSettings", userSettings)
 		  			composer.showOverlay("menuScene", overlayOption)
 				end	
 			end
@@ -349,7 +357,7 @@ function scene:create(event)
   	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
 		composer.removeScene("story_before_ending") --현재 장면 이름 넣기 ex)storyScene
-		composer.gotoScene("scene1")
+		-- composer.gotoScene("scene1")
 	end
 	
 	-- scriptNum를 params으로 받은 경우: 저장을 load한 경우이므로 특정 대사로 이동

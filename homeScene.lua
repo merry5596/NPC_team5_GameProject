@@ -9,9 +9,29 @@ local scene = composer.newScene()
 
 function scene:create( event )
 	local sceneGroup = self.view
+  
+-------------------유저 정보 로드 및 저장---------------------------------------------------------------------------------
+	local loadsave = require( "loadsave" )
+	local userSettings = loadsave.loadTable("userSettings.json")
+
+	local presentLevel = userSettings.presentLevel
+	local presentEXP = userSettings.presentEXP
+	local itemList = userSettings.itemList
+
+	userSettings.presentScene = "homeScene"
+-------------------퀘스트 정보 로드---------------------------------------------------------------------------------
+
+	local questNum = userSettings.questInfo.questNum
+	local questName = userSettings.questInfo.questName 
+	local maxJewerlyNum = userSettings.questInfo.maxJewerlyNum
+	local targetLevel = userSettings.questInfo.targetLevel
+	local areaName = userSettings.questInfo.areaName
+	local backgroundImage = userSettings.questInfo.backgroundImage
+
+------------------------------------------------------------------------------------------------------------------
 	
 	-- 임시 배경 --
-	local background = display.newImageRect("image/background/forest임시배경.png", display.contentWidth, display.contentHeight)
+	local background = display.newImageRect(backgroundImage, display.contentWidth, display.contentHeight)
 	background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
 	sceneGroup:insert(background)
 
@@ -30,17 +50,32 @@ function scene:create( event )
    	level.x, level.y = display.contentWidth*0.095, display.contentHeight*0.115
 	sceneGroup:insert(level)
 
+	local showLevel = display.newText(presentLevel, display.contentWidth*0.116, display.contentHeight*0.115, "fonts/BlackHanSans-Regular.ttf", 33)
+	showLevel:setFillColor(1)
+	sceneGroup:insert(showLevel)
+
 	--지역이름 박스 그림--
 	local area = display.newImage("image/component/area.png")
 	area.x, area.y = display.contentWidth*0.31, display.contentHeight*0.115
-	sceneGroup:insert(area)
+	-- sceneGroup:insert(area)
 
-	--재화 그림--
-	local money = display.newImage("image/component/money.png")
-	money.x, money.y = display.contentWidth*0.47, display.contentHeight*0.115
-	sceneGroup:insert(money)
+	local showArea = display.newText(areaName, display.contentWidth*0.31, display.contentHeight*0.1, "fonts/BlackHanSans-Regular.ttf", 33)
+	showArea:setFillColor(1)
+	-- sceneGroup:insert(showArea)
 
+	local showQuest = display.newText(questName, display.contentWidth*0.31, display.contentHeight*0.15, "fonts/GowunBatang-Bold.ttf", 20)
+	showQuest:setFillColor(1)
+	-- sceneGroup:insert(showQuest)
+	-- local money = display.newImage("image/component/money.png")
+	-- money.x, money.y = display.contentWidth*0.47, display.contentHeight*0.115
+	-- sceneGroup:insert(money)
 
+	local areaQuestGroup = display.newGroup()
+	areaQuestGroup:insert(area)
+	areaQuestGroup:insert(showArea)
+	areaQuestGroup:insert(showQuest)
+	sceneGroup:insert(areaQuestGroup)
+  
 	--가방 그림--
 	local bag = display.newImage("image/component/bag.png")
 	bag.x, bag.y = display.contentWidth*0.07, display.contentHeight*0.275
@@ -269,20 +304,26 @@ function scene:create( event )
 	{
 	    isModal = true
 	}
-
 ----------------------------------------------------------------------------------
 
-	local level = 1 --임시 레벨 변수
+	-- local level = presentLevel --임시 레벨 변수
 	local function levelUp(event) --임시 레벨업 함수
-		print("level:", level)
-		level = level + 1
+	   	presentLevel = presentLevel + 1
+    	print("levelup: ", presentLevel)
+    	showLevel.text = presentLevel
 	end
-	timerLevel = timer.performWithDelay(10000, levelUp, 0)
+	-- timerLevel = timer.performWithDelay(10000, levelUp, 0)
 
 	-- local maxJewerlyNum = event.params.maxJewerly (사용 예정) --
-	local maxJewerlyNum = 5 --임시 maxJewerly 변수
+	-- local maxJewerlyNum = 5 --임시 maxJewerly 변수
 
-	if level < 7 then --targetLevel 넣을 예정
+	local loadOption =
+	{
+	    effect = "fade",
+	    time = 400,
+	}
+
+	if presentLevel < targetLevel then --targetLevel 넣을 예정
 		--보석 종류 구분 함수--
 		local function findJewerlyNum(timerParams)
 			local num
@@ -316,7 +357,7 @@ function scene:create( event )
 				transition.fadeIn(jewerly[i], { time = 1000 })
 			end
 
-			if level >= 7 then --targetLevel 넣을 예정 --타겟레벨 넘으면 보석 등장 종료
+			if presentLevel >= targetLevel then --targetLevel 넣을 예정 --타겟레벨 넘으면 보석 등장 종료
 				if maxJewerlyNum >= 1 then
 					timer.cancel(timer1)
 					if maxJewerlyNum >= 2 then
@@ -332,11 +373,11 @@ function scene:create( event )
 						end
 					end
 				end
-				timer.cancel(timerLevel)
+				-- timer.cancel(timerLevel)
 			end
 		end
 
-		local presentEXP = 0 --현재 경험치 양
+		-- local presentEXP = 0 --현재 경험치 양
 		local increaseEXP = 0 --초당 증가하는 경험치 양
 
 		--보석 클릭해서 획득--
@@ -345,6 +386,8 @@ function scene:create( event )
 			jewerly1Num = jewerly1Num + 1
 			presentEXP = presentEXP + jewerlyEXP[1]
 			increaseEXP = increaseEXP + jewerlyEXP[1]
+			-- 저장
+		    userSettings.itemList[1] = jewerly1Num
 		end
 		jewerly[1]:addEventListener("tap", jewerlyClick_1)
 		local function jewerlyClick_2(event)
@@ -352,6 +395,8 @@ function scene:create( event )
 			jewerly2Num = jewerly2Num + 1
 			presentEXP = presentEXP + jewerlyEXP[2]
 			increaseEXP = increaseEXP + jewerlyEXP[2]
+			-- 저장
+		    userSettings.itemList[2] = jewerly2Num
 		end
 		jewerly[2]:addEventListener("tap", jewerlyClick_2)
 		local function jewerlyClick_3(event)
@@ -359,6 +404,8 @@ function scene:create( event )
 			jewerly3Num = jewerly3Num + 1
 			presentEXP = presentEXP + jewerlyEXP[3]
 			increaseEXP = increaseEXP + jewerlyEXP[3]
+			-- 저장
+		    userSettings.itemList[3] = jewerly3Num
 		end
 		jewerly[3]:addEventListener("tap", jewerlyClick_3)
 		local function jewerlyClick_4(event)
@@ -366,6 +413,8 @@ function scene:create( event )
 			jewerly4Num = jewerly4Num + 1
 			presentEXP = presentEXP + jewerlyEXP[4]
 			increaseEXP = increaseEXP + jewerlyEXP[4]
+			-- 저장
+		    userSettings.itemList[4] = jewerly4Num
 		end
 		jewerly[4]:addEventListener("tap", jewerlyClick_4)
 		local function jewerlyClick_5(event)
@@ -373,16 +422,54 @@ function scene:create( event )
 			jewerly5Num = jewerly5Num + 1
 			presentEXP = presentEXP + jewerlyEXP[5]
 			increaseEXP = increaseEXP + jewerlyEXP[5]
+			-- 저장
+		    userSettings.itemList[5] = jewerly5Num
 		end
 		jewerly[5]:addEventListener("tap", jewerlyClick_5)
 
 		--경험치 자동증가 함수--
 		local function autoEXPUp(event)
+			local targetEXP
+		 	-- 2~7레벨은 700으로,
+			-- 8~30레벨은 1,200으로,
+			-- 31~68레벨은 3,600으로,
+			-- 69~118레벨은 12,180으로,
+			-- 119~168레벨은 36,084으로,
+			-- 169~252레벨은 59,300으로
+
+		    if presentLevel < 7 then
+		    	targetEXP = 700
+		    elseif presentEXP < 30 then
+		    	targetEXP = 1200
+		    elseif presentEXP < 68 then
+		    	targetEXP = 3600
+		    elseif presentEXP < 118 then
+		    	targetEXP = 12180
+		    elseif presentEXP < 168 then
+		    	targetEXP = 36084
+		    elseif presentEXP < 252 then
+		    	targetEXP = 59300
+		    end
 			presentEXP = presentEXP + increaseEXP
 			print("autoPresentEXP", presentEXP)
 			print("autoIncreaseEXP", increaseEXP)
-			if level >= 7 then --targetLevel 넣을 예정
+
+
+		    if presentEXP >= targetEXP then
+		    	levelUp()
+		    	presentEXP = presentEXP - targetEXP
+		    end 
+
+		    -- 저장
+		    userSettings.presentLevel = presentLevel
+			userSettings.presentEXP = presentEXP
+
+			loadsave.saveTable(userSettings, "userSettings.json")
+
+			if presentLevel >= targetLevel then --targetLevel 넣을 예정
 				timer.cancel(timerEXP)
+				composer.setVariable("questNum", questNum)
+      	 		composer.gotoScene("quest_clear", loadOption)
 			end
 		end
 		timerEXP = timer.performWithDelay(1000, autoEXPUp, 0)
@@ -406,7 +493,6 @@ function scene:create( event )
 				end
 			end
 		end
-
 	end
 
 -----------------------------------------------------------------------------------------
@@ -443,6 +529,8 @@ function scene:create( event )
 		        	menuButton:scale(1.1, 1.1)
 		        	-- 여기부터가 실질적인 action에 해당
 		  			composer.setVariable("scriptNum", 0)
+		  			-- 변수로 수정...!
+		  			composer.setVariable("userSettings", userSettings)
   					composer.showOverlay("menuScene", overlayOption)
 				end	
 			end
@@ -453,12 +541,11 @@ function scene:create( event )
   	--메뉴 시작화면으로 버튼 클릭시 장면 닫고 타이틀화면으로 이동--
 	function scene:closeScene()
 		composer.removeScene("homeScene") --현재 장면 이름 넣기 ex)storyScene
-		composer.gotoScene("scene1")
+		-- composer.gotoScene("scene1")
 	end
 
+
 	--composer.gotoScene("view2")
-
-
 end
 
 function scene:show( event )
@@ -484,6 +571,7 @@ function scene:hide( event )
 		--
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
+		timer.cancel(timerEXP)
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 		composer.removeScene("home")
