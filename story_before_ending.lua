@@ -304,8 +304,6 @@ function scene:create(event)
 		showDialogue[i].alpha = 1
 		
 		print("i: ", i)
-
-		return true
 	end
 	skipButton:addEventListener("tap", skip)
 
