@@ -101,6 +101,10 @@ function scene:create( event )
 					-- else
 					-- 	dialogueBox:addEventListener("tap", nextScript)
 					-- end
+					print(composer.getSceneName( "current" ))
+					if composer.getSceneName("current") == "homeScene" then
+						parent:resumeTimer() --이전 장면의 함수 실행
+					end	
 					composer.hideOverlay("menuScene")
 				end	
 			end

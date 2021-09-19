@@ -492,7 +492,7 @@ function scene:create( event )
 
 		--경험치 자동증가 함수--
 		local EXPBarValue = {"", "", "", ""}
-		local function autoEXPUp(event)
+		function autoEXPUp(event)
 
 			print("현재레벨, 타켓경험치", presentLevel, targetEXP)
 
@@ -550,24 +550,33 @@ function scene:create( event )
 		timerEXP = timer.performWithDelay(1000, autoEXPUp, 0)
 
 		--보석 등장 메인 부분--
-		timer1 = timer.performWithDelay(5000, jewerlyfadeInOut, 0)
-		timer1.params = { params = "j1" }
-		if maxJewerlyNum >= 2 then
-			timer2 = timer.performWithDelay(10000, jewerlyfadeInOut, 0)
-			timer2.params = { params = "j2" }
-			if maxJewerlyNum >= 3 then
-				timer3 = timer.performWithDelay(16000, jewerlyfadeInOut, 0)
-				timer3.params = { params = "j3" }
-				if maxJewerlyNum >= 4 then
-					timer4 = timer.performWithDelay(25000, jewerlyfadeInOut, 0)
-					timer4.params = { params = "j4" }
-					if maxJewerlyNum == 5 then
-						timer5 = timer.performWithDelay(47000, jewerlyfadeInOut, 0)
-						timer5.params = { params = "j5" }
+		function jewerlyFadeOutMain()
+			timer1 = timer.performWithDelay(5000, jewerlyfadeInOut, 0)
+			timer1.params = { params = "j1" }
+			if maxJewerlyNum >= 2 then
+				timer2 = timer.performWithDelay(10000, jewerlyfadeInOut, 0)
+				timer2.params = { params = "j2" }
+				if maxJewerlyNum >= 3 then
+					timer3 = timer.performWithDelay(16000, jewerlyfadeInOut, 0)
+					timer3.params = { params = "j3" }
+					if maxJewerlyNum >= 4 then
+						timer4 = timer.performWithDelay(25000, jewerlyfadeInOut, 0)
+						timer4.params = { params = "j4" }
+						if maxJewerlyNum == 5 then
+							timer5 = timer.performWithDelay(47000, jewerlyfadeInOut, 0)
+							timer5.params = { params = "j5" }
+						end
 					end
 				end
 			end
 		end
+
+		jewerlyFadeOutMain()
+	end
+
+	function scene:resumeTimer()
+		timerEXP = timer.performWithDelay(1000, autoEXPUp, 0)
+		jewerlyFadeOutMain()
 	end
 
 -----------------------------------------------------------------------------------------
@@ -604,6 +613,8 @@ function scene:create( event )
   				if event.x >= bounds.xMin and event.x <= bounds.xMax and event.y >= bounds.yMin and event.y <= bounds.yMax then
 		        	menuButton:scale(1.1, 1.1)
 		        	-- 여기부터가 실질적인 action에 해당
+		        	timer.cancel(timerEXP)
+					jewerlyAppearStop()
 		  			composer.setVariable("scriptNum", 0)
 		  			-- 변수로 수정...!
 		  			composer.setVariable("userSettings", userSettings)

@@ -70,6 +70,9 @@ function scene:create( event )
 					else
 						dialogueBox:addEventListener("tap", nextScript)
 					end
+					if composer.getSceneName("current") == "homeScene" then
+						parent:resumeTimer() --이전 장면의 함수 실행
+					end	
 					composer.hideOverlay()
 				end	
 			end
@@ -190,6 +193,7 @@ function scene:hide( event )
 		-- INSERT code here to pause the scene
 		-- e.g. stop timers, stop animation, unload sounds, etc.)
 		print("loadScene hide")
+
 	elseif phase == "did" then
 		-- Called when the scene is now off screen
 		-- composer.removeScene("home")
