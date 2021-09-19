@@ -10,6 +10,7 @@ local scene = composer.newScene()
 function scene:create( event )
 	local sceneGroup = self.view
   
+  	print("home created")
 -------------------유저 정보 로드 및 저장---------------------------------------------------------------------------------
 	local loadsave = require( "loadsave" )
 	local userSettings = loadsave.loadTable("userSettings.json")
@@ -17,6 +18,11 @@ function scene:create( event )
 	local presentLevel = userSettings.presentLevel
 	local presentEXP = userSettings.presentEXP
 	local itemList = userSettings.itemList
+	jewerly1Num = itemList[1]
+	jewerly2Num = itemList[2]
+	jewerly3Num = itemList[3]
+	jewerly4Num = itemList[4]
+	jewerly5Num = itemList[5]
 
 	userSettings.presentScene = "homeScene"
 -------------------퀘스트 정보 로드---------------------------------------------------------------------------------
@@ -161,11 +167,7 @@ function scene:create( event )
 	sceneGroup:insert(inventoryGroup)
 
 	--아이템 보석 개수 변수--
-	jewerly1Num = 0
-	jewerly2Num = 0
-	jewerly3Num = 0
-	jewerly4Num = 0
-	jewerly5Num = 0
+
 
 	-- 소지품 열기
 	local bounds_bag = bag.contentBounds
