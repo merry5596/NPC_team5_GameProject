@@ -9,7 +9,7 @@ local scene = composer.newScene()
 
 function scene:create( event )
 	local sceneGroup = self.view
-
+  
 -------------------유저 정보 로드 및 저장---------------------------------------------------------------------------------
 	local loadsave = require( "loadsave" )
 	local userSettings = loadsave.loadTable("userSettings.json")
@@ -29,24 +29,23 @@ function scene:create( event )
 	local backgroundImage = userSettings.questInfo.backgroundImage
 
 ------------------------------------------------------------------------------------------------------------------
-
-	-- 배경 --
-	-- local background = display.newRect(display.contentWidth/2, display.contentHeight/2, display.contentWidth, display.contentHeight)
-	-- background:setFillColor(1)
 	
 	-- 임시 배경 --
 	local background = display.newImageRect(backgroundImage, display.contentWidth, display.contentHeight)
 	background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
 	sceneGroup:insert(background)
 
+	--플레이어 그림--
 	local evy = display.newImage("image/component/evy.png")
 	evy.x, evy.y = display.contentWidth*0.5, display.contentHeight*0.6
 	sceneGroup:insert(evy)
 
+	--메뉴 버튼 그림--
 	local menuButton = display.newImage("image/component/menu_button.png")
    	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
 	sceneGroup:insert(menuButton)
 
+	--레벨 박스 그림--
 	local level = display.newImage("image/component/level.png")
    	level.x, level.y = display.contentWidth*0.095, display.contentHeight*0.115
 	sceneGroup:insert(level)
@@ -55,6 +54,7 @@ function scene:create( event )
 	showLevel:setFillColor(1)
 	sceneGroup:insert(showLevel)
 
+	--지역이름 박스 그림--
 	local area = display.newImage("image/component/area.png")
 	area.x, area.y = display.contentWidth*0.31, display.contentHeight*0.115
 	-- sceneGroup:insert(area)
@@ -75,21 +75,25 @@ function scene:create( event )
 	areaQuestGroup:insert(showArea)
 	areaQuestGroup:insert(showQuest)
 	sceneGroup:insert(areaQuestGroup)
-
+  
+	--가방 그림--
 	local bag = display.newImage("image/component/bag.png")
 	bag.x, bag.y = display.contentWidth*0.07, display.contentHeight*0.275
 	sceneGroup:insert(bag)
 
+	--상자 클릭시 열리는 인벤토리 박스 그림--
 	local inventoryBox = display.newImage("image/component/inventory_box.png")
 	inventoryBox.x, inventoryBox.y = display.contentWidth*0.365, display.contentHeight*0.58
 	inventoryBox.isVisible = false
 	sceneGroup:insert(inventoryBox)
 
+	--인벤토리 박스 속 스크롤바 그림--
 	local scrollbar = display.newImage("image/component/inventory_scroll.png")
 	scrollbar.x, scrollbar.y = display.contentWidth*0.6736, display.contentHeight*0.35
 	scrollbar.isVisible = false
 	sceneGroup:insert(scrollbar)
 
+	--???--
 	local function fitImage( displayObject, fitWidth, fitHeight, enlarge )
 		--
 		-- first determine which edge is out of bounds
@@ -105,6 +109,7 @@ function scene:create( event )
 		displayObject:scale( scaleFactor, scaleFactor )
 	end
 
+	--인벤토리 박스 닫기버튼 그림--
 	local closeButton = display.newImage("image/component/menu_close.png")
 	fitImage( closeButton, 50, 50, true )
 	closeButton.x, closeButton.y = display.contentWidth*0.6736, display.contentHeight*0.24
@@ -122,8 +127,8 @@ function scene:create( event )
 	jewerly[4] = display.newImage(jewerlyGroup, "image/component/보석_파.png") --사파이어
 	jewerly[5] = display.newImage(jewerlyGroup, "image/component/보석_흰.png") --다이아몬드
 	for i = 1, #jewerly do
-	jewerly[i]:scale(0.5, 0.5)
-	jewerly[i].alpha = 0
+		jewerly[i]:scale(0.5, 0.5)
+		jewerly[i].alpha = 0
 	end
 	sceneGroup:insert(jewerlyGroup)
 
@@ -488,10 +493,10 @@ function scene:create( event )
 				end
 			end
 		end
-
 	end
 
 -----------------------------------------------------------------------------------------
+
 	--메뉴열기--	
 	local bounds = menuButton.contentBounds
 	local isOut
