@@ -69,6 +69,10 @@ function scene:create( event )
 	local menuButton = display.newImage("image/component/menu_button.png")
   	menuButton.x, menuButton.y = display.contentWidth*0.92, display.contentHeight*0.1
   	sceneGroup:insert(menuButton)
+
+  	--sound
+	local buttonSound = audio.loadSound( "sound/buttonSound.mp3" )
+
   
   	--overlayOption: overlay 화면의 액션 이 씬에 전달 X
 	local overlayOption =
@@ -234,6 +238,8 @@ function scene:create( event )
 	end
 
 	function fastforward(event)
+		audio.play( buttonSound )
+
 		if(fastforward_state == 0) then
 			fastforward_state = 1
 			dialogueBox:removeEventListener("tap", nextScript)
@@ -260,6 +266,7 @@ function scene:create( event )
 
 	--스킵기능(추가)--
 	function skip(event)
+		audio.play( buttonSound )
 		if(nameGroup.isVisible == true) then
 			transition.fadeOut(nameGroup, { time = dialogueFadeOutTime })
 		end
@@ -291,6 +298,7 @@ function scene:create( event )
     	    self.isFocus = true
     	    
     	    menuButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	   	audio.play( buttonSound )
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)

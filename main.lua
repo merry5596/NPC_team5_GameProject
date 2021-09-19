@@ -13,11 +13,11 @@ local composer = require "composer"
 
 -- event listeners for tab buttons:
 local function onFirstView( event )
-	composer.gotoScene( "scene1" )
+	composer.gotoScene( "story_ruins_2" )
 end
 
 local function onSecondView( event )
 	composer.gotoScene( "homeScene" )
 end
 
-onFirstView()	-- invoke first tab button's onPress event manually
+onSecondView()	-- invoke first tab button's onPress event manually

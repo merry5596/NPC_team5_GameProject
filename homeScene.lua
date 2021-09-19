@@ -36,6 +36,10 @@ function scene:create( event )
 
 ------------------------------------------------------------------------------------------------------------------
 	
+	--sound
+	local buttonSound = audio.loadSound( "sound/buttonSound.mp3" )
+	local jewelrySound = audio.loadSound( "sound/jewelrySound.mp3" )
+
 	-- 임시 배경 --
 	local background = display.newImageRect(backgroundImage, display.contentWidth, display.contentHeight)
 	background.x, background.y = display.contentWidth*0.5, display.contentHeight*0.5
@@ -179,7 +183,8 @@ function scene:create( event )
   			display.getCurrentStage():setFocus( event.target )
     	    self.isFocus = true
     	    
-    	    bag:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	    bag:scale(0.9, 0.9) 	-- 버튼 작아짐    	    
+    	    audio.play( buttonSound )
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut_bag == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
@@ -271,6 +276,8 @@ function scene:create( event )
 	local isOut_close
   	local function closeBag(event)
   		if event.phase == "began" then
+  			audio.play( buttonSound )
+
   			isOut_close = 0 	-- 이벤트 시작 시에는 이벤트가 버튼 안에 있음 (초기값)
 
   			display.getCurrentStage():setFocus( event.target )
@@ -409,6 +416,7 @@ function scene:create( event )
 
 		--보석 클릭해서 획득--
 		local function jewerlyClick_1(event)
+			audio.play( jewelrySound )
 			transition.fadeOut(jewerly[1], { time = 100 })
 			jewerly1Num = jewerly1Num + 1
 			presentEXP = presentEXP + jewerlyEXP[1]
@@ -418,6 +426,7 @@ function scene:create( event )
 		end
 		jewerly[1]:addEventListener("tap", jewerlyClick_1)
 		local function jewerlyClick_2(event)
+			audio.play( jewelrySound )
 			transition.fadeOut(jewerly[2], { time = 100 })
 			jewerly2Num = jewerly2Num + 1
 			presentEXP = presentEXP + jewerlyEXP[2]
@@ -427,6 +436,7 @@ function scene:create( event )
 		end
 		jewerly[2]:addEventListener("tap", jewerlyClick_2)
 		local function jewerlyClick_3(event)
+			audio.play( jewelrySound )
 			transition.fadeOut(jewerly[3], { time = 100 })
 			jewerly3Num = jewerly3Num + 1
 			presentEXP = presentEXP + jewerlyEXP[3]
@@ -436,6 +446,7 @@ function scene:create( event )
 		end
 		jewerly[3]:addEventListener("tap", jewerlyClick_3)
 		local function jewerlyClick_4(event)
+			audio.play( jewelrySound )
 			transition.fadeOut(jewerly[4], { time = 100 })
 			jewerly4Num = jewerly4Num + 1
 			presentEXP = presentEXP + jewerlyEXP[4]
@@ -445,6 +456,7 @@ function scene:create( event )
 		end
 		jewerly[4]:addEventListener("tap", jewerlyClick_4)
 		local function jewerlyClick_5(event)
+			audio.play( jewelrySound )
 			transition.fadeOut(jewerly[5], { time = 100 })
 			jewerly5Num = jewerly5Num + 1
 			presentEXP = presentEXP + jewerlyEXP[5]
@@ -571,6 +583,7 @@ function scene:create( event )
     	    self.isFocus = true
     	    
     	    menuButton:scale(0.9, 0.9) 	-- 버튼 작아짐
+    	    audio.play( buttonSound )
     	elseif self.isFocus then
     		if event.phase == "moved" then
     			-- 1. 이벤트가 버튼 밖에 있지만 isOut == 0인 경우(방금까지 안에 있었을 경우)에만 수행 (처음 밖으로 나갈 때 한 번 수행)
